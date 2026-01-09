@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: soongo_data
+Version: 0.0.1
+Summary: SoonGo proprietary data collection application
+Author-email: Matthieu Glotz <matthieu@soongo.co>
+Project-URL: Homepage, https://gitlab.com/matthieu.glotz/input_data
+Project-URL: Issues, https://gitlab.com/matthieu.glotz/input_data/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+
+# SoonGo Data
+
+## Config
+Use connectors/connector_config.yaml to add different connectors to organizations
+and pass connector data collection arguments, if necessary.
+Input table generation logic is in input_tables, which also handles their generation.

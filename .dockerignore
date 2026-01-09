@@ -1,0 +1,5 @@
+__pycache__/*
+*/__pycache__/*
+connectors/*/__pycache__/*
+data_models/*/__pycache__/*
+.vscode/*

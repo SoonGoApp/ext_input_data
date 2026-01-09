@@ -1,0 +1,143 @@
+{
+    "quartus": {
+        "params": {
+            "source_connectors": [
+                "NIBELIS"
+            ],
+            "mapping_col": "business_unit",
+            "bu_cols": [
+                "entity_1",
+                "entity_2",
+                "entity_3"
+            ]
+        },
+        "bus": {
+            "Groupe QUARTUS > 111 > 111 - 395": "GROUPE QUARTUS > 111 > 111 - 395",
+            "Groupe QUARTUS > ATRIUM > ATRIUM - National": "GROUPE QUARTUS > ATRIUM > ATRIUM - National",
+            "Groupe QUARTUS > Groupe QUARTUS > QUARTUS > QUARTUS PARIS": "GROUPE QUARTUS > QUARTUS > QUARTUS PARIS",
+            "Groupe QUARTUS > QUARTUS ENSEMBLIER URBAIN NORD DE France": "GROUPE QUARTUS > QUARTUS ENSEMBLIER URBAIN NORD DE France",
+            "Groupe QUARTUS > QUARTUS RESIDENTIEL > QUARTUS RESIDENTIEL - 404": "GROUPE QUARTUS > QUARTUS RESIDENTIEL > QUARTUS RESIDENTIEL - 404",
+            "Groupe QUARTUS > QUARTUS RESIDENTIEL > QUARTUS RESIDENTIEL - Marseille": "GROUPE QUARTUS > QUARTUS RESIDENTIEL > QUARTUS RESIDENTIEL - Marseille",
+            "Groupe QUARTUS > QUARTUS RESIDENTIEL > QUARTUS RESIDENTIEL - QR DIRECTION TECHNIQUE": "GROUPE QUARTUS > QUARTUS RESIDENTIEL > QUARTUS RESIDENTIEL - QR DIRECTION TECHNIQUE",
+            "Groupe QUARTUS > 111 > 111 - Dir Commerciale Nationale": "GROUPE QUARTUS > 111 > 111 - Dir Commerciale Nationale",
+            "Groupe QUARTUS > QUARTUS RESIDENTIEL > QUARTUS RESIDENTIEL - Nantes": "GROUPE QUARTUS > QUARTUS RESIDENTIEL > QUARTUS RESIDENTIEL - Nantes",
+            "Groupe QUARTUS > QUARTUS ENSEMBLIER URBAIN NORD DE France > QUARTUS ENSEMBLIER URBAIN NORD DE France - Lille": "Groupe QUARTUS > QUARTUS ENSEMBLIER URBAIN NORD DE FRANCE > QUARTUS ENSEMBLIER URBAIN NORD DE FRANCE - Lille"
+        }
+    },
+    "domino-rh": {
+        "params": {
+            "source_connectors": ["DOMINO"],
+            "bu_cols": [
+                "entity_1",
+                "entity_2",
+                "entity_3"
+            ]
+        }
+    },
+    "acorus": {
+        "params": {
+            "source_connectors": ["LUCCA"],
+            "bu_cols": [
+                "business_unit"
+            ],
+            "mapping_col": "entity_3"
+        }
+    },
+    "compagnie-des-alpes": {
+        "params": {
+            "bu_cols": [
+                "entity_1",
+                "entity_2",
+                "entity_3"
+            ]
+        }
+    },
+    "groupe-batisseur-d-avenir": {
+        "params": {
+            "source_connectors": ["LUCCA"],
+            "bu_cols": [
+                "entity_1",
+                "entity_2",
+                "entity_3"
+            ]
+        },
+        "bus": {
+            "Direction Générale Groupe >  BATI ARMOR > Communication": "Direction Générale Groupe >  BATI ARMOR – communication",
+            "Direction Générale Groupe > BATI LYON PROMOTION > Communication": "Direction Générale Groupe > BATI LYON PROMOTION – communication",
+            "Direction Générale Groupe > BATI NANTES > Communication": "Direction Générale Groupe > BATI NANTES – communication",
+
+            "Direction Générale Groupe >  BATI ARMOR > Commerciale": "Direction Générale Groupe >  BATI ARMOR – commercial",
+            "Direction Générale Groupe > BATI LYON PROMOTION > Commercial": "Direction Générale Groupe > BATI LYON PROMOTION – commercial",
+            "Direction Générale Groupe > BATI NANTES > commercial": "Direction Générale Groupe > BATI NANTES – commercial",
+
+            "Direction Générale Groupe >  BATI ARMOR > Comptabilité": "Direction Générale Groupe >  BATI ARMOR – comptabilité",
+            "Direction Générale Groupe > BATI LYON PROMOTION > comptabilité": "Direction Générale Groupe > BATI LYON PROMOTION – comptabilité",
+            "Direction Générale Groupe > BATI NANTES > comptabilité": "Direction Générale Groupe > BATI NANTES – comptabilité",
+            "Direction Générale Groupe > BATI AMENAGEMENT BRETAGNE > Comptabilité": "Direction Générale Groupe > BATI AMENAGEMENT BRETAGNE – comptabilité",
+            "Direction Générale Groupe > BATI AMENAGEMENT > Comptabilité": "Direction Générale Groupe > BATI AMENAGEMENT – Comptabilité",
+            "Direction Générale Groupe > BATI PARIS > comptabilité": "Direction Générale Groupe > BATI PARIS – comptabilité",
+
+            "Direction Générale Groupe > BATI LYON PROMOTION > Développement": "Direction Générale Groupe > BATI LYON PROMOTION – Développement",
+            "Direction Générale Groupe > BATI PARIS > Développement": "Direction Générale Groupe > BATI PARIS – Développement",
+            
+            "Direction Générale Groupe > BATI NANTES > Opérations": "Direction Générale Groupe > BATI NANTES – Opérations",
+            "Direction Générale Groupe > BATI PARIS > Opérationnel": "Direction Générale Groupe > BATI PARIS – Opérationnel",
+
+            "Direction Générale Groupe >  BATI ARMOR > Promotion/opération": "Direction Générale Groupe > BATI ARMOR – Promotion/opération",
+
+            "Direction Générale Groupe >  BATI ARMOR > Technique": "Direction Générale Groupe >  BATI ARMOR – Technique",
+            "Direction Générale Groupe > BATI LYON PROMOTION > Technique": "Direction Générale Groupe > BATI LYON PROMOTION – Technique",
+            "Direction Générale Groupe > BATI NANTES > Technique": "Direction Générale Groupe > BATI NANTES – Technique",
+
+            "Direction Générale Groupe > BATI LYON PROMOTION > Montage": "Direction Générale Groupe > BATI LYON PROMOTION > BATI LYON PROMOTION -Montage",
+            "Direction Générale Groupe >  BATI ARMOR > Direction agence": "Direction Générale Groupe >  BATI ARMOR > BATI ARMOR - Direction agence"
+        }
+    },
+    "yanet": {
+        "params": {
+            "source_connectors": ["YANET"],
+            "bu_cols": [
+                "entity_1",
+                "entity_2",
+                "entity_3"
+            ]
+        }
+    },
+    "udaf": {
+        "params": {
+            "source_connectors": ["UDAF"],
+            "bu_cols": [
+                "entity_1",
+                "entity_2",
+                "entity_3"
+            ]
+        }
+    },
+    "cetih": {
+        "params": {
+            "source_connectors": ["CETIH"],
+            "bu_cols": [
+                "entity_1",
+                "entity_2"
+            ]
+        }
+    },
+    "muller-automotive": {
+        "params": {
+            "source_connectors": ["MULLER_AUTOMOTIVE"],
+            "bu_cols": [
+                "entity_1",
+                "entity_2"
+            ]
+        }
+    },
+    "grandjouan": {
+        "params": {
+            "source_connectors": ["GRANDJOUAN"],
+            "bu_cols": [
+                "entity_1",
+                "entity_2"
+            ]
+        }
+    }
+}

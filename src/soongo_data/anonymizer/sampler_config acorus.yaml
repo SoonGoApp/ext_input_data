@@ -1,0 +1,37 @@
+---
+sampling:
+
+  - nb_sampling: 2600
+  
+    changes:
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Allemagne
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Suisse
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Benelux
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Espagne
+
+        - Groupe Company > Services Généraux > RH/Finance
+        - Groupe Company > Services Généraux > Direction
+  

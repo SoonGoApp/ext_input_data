@@ -1,0 +1,4 @@
+"vehicle_id","geometry","start_location","end_location","start_at","end_at"
+61f4da07-1760-4ecd-bb6b-a9d836a27439,"LINESTRING(0 0,0 1)",0 rue du test 75019 paris,0 avenue du test 95019 paris,"2025-01-01 12:00:00","2025-01-01 12:01:00"
+b7752134-4303-4316-85d3-16a11ba8ba45,"LINESTRING(0 0,0 1,1 1)",0 rue du test 75019 paris,1 rue du test 75019 paris,"2025-01-01 12:00:00","2025-01-01 12:02:00"
+286a190d-4e25-4330-bef0-1f96e682b5fa,"LINESTRING(0 0,0 1,3 3,4 4)",0 rue du test 75019 paris,4 rue du test 75019 paris,"2025-01-01 12:00:00","2025-01-01 12:08:00"

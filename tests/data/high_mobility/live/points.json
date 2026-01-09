@@ -1,0 +1,8 @@
+[
+    {"data":{"vehicle_location":{"altitude":{"data":{"unit":"meters","value":26},"timestamp":"2025-12-11T15:26:21"}}},"capability":"vehicle_location","property":"altitude","vin":"1HM6WNDF762S9H5EC"},
+    {"data":{"vehicle_location":{"coordinates":{"data":{"latitude":44.99447,"longitude":-0.43797},"timestamp":"2025-12-11T15:26:21"}}},"capability":"vehicle_location","property":"coordinates","vin":"1HM6WNDF762S9H5EC"},
+    {"data":{"vehicle_location":{"gps_signal_strength":{"data":100,"timestamp":"2025-12-11T15:26:21"}}},"capability":"vehicle_location","property":"gps_signal_strength","vin":"1HM6WNDF762S9H5EC"},
+    {"data":{"vehicle_location":{"gps_source":{"data":"real","timestamp":"2025-12-11T15:26:21"}}},"capability":"vehicle_location","property":"gps_source","vin":"1HM6WNDF762S9H5EC"},
+    {"data":{"vehicle_location":{"heading":{"data":{"unit":"degrees","value":153},"timestamp":"2025-12-11T15:26:21"}}},"capability":"vehicle_location","property":"heading","vin":"1HM6WNDF762S9H5EC"},
+    {"data":{"race":{"vehicle_moving":{"data":"not_moving","timestamp":"2025-12-11T15:26:26"}}},"capability":"race","property":"vehicle_moving","vin":"1HM6WNDF762S9H5EC"}
+]

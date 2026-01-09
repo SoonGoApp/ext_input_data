@@ -1,0 +1,2567 @@
+---
+quartus:
+  accidents:
+    fetch_table_params:
+      include_tables:
+        - [AYVENS, CSV_UPLOAD, ACCIDENTS]
+
+  collaborators:
+    org_id_col: email
+    infer_category: True
+    fetch_table_params:
+      disjunctive_cols:
+        - - organization_collaborator_id
+          - firstname
+          - lastname
+          - alternative_names
+          - employee_full_name
+      conjunctive_cols:
+        - [firstname, lastname]
+        - [entity_1, entity_2, entity_3]
+        - [role]
+        - [work_location]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [geography]
+        - [organization_collaborator_id]
+        - [connector_name]
+        - [source_table]
+        - [synchronisation_type]
+        - [email]
+        - [employee_entry_date]
+        - [employee_exit_date]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [email]
+        - [manager_organization_id]
+        - [manager_soongo_reference]
+        - [picture_href]
+        - [personal_phone_number]
+        - [professional_phone_number]
+        - [civility]
+        - [birthplace]
+        - [birthdate]
+        - [license_number]
+        - [license_country]
+        - [license_issuing_date]
+        - [license_issuing_place]
+        - [license_issuing_country]
+        - [personal_address]
+        - [personal_street_number]
+        - [personal_postal_code]
+        - [personal_city]
+        - [personal_street_name]
+        - [personal_country]
+
+  expense_claims:
+    fetch_table_params:
+      include_tables:
+        - [CONCUR, CSV_UPLOAD, EXPENSE_CLAIMS]
+        - [CONCUR, EDI, EXPENSE_CLAIMS]
+
+  expenses:
+    fetch_table_params:
+      include_tables:
+        - [GAC, BUDGET, EXPENSES]
+        - [AYVENS, EDI, EXPENSES_XLS]
+        - [ARVAL, EDI, EXPENSES_V2]
+        - [SPEEDY, EDI, EXPENSES]
+        - [TOTAL, EDI, FUEL_EXPENSES]
+        - [TOTAL, EDI, TOLL_EXPENSES]
+        - [TOTAL, EDI, FEE_EXPENSES]
+        - [TOTAL, EDI, REIMBURSEMENTS]
+        - [TOTAL, EDI, OTHER_EXPENSES]
+        - [TOTAL, EDI, DOCUMENT_FEES]
+      conjunctive_cols:
+        - [expense_reference]
+        - [supplier]
+        - [billing_date]
+        - [amount_tax_exc]
+        - [amount_tax_inc]
+        - [plate_number]
+        - [vat_amount]
+        - [deductible_vat]
+        - [organization_collaborator_id]
+        - [entity_1]
+        - [entity_2]
+        - [entity_3]
+        - [employee_full_name]
+        - [soongo_category]
+        - [quantity]
+        - [equipment_reference]
+        - [connector_name]
+        - [synchronisation_type]
+        - [billing_reference]
+        - [transaction_start_date]
+        - [transaction_end_date]
+        - [expense_location]
+        - [product]
+        - [merchant_name]
+        - [accident_ref]
+
+  hotels:
+    fetch_table_params:
+      include_tables:
+      - [HAVAS, CSV_UPLOAD, HOTEL]
+
+  mileages:
+    fetch_table_params:
+      exclude_tables:
+        - [GAC, STEERING, '*']
+      disjunctive_cols:
+        - [plate_number]
+        - [mileage]
+      conjunctive_cols:
+        - [mileage_date]
+        - [connector_name]
+        - [source_dataset]
+        - [source_table]
+        - [synchronisation_type]
+
+  rental_cars:
+    fetch_table_params:
+      include_tables:
+        - [HAVAS, CSV_UPLOAD, RENTAL_CAR]
+
+  taxes:
+    fetch_table_params:
+      include_tables:
+        - [GAC, TAXES, 'IN_KIND_BENEFIT']
+        - [GAC, TAXES, 'AMORTIZATION']
+        - [GAC, TAXES, 'SENIORITY_TAX']
+        - [GAC, TAXES, 'CO2_TAX']
+        - [GAC, TAXES, 'CORPORATE_CAR_TAX']
+        - [GAC, TAXES, 'POLLUTANT_TAX']
+  
+      disjunctive_cols:
+        - [declared_non_deductible_amortization, tax_vehicle_age, tax_corporate_vehicles, tax_CO2_emission, tax_pollutant]
+      conjunctive_cols:
+        - [entity_1, entity_2, entity_3]
+        - [organisation_employee_id]
+        - [employee_full_name]
+        - [firstname, lastname]
+        - [year, quarter]
+        - [year]
+        - [ikb_period_start]
+        - [plate_number]
+        - [billing_date]
+        - [declared_non_deductible_amortization]
+        - [tax_vehicle_age]
+        - [tax_corporate_vehicles]
+        - [connector_name]
+        - [synchronisation_type]
+
+  trains_planes_travel:
+    fetch_table_params:
+      include_tables:
+        - [HAVAS, CSV_UPLOAD, AIR_RAIL]
+
+  collaborators_vehicles:
+    fetch_table_params:
+      include_tables:
+        - [GAC, EXPORTS, ASSOCIATIONS]
+      disjunctive_cols:
+        - [plate_number]
+        - - firstname
+          - lastname
+          - employee_full_name
+          - organization_collaborator_id
+      conjunctive_cols:
+        - [association_start_date, association_end_date]
+        - [billing_date, soongo_category, amount_tax_exc]
+        - [lease_start_date]
+        - [period_start, period_end]
+        - [connector_name]
+        - [synchronisation_type]
+
+    daily_participation_params:
+      include_tables:
+       - [GAC, TAXES, IN_KIND_BENEFIT]
+    
+    infer: false
+
+
+  vehicles:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+      conjunctive_cols:
+        - [make]
+        - [model]
+        - [full_model]
+        - [co2_per_km]
+        - [CO2_production]
+        - [CO2_recycling]
+        - [energy]
+        - [manufacturer_price_tax_exc]
+        - [rebate_rate]
+        - [rebate_price]
+        - [order_reference]
+        - [vehicle_status]
+        - [vehicle_age]
+        - [initial_mileage]
+        - [mileage]
+        - [mileage_date]
+        - [fiscal_power]
+        - [fiscal_type]
+        - [is_air_quality_certified]
+        - [seat_count]
+        - [business_unit]
+        - [theoretical_consumption]
+        - [entry_into_service_date]
+        - [entity_1, entity_2, entity_3]
+        - [monthly_mileage]
+        - [record_date]
+        - [source_table]
+        - [synchronisation_type]
+        - [assignment_type]
+        - [connector_name]
+        - [record_table]
+        - [entry_into_fleet_date]
+        - [exit_from_fleet_date]
+        - [curb_weight]
+        - [vehicle_external_colour]
+        - [door_count]
+        - [electricity_consumption]
+        - [battery_capacity]
+        - [battery_price_tax_inc]
+        - [max_elec_recharge]
+        - [transmission_type]
+        - [air_quality_certificate_level]
+        - [theoretical_fuel_consumption]
+        - [vehicle_empty_weight]
+        - [motor_power]
+        - [fuel_tank_capacity]
+  
+  vehicle_status_history:
+    fetch_table_params:
+      include_tables:
+        - [GAC, EXPORTS, FLEET_STATUS]
+  
+  equipments:
+    fetch_table_params:
+      include_tables:
+        - [GAC, INVENTORY, EQUIPMENTS]
+        - [GAC, INVENTORY, FUEL_CARD]
+      disjunctive_cols:
+        - [equipment_reference]
+      conjunctive_cols:
+        - [equipment_status]
+        - [equipment_supplier]
+        - [equipment_start_date]
+        - [equipment_end_date]
+        - [equipment_code]
+        - [plate_number]
+        - - firstname
+          - lastname
+          - employee_full_name
+          - organization_collaborator_id
+        - [entity_1, entity_2, entity_3]
+        - [synchronisation_type]
+        - [connector_name]
+        - [source_table]
+        - [equipment_product]
+        - [equipment_type]
+
+  equipment_categories_assignment:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+        - [equipment_category]
+        - [synchronisation_type]
+        - [connector_name]
+
+  vehicle_contracts:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+      conjunctive_cols:
+        - [contract_reference]
+        - [fiscal_type]
+        - [lease_start_date]
+        - [lease_end_date]
+        - [lease_months]
+        - [lease_mileage]
+        - [contract_start_date]
+        - [contract_end_date]
+        - [contract_type]
+        - [car_supplier]
+        - [financial_rent_net]
+        - [maintenance_rent_net]
+        - [tires_rent_net]
+        - [financial_loss_rent_net]
+        - [replacement_vehicle_rent_net]
+        - [relay_vehicle_rent_net]
+        - [insurance_rent_net]
+        - [fuel_card_management_rent_net]
+        - [management_fee_rent_net]
+        - [assistance_rent_net]
+        - [telematics_rent_net]
+        - [financial_rent_tax_exc]
+        - [maintenance_rent_tax_exc]
+        - [tires_rent_tax_exc]
+        - [financial_loss_rent_tax_exc]
+        - [replacement_vehicle_rent_tax_exc]
+        - [relay_vehicle_rent_tax_exc]
+        - [insurance_rent_tax_exc]
+        - [fuel_card_management_rent_tax_exc]
+        - [management_fee_rent_tax_exc]
+        - [assistance_rent_tax_exc]
+        - [telematics_rent_tax_exc]
+        - [financial_rent_ttc]
+        - [maintenance_rent_ttc]
+        - [tires_rent_ttc]
+        - [financial_loss_rent_ttc]
+        - [replacement_vehicle_rent_ttc]
+        - [relay_vehicle_rent_ttc]
+        - [insurance_rent_ttc]
+        - [fuel_card_management_rent_ttc]
+        - [management_fee_rent_ttc]
+        - [assistance_rent_ttc]
+        - [telematics_rent_ttc]
+        - [accident_management_rent_tax_exc]
+        - [vignette_rent_tax_exc]
+        - [service_fees_rent_tax_exc]
+        - [accident_management_rent_ttc]
+        - [vignette_rent_ttc]
+        - [service_fees_rent_ttc]
+        - [accident_management_rent_tax_exc]
+        - [vignette_rent_tax_exc]
+        - [service_fees_rent_tax_exc]
+        - [other_rent_net]
+        - [other_rent_tax_exc]
+        - [other_rent_ttc]
+        - [summer_tires_contract_nb]
+        - [winter_tires_contract_nb]
+        - [tires_contract_nb]
+        - [restitution_date]
+        - [interest_rate]
+        - [residual_value]
+        - [resale_price]
+        - [resale_date]
+        - [record_date]
+        - [synchronisation_type]
+        - [connector_name]
+        - [record_table]
+        - [file_creation_date]
+    
+    deduplicate: true
+
+  vehicle_services:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [computed_service_date]
+
+  in_kind_benefits:
+    fetch_table_params:
+      include_tables:
+        - [QUARTUS, QUARTUS, IN_KIND_BENEFITS]
+
+domino-rh:
+  accidents:
+    fetch_table_params:
+      include_tables:
+        - [DOMINO, DOMINO, ACCIDENTS]
+
+  collaborators:
+    fetch_table_params:
+      disjunctive_cols:
+        - [alternative_names, employee_full_name]
+      conjunctive_cols:
+        - [firstname, lastname]
+        - [entity_1, entity_2, entity_3]
+        - [employee_role]
+        - [work_location]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [geography]
+        - [organization_collaborator_id]
+        - [source_table]
+        - [synchronisation_type]
+        - [connector_name]
+        - [email]
+
+  expense_claims:
+    fetch_table_params:
+      include_tables:
+        - [NOTILUS, NOTILUS, EXPENSE_CLAIMS]
+
+  expenses:
+    fetch_table_params:
+      include_tables:
+        - [NOTILUS, NOTILUS, EXT_EXPENSES]
+        - [EDENRED, EDENRED, FUEL_EXPENSES]
+        - [ALPHABET, CSV_UPLOAD, EXPENSES]
+        - [ATHLON, CSV_UPLOAD, RENT_EXPENSES]
+        - [ATHLON, CSV_UPLOAD, OTHER_EXPENSES]
+        - [FLEASE, FLEASE, EXPENSES]
+      conjunctive_cols:
+        - [expense_reference]
+        - [supplier]
+        - [billing_date]
+        - [amount_tax_exc]
+        - [amount_tax_inc]
+        - [plate_number]
+        - [soongo_category]
+        - [quantity]
+        - [equipment_reference]
+        - [connector_name]
+        - [synchronisation_type]
+        - [billing_reference]
+        - [transaction_start_date]
+        - [transaction_end_date]
+        - [expense_location]
+
+  vehicle_contracts:
+    fetch_table_params:
+      include_tables:
+        - [NOTILUS, NOTILUS, VEHICLES]
+
+  hotels:
+    fetch_table_params:
+      include_tables:
+      - [HAVAS, CSV_UPLOAD, HOTEL]
+
+  mileages:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [mileage]
+      conjunctive_cols:
+        - [mileage_date]
+        - [source_dataset]
+        - [source_table]
+        - [synchronisation_type]
+        - [connector_name]
+
+  rental_cars:
+    fetch_table_params:
+      include_tables:
+        - [HAVAS, CSV_UPLOAD, RENTAL_CAR]
+
+  taxes:
+    fetch_table_params:
+      include_tables:
+        - [NOTILUS, NOTILUS, 'AGE_TAX']
+        - [NOTILUS, NOTILUS, 'CO2_TAX']
+      disjunctive_cols:
+        - [declared_non_deductible_amortization, tax_vehicle_age, tax_corporate_vehicles, tax_CO2_emission]
+      conjunctive_cols:
+        - [entity_1, entity_2, entity_3]
+        - [year]
+        - [plate_number]
+        - [employee_full_name]
+        - [organization_collaborator_id]
+        - [billing_date]
+        - [connector_name]
+        - [synchronisation_type]
+
+  trains_planes_travel:
+    fetch_table_params:
+      include_tables:
+        - [HAVAS, CSV_UPLOAD, TRAIN_PLANES]
+
+  collaborators_vehicles:
+    fetch_table_params:
+      include_tables:
+        - [NOTILUS, NOTILUS, ATTRIBUTION]
+
+    daily_participation_params:
+      include_tables:
+       - [NOTILUS, NOTILUS, VEHICLES]
+
+    cap_lease_end_date: False
+
+
+  vehicles:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+      conjunctive_cols:
+        - [make]
+        - [model]
+        - [full_model]
+        - [co2_per_km]
+        - [CO2_production]
+        - [CO2_recycling]
+        - [energy]
+        - [manufacturer_price_tax_exc]
+        - [rebate_rate]
+        - [rebate_price]
+        - [order_reference]
+        - [lease_start_date]
+        - [lease_end_date]
+        - [vehicle_status]
+        - [lease_months]
+        - [lease_mileage]
+        - [vehicle_age]
+        - [car_supplier]
+        - [initial_mileage]
+        - [mileage]
+        - [mileage_date]
+        - [fiscal_power]
+        - [fiscal_type]
+        - [is_air_quality_certified]
+        - [seat_count]
+        - [business_unit]
+        - [theoretical_consumption]
+        - [contract_type]
+        - [entry_into_service_date]
+        - [entity_1, entity_2, entity_3]
+        - [monthly_mileage]
+        - [record_date]
+        - [source_table]
+        - [synchronisation_type]
+        - [assignment_type]
+        - [connector_name]
+        - [record_table]
+        - [entry_into_fleet_date]
+        - [exit_from_fleet_date]
+
+  equipments:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+      conjunctive_cols:
+        - [equipment_status]
+        - [equipment_supplier]
+        - [equipment_start_date]
+        - [equipment_end_date]
+        - [equipment_code]
+        - [plate_number]
+        - - firstname
+          - lastname
+          - employee_full_name
+          - organization_collaborator_id
+        - [entity_1, entity_2, entity_3]
+        - [synchronisation_type]
+        - [connector_name]
+        - [equipment_category]
+
+  equipment_categories_assignment:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+        - [equipment_category]
+        - [synchronisation_type]
+        - [connector_name]
+
+  vehicle_services:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [computed_service_date]
+
+acorus:
+  accidents:
+    fetch_table_params:
+      include_tables: 
+        - ['SMABTP', 'CSV_UPLOAD', 'ACCIDENTS']
+
+  collaborators:
+    org_id_col: email
+    fetch_table_params:
+      disjunctive_cols:
+        - [alternative_names, employee_full_name]
+      conjunctive_cols:
+        - [firstname, lastname]
+        - [entity_1, entity_2, entity_3]
+        - [role]
+        - [work_location]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [geography]
+        - [organization_collaborator_id]
+        - [connector_name]
+        - [source_table]
+        - [synchronisation_type]
+        - [email]
+        - [employee_entry_date]
+        - [employee_exit_date]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [email]
+        - [manager_organization_id]
+        - [manager_soongo_reference]
+        - [picture_href]
+        - [personal_phone_number]
+        - [professional_phone_number]
+        - [civility]
+        - [birthplace]
+        - [birthdate]
+        - [license_number]
+        - [license_country]
+        - [license_issuing_date]
+        - [license_issuing_place]
+        - [license_issuing_country]
+        - [personal_address]
+        - [personal_street_number]
+        - [personal_postal_code]
+        - [personal_city]
+        - [personal_street_name]
+        - [personal_country]
+
+  expense_claims:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  expenses:
+    fetch_table_params:
+      disjunctive_cols:
+        - [soongo_category]
+
+  hotels:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  mileages:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [mileage]
+      conjunctive_cols:
+        - [mileage_date]
+        - [connector_name]
+        - [source_dataset]
+        - [source_table]
+        - [synchronisation_type]
+
+  rental_cars:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  taxes:
+    fetch_table_params:
+      include_tables: 
+        - [ATHLON, CSV_UPLOAD, AMORTIZATION]
+        - [ATHLON, CSV_UPLOAD, TVS]
+        - [AYVENS, CSV_UPLOAD, AMORTIZATION]
+        - [AYVENS, CSV_UPLOAD, TVS]
+        - [BPCE, CSV_UPLOAD, AMORTIZATION]
+        - [ARVAL, CSV_UPLOAD, AMORTIZATION]
+        - [ARVAL, CSV_UPLOAD, TVS]
+      disjunctive_cols:
+        - [declared_non_deductible_amortization, tax_vehicle_age, tax_corporate_vehicles, tax_CO2_emission, tax_pollutant]
+        - [billing_date]
+      conjunctive_cols:
+        - [entity_1, entity_2, entity_3]
+        - [year]
+        - [plate_number]
+        - [employee_full_name]
+        - [organization_collaborator_id]
+        - [connector_name]
+        - [synchronisation_type]
+
+  trains_planes_travel:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_eco_score:
+    fetch_table_params:
+      include_tables: 
+        - [MASTERNAUT, API, ECO_SCORE]
+
+
+  collaborators_vehicles:
+    fetch_table_params:
+      include_tables: 
+        - [FLEETNOTE, FLEETNOTE, FLEET]
+      disjunctive_cols:
+        - [plate_number]
+        - [alternative_names, employee_full_name, organization_collaborator_id]
+        - [association_start_date]
+        - [association_end_date]
+      conjunctive_cols:
+        - [assigned_service]
+        - [billing_date]
+        - [transaction_start_date]
+        - [transaction_end_date]
+        - [soongo_category]
+        - [amount_tax_exc]
+        - [amount_tax_inc]
+        - [plate_number]
+        - [lease_end_date]
+        - [connector_name]
+        - [source_table]
+        - [synchronisation_type]
+      
+    infer: false
+
+    daily_participation_params:
+      exclude_tables: 
+        - [FLEETNOTE, FLEETNOTE, EXPENSES]
+        - [FLEETNOTE, FLEETNOTE, MILEAGE]
+        - [FLEETNOTE, FLEETNOTE, FLEET]
+        - [GREENNCAP, GREENNCAP, CARBON_PER_MODEL]
+        - [MASTERNAUT, API, COLLABORATORS]
+        - [MASTERNAUT, API, VEHICLES]
+        - [MASTERNAUT, API, ASSOCIATIONS]
+        - [BPCE, BPCE, VEHICLES]
+        - [BPCE, BPCE, RENT_EXPENSES]
+        - [LUCCA, LUCCA, COLLABORATORS]
+        - [TOTAL, TOTAL, EQUIPMENTS]
+        - [TOTAL, TOTAL, EXPENSES]
+
+    cap_lease_end_date: False
+
+
+  vehicles:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+      conjunctive_cols:
+        - [make]
+        - [model]
+        - [full_model]
+        - [co2_per_km]
+        - [CO2_production]
+        - [CO2_recycling]
+        - [energy]
+        - [manufacturer_price_tax_exc]
+        - [rebate_rate]
+        - [rebate_price]
+        - [order_reference]
+        - [vehicle_status]
+        - [vehicle_age]
+        - [initial_mileage]
+        - [mileage]
+        - [mileage_date]
+        - [fiscal_power]
+        - [fiscal_type]
+        - [is_air_quality_certified]
+        - [seat_count]
+        - [business_unit]
+        - [theoretical_consumption]
+        - [entry_into_service_date]
+        - [entity_1, entity_2, entity_3]
+        - [monthly_mileage]
+        - [record_date]
+        - [source_table]
+        - [synchronisation_type]
+        - [assignment_type]
+        - [connector_name]
+        - [record_table]
+        - [entry_into_fleet_date]
+        - [exit_from_fleet_date]
+        - [curb_weight]
+        - [vehicle_external_colour]
+        - [door_count]
+        - [electricity_consumption]
+        - [battery_capacity]
+        - [battery_price_tax_inc]
+        - [max_elec_recharge]
+        - [transmission_type]
+        - [air_quality_certificate_level]
+        - [vehicle_empty_weight]
+        - [motor_power]
+        - [fuel_tank_capacity]
+
+  vehicle_contracts:
+    fetch_table_params:
+      include_tables:
+        - [FLEETNOTE, FLEETNOTE, CONTRACT_HISTORY]
+      disjunctive_cols:
+        - [plate_number]
+      conjunctive_cols:
+        - [contract_reference]
+        - [fiscal_type]
+        - [lease_start_date]
+        - [lease_end_date]
+        - [lease_months]
+        - [lease_mileage]
+        - [contract_start_date]
+        - [contract_end_date]
+        - [contract_type]
+        - [car_supplier]
+        - [financial_rent_net]
+        - [maintenance_rent_net]
+        - [tires_rent_net]
+        - [financial_loss_rent_net]
+        - [replacement_vehicle_rent_net]
+        - [relay_vehicle_rent_net]
+        - [insurance_rent_net]
+        - [fuel_card_management_rent_net]
+        - [management_fee_rent_net]
+        - [assistance_rent_net]
+        - [telematics_rent_net]
+        - [financial_rent_tax_exc]
+        - [maintenance_rent_tax_exc]
+        - [tires_rent_tax_exc]
+        - [financial_loss_rent_tax_exc]
+        - [replacement_vehicle_rent_tax_exc]
+        - [relay_vehicle_rent_tax_exc]
+        - [insurance_rent_tax_exc]
+        - [fuel_card_management_rent_tax_exc]
+        - [management_fee_rent_tax_exc]
+        - [assistance_rent_tax_exc]
+        - [telematics_rent_tax_exc]
+        - [financial_rent_ttc]
+        - [maintenance_rent_ttc]
+        - [tires_rent_ttc]
+        - [financial_loss_rent_ttc]
+        - [replacement_vehicle_rent_ttc]
+        - [relay_vehicle_rent_ttc]
+        - [insurance_rent_ttc]
+        - [fuel_card_management_rent_ttc]
+        - [management_fee_rent_ttc]
+        - [assistance_rent_ttc]
+        - [telematics_rent_ttc]
+        - [accident_management_rent_tax_exc]
+        - [vignette_rent_tax_exc]
+        - [service_fees_rent_tax_exc]
+        - [accident_management_rent_ttc]
+        - [vignette_rent_ttc]
+        - [service_fees_rent_ttc]
+        - [accident_management_rent_tax_exc]
+        - [vignette_rent_tax_exc]
+        - [service_fees_rent_tax_exc]
+        - [other_rent_net]
+        - [other_rent_tax_exc]
+        - [other_rent_ttc]
+        - [summer_tires_contract_nb]
+        - [winter_tires_contract_nb]
+        - [tires_contract_nb]
+        - [restitution_date]
+        - [interest_rate]
+        - [residual_value]
+        - [resale_price]
+        - [resale_date]
+        - [record_date]
+        - [synchronisation_type]
+        - [connector_name]
+        - [record_table]
+        - [file_creation_date]
+    
+    deduplicate: false
+
+  equipments:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+      conjunctive_cols:
+        - [equipment_status]
+        - [equipment_supplier]
+        - [equipment_start_date]
+        - [equipment_end_date]
+        - [equipment_code]
+        - [plate_number]
+        - - firstname
+          - lastname
+        - [employee_full_name]
+        - [organization_collaborator_id]
+        - [entity_1, entity_2, entity_3]
+        - [synchronisation_type]
+        - [connector_name]
+        - [equipment_category]
+        - [equipment_type]
+
+  equipment_categories_assignment:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+        - [equipment_category]
+        - [synchronisation_type]
+        - [connector_name]
+
+  collaborator_connector_ids:
+    fetch_table_params:
+      include_tables: 
+        - [MASTERNAUT, API, COLLABORATORS]
+      disjunctive_cols:
+        - [employee_full_name, organization_collaborator_id]
+        - [collaborator_connector_id]
+        - [synchronisation_type]
+        - [connector_name]
+        - [ext_api_params]
+
+  vehicle_connector_ids:
+    fetch_table_params:
+      include_tables: 
+        - [MASTERNAUT, API, VEHICLES]
+      disjunctive_cols:
+        - [plate_number]
+        - [vehicle_connector_id]
+        - [synchronisation_type]
+        - [connector_name]
+        - [ext_api_params]
+  
+  business_unit_connector_ids:
+    fetch_table_params:
+      include_tables:
+        - [MASTERNAUT, API, GROUPS]
+
+  vehicle_services:
+    fetch_table_params:
+      include_tables:
+        - [MASTERNAUT, API, SERVICES]
+
+  vehicle_status_history:
+    fetch_table_params:
+      include_tables:
+        - [MASTERNAUT, API, VEHICLES]
+
+  in_kind_benefits:
+    fetch_table_params:
+      include_tables:
+        - [ACORUS, CSV_UPLOAD, IKB_DIRECTION]
+        - [ACORUS, CSV_UPLOAD, IKB_HISTORY]
+
+  documents:
+    fetch_table_params:
+      include_tables:
+        - [WEPROOV, API, REPORTS]
+
+groupe-batisseur-d-avenir:
+  accidents:
+    fetch_table_params:
+      disjunctive_cols: 
+        - ['accident_date']
+
+  collaborators:
+    org_id_col: soongo_collab_reference
+    fetch_table_params:
+      disjunctive_cols:
+        - [alternative_names, employee_full_name]
+
+  expense_claims:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  expenses:
+    fetch_table_params:
+      disjunctive_cols:
+        - [soongo_category]
+
+  hotels:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  mileages:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [mileage]
+      conjunctive_cols:
+        - [mileage_date]
+        - [connector_name]
+        - [source_dataset]
+        - [source_table]
+        - [synchronisation_type]
+
+  rental_cars:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  taxes:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  trains_planes_travel:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators_vehicles:
+    fetch_table_params:
+      include_tables: 
+        - [GBA, CSV_UPLOAD, VEHICLES]
+      disjunctive_cols:
+        - [plate_number]
+        - [alternative_names, employee_full_name, organization_collaborator_id]
+        - [association_start_date]
+        - [association_end_date]
+
+      conjunctive_cols:
+        - [assigned_service]
+        - [billing_date]
+        - [transaction_start_date]
+        - [transaction_end_date]
+        - [soongo_category]
+        - [amount_tax_exc]
+        - [amount_tax_inc]
+        - [plate_number]
+        - [lease_end_date]
+        - [connector_name]
+        - [source_table]
+        - [synchronisation_type]
+      
+    infer: false
+
+    daily_participation_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+    cap_lease_end_date: False
+
+
+  vehicles:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+
+  vehicle_contracts:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        -
+          - contract_reference
+          - lease_start_date
+          - lease_end_date
+          - lease_months
+          - lease_mileage
+          - contract_start_date
+          - contract_end_date
+          - contract_type
+          - car_supplier
+          - financial_rent_net
+          - maintenance_rent_net
+          - tires_rent_net
+          - financial_loss_rent_net
+          - replacement_vehicle_rent_net
+          - relay_vehicle_rent_net
+          - insurance_rent_net
+          - fuel_card_management_rent_net
+          - management_fee_rent_net
+          - assistance_rent_net
+          - telematics_rent_net
+          - financial_rent_tax_exc
+          - maintenance_rent_tax_exc
+          - tires_rent_tax_exc
+          - financial_loss_rent_tax_exc
+          - replacement_vehicle_rent_tax_exc
+          - relay_vehicle_rent_tax_exc
+          - insurance_rent_tax_exc
+          - fuel_card_management_rent_tax_exc
+          - management_fee_rent_tax_exc
+          - assistance_rent_tax_exc
+          - telematics_rent_tax_exc
+          - financial_rent_ttc
+          - maintenance_rent_ttc
+          - tires_rent_ttc
+          - financial_loss_rent_ttc
+          - replacement_vehicle_rent_ttc
+          - relay_vehicle_rent_ttc
+          - insurance_rent_ttc
+          - fuel_card_management_rent_ttc
+          - management_fee_rent_ttc
+          - assistance_rent_ttc
+          - telematics_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - accident_management_rent_ttc
+          - vignette_rent_ttc
+          - service_fees_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - other_rent_net
+          - other_rent_tax_exc
+          - other_rent_ttc
+          - summer_tires_contract_nb
+          - winter_tires_contract_nb
+          - tires_contract_nb
+          - restitution_date
+          - interest_rate
+          - residual_value
+          - resale_price
+          - resale_date
+      conjunctive_cols:
+          - [record_date]
+          - [synchronisation_type]
+          - [connector_name]
+          - [record_table]
+          - [file_creation_date]
+    
+    deduplicate: true
+
+  equipments:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+      conjunctive_cols:
+        - [equipment_status]
+        - [equipment_supplier]
+        - [equipment_start_date]
+        - [equipment_end_date]
+        - [equipment_code]
+        - [plate_number]
+        - - firstname
+          - lastname
+        - [employee_full_name]
+        - [organization_collaborator_id]
+        - [entity_1, entity_2, entity_3]
+        - [synchronisation_type]
+        - [connector_name]
+        - [equipment_category]
+        - [equipment_type]
+
+  equipment_categories_assignment:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+        - [equipment_category]
+        - [synchronisation_type]
+        - [connector_name]
+
+  collaborator_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  
+  business_unit_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_services:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+
+yanet:
+  accidents:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators:
+    org_id_col: soongo_collab_reference
+    fetch_table_params:
+      disjunctive_cols:
+        - [alternative_names, employee_full_name]
+      conjunctive_cols:
+        - [firstname, lastname]
+        - [entity_1, entity_2, entity_3]
+        - [role]
+        - [work_location]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [geography]
+        - [organization_collaborator_id]
+        - [connector_name]
+        - [source_table]
+        - [synchronisation_type]
+        - [email]
+        - [employee_entry_date]
+        - [employee_exit_date]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [email]
+        - [manager_organization_id]
+        - [manager_soongo_reference]
+        - [picture_href]
+        - [personal_phone_number]
+        - [professional_phone_number]
+        - [civility]
+        - [birthplace]
+        - [birthdate]
+        - [license_number]
+        - [license_country]
+        - [license_issuing_date]
+        - [license_issuing_place]
+        - [license_issuing_country]
+        - [personal_address]
+        - [personal_street_number]
+        - [personal_postal_code]
+        - [personal_city]
+        - [personal_street_name]
+        - [personal_country]
+
+  expense_claims:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  expenses:
+    fetch_table_params:
+      disjunctive_cols:
+        - [soongo_category]
+
+  hotels:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  mileages:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [mileage]
+      conjunctive_cols:
+        - [mileage_date]
+        - [connector_name]
+        - [source_dataset]
+        - [source_table]
+        - [synchronisation_type]
+
+  rental_cars:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  taxes:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  trains_planes_travel:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators_vehicles:
+    fetch_table_params:
+      include_tables: 
+        - [YANET, CSV_UPLOAD, ASSOCIATIONS]
+      
+    infer: false
+
+    daily_participation_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+    cap_lease_end_date: False
+
+
+  vehicles:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+      conjunctive_cols:
+        - [make]
+        - [model]
+        - [full_model]
+        - [co2_per_km]
+        - [CO2_production]
+        - [CO2_recycling]
+        - [energy]
+        - [manufacturer_price_tax_exc]
+        - [rebate_rate]
+        - [rebate_price]
+        - [order_reference]
+        - [vehicle_status]
+        - [vehicle_age]
+        - [initial_mileage]
+        - [mileage]
+        - [mileage_date]
+        - [fiscal_power]
+        - [fiscal_type]
+        - [is_air_quality_certified]
+        - [seat_count]
+        - [business_unit]
+        - [theoretical_consumption]
+        - [entry_into_service_date]
+        - [entity_1, entity_2, entity_3]
+        - [monthly_mileage]
+        - [record_date]
+        - [source_table]
+        - [synchronisation_type]
+        - [assignment_type]
+        - [connector_name]
+        - [record_table]
+        - [entry_into_fleet_date]
+        - [exit_from_fleet_date]
+        - [curb_weight]
+        - [vehicle_external_colour]
+        - [door_count]
+        - [electricity_consumption]
+        - [battery_capacity]
+        - [battery_price_tax_inc]
+        - [max_elec_recharge]
+        - [transmission_type]
+        - [air_quality_certificate_level]
+        - [vehicle_empty_weight]
+        - [motor_power]
+        - [fuel_tank_capacity]
+
+  vehicle_contracts:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        -
+          - contract_reference
+          - lease_start_date
+          - lease_end_date
+          - lease_months
+          - lease_mileage
+          - contract_start_date
+          - contract_end_date
+          - contract_type
+          - car_supplier
+          - financial_rent_net
+          - maintenance_rent_net
+          - tires_rent_net
+          - financial_loss_rent_net
+          - replacement_vehicle_rent_net
+          - relay_vehicle_rent_net
+          - insurance_rent_net
+          - fuel_card_management_rent_net
+          - management_fee_rent_net
+          - assistance_rent_net
+          - telematics_rent_net
+          - financial_rent_tax_exc
+          - maintenance_rent_tax_exc
+          - tires_rent_tax_exc
+          - financial_loss_rent_tax_exc
+          - replacement_vehicle_rent_tax_exc
+          - relay_vehicle_rent_tax_exc
+          - insurance_rent_tax_exc
+          - fuel_card_management_rent_tax_exc
+          - management_fee_rent_tax_exc
+          - assistance_rent_tax_exc
+          - telematics_rent_tax_exc
+          - financial_rent_ttc
+          - maintenance_rent_ttc
+          - tires_rent_ttc
+          - financial_loss_rent_ttc
+          - replacement_vehicle_rent_ttc
+          - relay_vehicle_rent_ttc
+          - insurance_rent_ttc
+          - fuel_card_management_rent_ttc
+          - management_fee_rent_ttc
+          - assistance_rent_ttc
+          - telematics_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - accident_management_rent_ttc
+          - vignette_rent_ttc
+          - service_fees_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - other_rent_net
+          - other_rent_tax_exc
+          - other_rent_ttc
+          - summer_tires_contract_nb
+          - winter_tires_contract_nb
+          - tires_contract_nb
+          - restitution_date
+          - interest_rate
+          - residual_value
+          - resale_price
+          - resale_date
+      conjunctive_cols:
+          - [record_date]
+          - [synchronisation_type]
+          - [connector_name]
+          - [record_table]
+          - [file_creation_date]
+    
+    deduplicate: true
+
+  equipments:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+      conjunctive_cols:
+        - [equipment_status]
+        - [equipment_supplier]
+        - [equipment_start_date]
+        - [equipment_end_date]
+        - [equipment_code]
+        - [plate_number]
+        - - firstname
+          - lastname
+        - [employee_full_name]
+        - [organization_collaborator_id]
+        - [entity_1, entity_2, entity_3]
+        - [synchronisation_type]
+        - [connector_name]
+        - [equipment_category]
+        - [equipment_type]
+
+  equipment_categories_assignment:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+        - [equipment_category]
+        - [synchronisation_type]
+        - [connector_name]
+
+  collaborator_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  
+  business_unit_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_services:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+
+udaf:
+  accidents:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators:
+    org_id_col: organization_collaborator_id
+    fetch_table_params:
+      disjunctive_cols:
+        - [alternative_names, employee_full_name]
+      conjunctive_cols:
+        - [firstname, lastname]
+        - [entity_1, entity_2, entity_3]
+        - [role]
+        - [work_location]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [geography]
+        - [organization_collaborator_id]
+        - [connector_name]
+        - [source_table]
+        - [synchronisation_type]
+        - [email]
+        - [employee_entry_date]
+        - [employee_exit_date]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [email]
+        - [manager_organization_id]
+        - [manager_soongo_reference]
+        - [picture_href]
+        - [personal_phone_number]
+        - [professional_phone_number]
+        - [civility]
+        - [birthplace]
+        - [birthdate]
+        - [license_number]
+        - [license_country]
+        - [license_issuing_date]
+        - [license_issuing_place]
+        - [license_issuing_country]
+        - [personal_address]
+        - [personal_street_number]
+        - [personal_postal_code]
+        - [personal_city]
+        - [personal_street_name]
+        - [personal_country]
+
+  expense_claims:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  expenses:
+    fetch_table_params:
+      disjunctive_cols:
+        - [soongo_category]
+
+  hotels:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  mileages:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [mileage]
+      conjunctive_cols:
+        - [mileage_date]
+        - [connector_name]
+        - [source_dataset]
+        - [source_table]
+        - [synchronisation_type]
+
+  rental_cars:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  taxes:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  trains_planes_travel:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators_vehicles:
+    fetch_table_params:
+      include_tables: 
+        - [YANET, CSV_UPLOAD, ASSOCIATIONS]
+      
+    infer: false
+
+    daily_participation_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+    cap_lease_end_date: False
+
+
+  vehicles:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+      conjunctive_cols:
+        - [make]
+        - [model]
+        - [full_model]
+        - [co2_per_km]
+        - [CO2_production]
+        - [CO2_recycling]
+        - [energy]
+        - [manufacturer_price_tax_exc]
+        - [rebate_rate]
+        - [rebate_price]
+        - [order_reference]
+        - [vehicle_status]
+        - [vehicle_age]
+        - [initial_mileage]
+        - [mileage]
+        - [mileage_date]
+        - [fiscal_power]
+        - [fiscal_type]
+        - [is_air_quality_certified]
+        - [seat_count]
+        - [business_unit]
+        - [theoretical_consumption]
+        - [entry_into_service_date]
+        - [entity_1, entity_2, entity_3]
+        - [monthly_mileage]
+        - [record_date]
+        - [source_table]
+        - [synchronisation_type]
+        - [assignment_type]
+        - [connector_name]
+        - [record_table]
+        - [entry_into_fleet_date]
+        - [exit_from_fleet_date]
+        - [curb_weight]
+        - [vehicle_external_colour]
+        - [door_count]
+        - [electricity_consumption]
+        - [battery_capacity]
+        - [battery_price_tax_inc]
+        - [max_elec_recharge]
+        - [transmission_type]
+        - [air_quality_certificate_level]
+        - [vehicle_empty_weight]
+        - [motor_power]
+        - [fuel_tank_capacity]
+        - [theoretical_fuel_consumption]
+
+  vehicle_contracts:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        -
+          - contract_reference
+          - lease_start_date
+          - lease_end_date
+          - lease_months
+          - lease_mileage
+          - contract_start_date
+          - contract_end_date
+          - contract_type
+          - car_supplier
+          - financial_rent_net
+          - maintenance_rent_net
+          - tires_rent_net
+          - financial_loss_rent_net
+          - replacement_vehicle_rent_net
+          - relay_vehicle_rent_net
+          - insurance_rent_net
+          - fuel_card_management_rent_net
+          - management_fee_rent_net
+          - assistance_rent_net
+          - telematics_rent_net
+          - financial_rent_tax_exc
+          - maintenance_rent_tax_exc
+          - tires_rent_tax_exc
+          - financial_loss_rent_tax_exc
+          - replacement_vehicle_rent_tax_exc
+          - relay_vehicle_rent_tax_exc
+          - insurance_rent_tax_exc
+          - fuel_card_management_rent_tax_exc
+          - management_fee_rent_tax_exc
+          - assistance_rent_tax_exc
+          - telematics_rent_tax_exc
+          - financial_rent_ttc
+          - maintenance_rent_ttc
+          - tires_rent_ttc
+          - financial_loss_rent_ttc
+          - replacement_vehicle_rent_ttc
+          - relay_vehicle_rent_ttc
+          - insurance_rent_ttc
+          - fuel_card_management_rent_ttc
+          - management_fee_rent_ttc
+          - assistance_rent_ttc
+          - telematics_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - accident_management_rent_ttc
+          - vignette_rent_ttc
+          - service_fees_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - other_rent_net
+          - other_rent_tax_exc
+          - other_rent_ttc
+          - summer_tires_contract_nb
+          - winter_tires_contract_nb
+          - tires_contract_nb
+          - restitution_date
+          - interest_rate
+          - residual_value
+          - resale_price
+          - resale_date
+      conjunctive_cols:
+          - [record_date]
+          - [synchronisation_type]
+          - [connector_name]
+          - [record_table]
+          - [file_creation_date]
+    
+    deduplicate: true
+
+  equipments:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+      conjunctive_cols:
+        - [equipment_status]
+        - [equipment_supplier]
+        - [equipment_start_date]
+        - [equipment_end_date]
+        - [equipment_code]
+        - [plate_number]
+        - - firstname
+          - lastname
+        - [employee_full_name]
+        - [organization_collaborator_id]
+        - [entity_1, entity_2, entity_3]
+        - [synchronisation_type]
+        - [connector_name]
+        - [equipment_category]
+        - [equipment_type]
+
+  equipment_categories_assignment:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+        - [equipment_category]
+        - [synchronisation_type]
+        - [connector_name]
+
+  collaborator_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  
+  business_unit_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_services:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+
+cetih:
+  accidents:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators:
+    org_id_col: organization_collaborator_id
+    fetch_table_params:
+      disjunctive_cols:
+        - [alternative_names, employee_full_name]
+      conjunctive_cols:
+        - [firstname, lastname]
+        - [entity_1, entity_2]
+        - [role]
+        - [work_location]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [geography]
+        - [organization_collaborator_id]
+        - [connector_name]
+        - [source_table]
+        - [synchronisation_type]
+        - [email]
+        - [employee_entry_date]
+        - [employee_exit_date]
+        - [organization_collaborator_category]
+        - [business_unit]
+        - [email]
+        - [manager_organization_id]
+        - [manager_soongo_reference]
+        - [picture_href]
+        - [personal_phone_number]
+        - [professional_phone_number]
+        - [civility]
+        - [birthplace]
+        - [birthdate]
+        - [license_number]
+        - [license_country]
+        - [license_issuing_date]
+        - [license_issuing_place]
+        - [license_issuing_country]
+        - [personal_address]
+        - [personal_street_number]
+        - [personal_postal_code]
+        - [personal_city]
+        - [personal_street_name]
+        - [personal_country]
+
+  expense_claims:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  expenses:
+    fetch_table_params:
+      disjunctive_cols:
+        - [soongo_category]
+
+  hotels:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  mileages:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [mileage]
+      conjunctive_cols:
+        - [mileage_date]
+        - [connector_name]
+        - [source_dataset]
+        - [source_table]
+        - [synchronisation_type]
+
+  rental_cars:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  taxes:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  trains_planes_travel:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators_vehicles:
+    fetch_table_params:
+      include_tables: 
+        - [CETIH, DEMO, VEHICLES]
+      
+    infer: false
+
+    daily_participation_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+    cap_lease_end_date: False
+
+
+  vehicles:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+      conjunctive_cols:
+        - [make]
+        - [model]
+        - [full_model]
+        - [co2_per_km]
+        - [CO2_production]
+        - [CO2_recycling]
+        - [energy]
+        - [manufacturer_price_tax_exc]
+        - [rebate_rate]
+        - [rebate_price]
+        - [order_reference]
+        - [vehicle_status]
+        - [vehicle_age]
+        - [initial_mileage]
+        - [mileage]
+        - [mileage_date]
+        - [fiscal_power]
+        - [fiscal_type]
+        - [is_air_quality_certified]
+        - [seat_count]
+        - [business_unit]
+        - [theoretical_consumption]
+        - [entry_into_service_date]
+        - [entity_1, entity_2, entity_3]
+        - [monthly_mileage]
+        - [record_date]
+        - [source_table]
+        - [synchronisation_type]
+        - [assignment_type]
+        - [connector_name]
+        - [record_table]
+        - [entry_into_fleet_date]
+        - [exit_from_fleet_date]
+        - [curb_weight]
+        - [vehicle_external_colour]
+        - [door_count]
+        - [electricity_consumption]
+        - [battery_capacity]
+        - [battery_price_tax_inc]
+        - [max_elec_recharge]
+        - [transmission_type]
+        - [air_quality_certificate_level]
+        - [vehicle_empty_weight]
+        - [motor_power]
+        - [fuel_tank_capacity]
+
+  vehicle_contracts:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        -
+          - contract_reference
+          - lease_start_date
+          - lease_end_date
+          - lease_months
+          - lease_mileage
+          - contract_start_date
+          - contract_end_date
+          - contract_type
+          - car_supplier
+          - financial_rent_net
+          - maintenance_rent_net
+          - tires_rent_net
+          - financial_loss_rent_net
+          - replacement_vehicle_rent_net
+          - relay_vehicle_rent_net
+          - insurance_rent_net
+          - fuel_card_management_rent_net
+          - management_fee_rent_net
+          - assistance_rent_net
+          - telematics_rent_net
+          - financial_rent_tax_exc
+          - maintenance_rent_tax_exc
+          - tires_rent_tax_exc
+          - financial_loss_rent_tax_exc
+          - replacement_vehicle_rent_tax_exc
+          - relay_vehicle_rent_tax_exc
+          - insurance_rent_tax_exc
+          - fuel_card_management_rent_tax_exc
+          - management_fee_rent_tax_exc
+          - assistance_rent_tax_exc
+          - telematics_rent_tax_exc
+          - financial_rent_ttc
+          - maintenance_rent_ttc
+          - tires_rent_ttc
+          - financial_loss_rent_ttc
+          - replacement_vehicle_rent_ttc
+          - relay_vehicle_rent_ttc
+          - insurance_rent_ttc
+          - fuel_card_management_rent_ttc
+          - management_fee_rent_ttc
+          - assistance_rent_ttc
+          - telematics_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - accident_management_rent_ttc
+          - vignette_rent_ttc
+          - service_fees_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - other_rent_net
+          - other_rent_tax_exc
+          - other_rent_ttc
+          - summer_tires_contract_nb
+          - winter_tires_contract_nb
+          - tires_contract_nb
+          - restitution_date
+          - interest_rate
+          - residual_value
+          - resale_price
+          - resale_date
+      conjunctive_cols:
+          - [record_date]
+          - [synchronisation_type]
+          - [connector_name]
+          - [record_table]
+          - [file_creation_date]
+    
+    deduplicate: true
+
+  equipments:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+      conjunctive_cols:
+        - [equipment_status]
+        - [equipment_supplier]
+        - [equipment_start_date]
+        - [equipment_end_date]
+        - [equipment_code]
+        - [plate_number]
+        - - firstname
+          - lastname
+        - [employee_full_name]
+        - [organization_collaborator_id]
+        - [entity_1, entity_2, entity_3]
+        - [synchronisation_type]
+        - [connector_name]
+        - [equipment_category]
+        - [equipment_type]
+
+  equipment_categories_assignment:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+        - [equipment_category]
+        - [synchronisation_type]
+        - [connector_name]
+
+  collaborator_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  
+  business_unit_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_services:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+
+muller-automotive:
+  accidents:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators:
+    org_id_col: soongo_collab_reference
+    fetch_table_params:
+      disjunctive_cols:
+        - [alternative_names, employee_full_name]
+
+  expense_claims:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  expenses:
+    fetch_table_params:
+      disjunctive_cols:
+        - [soongo_category]
+
+  hotels:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  mileages:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [mileage]
+      conjunctive_cols:
+        - [mileage_date]
+        - [connector_name]
+        - [source_dataset]
+        - [source_table]
+        - [synchronisation_type]
+
+  rental_cars:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  taxes:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  trains_planes_travel:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators_vehicles:
+    fetch_table_params:
+      include_tables: 
+        - [MULLER_AUTOMOTIVE, CSV_UPLOAD, VEHICLES]
+      
+    infer: false
+
+    daily_participation_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+    cap_lease_end_date: False
+
+
+  vehicles:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+
+  vehicle_contracts:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        -
+          - contract_reference
+          - lease_start_date
+          - lease_end_date
+          - lease_months
+          - lease_mileage
+          - contract_start_date
+          - contract_end_date
+          - contract_type
+          - car_supplier
+          - financial_rent_net
+          - maintenance_rent_net
+          - tires_rent_net
+          - financial_loss_rent_net
+          - replacement_vehicle_rent_net
+          - relay_vehicle_rent_net
+          - insurance_rent_net
+          - fuel_card_management_rent_net
+          - management_fee_rent_net
+          - assistance_rent_net
+          - telematics_rent_net
+          - financial_rent_tax_exc
+          - maintenance_rent_tax_exc
+          - tires_rent_tax_exc
+          - financial_loss_rent_tax_exc
+          - replacement_vehicle_rent_tax_exc
+          - relay_vehicle_rent_tax_exc
+          - insurance_rent_tax_exc
+          - fuel_card_management_rent_tax_exc
+          - management_fee_rent_tax_exc
+          - assistance_rent_tax_exc
+          - telematics_rent_tax_exc
+          - financial_rent_ttc
+          - maintenance_rent_ttc
+          - tires_rent_ttc
+          - financial_loss_rent_ttc
+          - replacement_vehicle_rent_ttc
+          - relay_vehicle_rent_ttc
+          - insurance_rent_ttc
+          - fuel_card_management_rent_ttc
+          - management_fee_rent_ttc
+          - assistance_rent_ttc
+          - telematics_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - accident_management_rent_ttc
+          - vignette_rent_ttc
+          - service_fees_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - other_rent_net
+          - other_rent_tax_exc
+          - other_rent_ttc
+          - summer_tires_contract_nb
+          - winter_tires_contract_nb
+          - tires_contract_nb
+          - restitution_date
+          - interest_rate
+          - residual_value
+          - resale_price
+          - resale_date
+      conjunctive_cols:
+          - [record_date]
+          - [synchronisation_type]
+          - [connector_name]
+          - [record_table]
+          - [file_creation_date]
+    
+    deduplicate: true
+
+  equipments:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+      conjunctive_cols:
+        - [equipment_status]
+        - [equipment_supplier]
+        - [equipment_start_date]
+        - [equipment_end_date]
+        - [equipment_code]
+        - [plate_number]
+        - - firstname
+          - lastname
+        - [employee_full_name]
+        - [organization_collaborator_id]
+        - [entity_1, entity_2, entity_3]
+        - [synchronisation_type]
+        - [connector_name]
+        - [equipment_category]
+        - [equipment_type]
+
+  equipment_categories_assignment:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+        - [equipment_category]
+        - [synchronisation_type]
+        - [connector_name]
+
+  collaborator_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  
+  business_unit_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_services:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+
+grandjouan:
+  accidents:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators:
+    org_id_col: soongo_collab_reference
+    fetch_table_params:
+      disjunctive_cols:
+        - [alternative_names, employee_full_name]
+
+  expense_claims:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  expenses:
+    fetch_table_params:
+      disjunctive_cols:
+        - [soongo_category]
+
+  hotels:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  mileages:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [mileage]
+      conjunctive_cols:
+        - [mileage_date]
+        - [connector_name]
+        - [source_dataset]
+        - [source_table]
+        - [synchronisation_type]
+
+  rental_cars:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  taxes:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  trains_planes_travel:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators_vehicles:
+    fetch_table_params:
+      include_tables: 
+        - [GRANDJOUAN, CSV_UPLOAD, VEHICLES]
+      
+    infer: false
+
+    daily_participation_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+    cap_lease_end_date: False
+
+
+  vehicles:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+
+  vehicle_contracts:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        -
+          - contract_reference
+          - lease_start_date
+          - lease_end_date
+          - lease_months
+          - lease_mileage
+          - contract_start_date
+          - contract_end_date
+          - contract_type
+          - car_supplier
+          - financial_rent_net
+          - maintenance_rent_net
+          - tires_rent_net
+          - financial_loss_rent_net
+          - replacement_vehicle_rent_net
+          - relay_vehicle_rent_net
+          - insurance_rent_net
+          - fuel_card_management_rent_net
+          - management_fee_rent_net
+          - assistance_rent_net
+          - telematics_rent_net
+          - financial_rent_tax_exc
+          - maintenance_rent_tax_exc
+          - tires_rent_tax_exc
+          - financial_loss_rent_tax_exc
+          - replacement_vehicle_rent_tax_exc
+          - relay_vehicle_rent_tax_exc
+          - insurance_rent_tax_exc
+          - fuel_card_management_rent_tax_exc
+          - management_fee_rent_tax_exc
+          - assistance_rent_tax_exc
+          - telematics_rent_tax_exc
+          - financial_rent_ttc
+          - maintenance_rent_ttc
+          - tires_rent_ttc
+          - financial_loss_rent_ttc
+          - replacement_vehicle_rent_ttc
+          - relay_vehicle_rent_ttc
+          - insurance_rent_ttc
+          - fuel_card_management_rent_ttc
+          - management_fee_rent_ttc
+          - assistance_rent_ttc
+          - telematics_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - accident_management_rent_ttc
+          - vignette_rent_ttc
+          - service_fees_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - other_rent_net
+          - other_rent_tax_exc
+          - other_rent_ttc
+          - summer_tires_contract_nb
+          - winter_tires_contract_nb
+          - tires_contract_nb
+          - restitution_date
+          - interest_rate
+          - residual_value
+          - resale_price
+          - resale_date
+      conjunctive_cols:
+          - [record_date]
+          - [synchronisation_type]
+          - [connector_name]
+          - [record_table]
+          - [file_creation_date]
+    
+    deduplicate: true
+
+  equipments:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+      conjunctive_cols:
+        - [equipment_status]
+        - [equipment_supplier]
+        - [equipment_start_date]
+        - [equipment_end_date]
+        - [equipment_code]
+        - [plate_number]
+        - - firstname
+          - lastname
+        - [employee_full_name]
+        - [organization_collaborator_id]
+        - [entity_1, entity_2, entity_3]
+        - [synchronisation_type]
+        - [connector_name]
+        - [equipment_category]
+        - [equipment_type]
+
+  equipment_categories_assignment:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+        - [equipment_category]
+        - [synchronisation_type]
+        - [connector_name]
+
+  collaborator_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  
+  business_unit_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_services:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+
+compagnie-des-alpes:
+  accidents:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators:
+    org_id_col: soongo_collab_reference
+    fetch_table_params:
+      disjunctive_cols:
+        - [alternative_names, employee_full_name]
+
+  expense_claims:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  expenses:
+    fetch_table_params:
+      disjunctive_cols:
+        - [soongo_category]
+
+  hotels:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  mileages:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        - [mileage]
+      conjunctive_cols:
+        - [mileage_date]
+        - [connector_name]
+        - [source_dataset]
+        - [source_table]
+        - [synchronisation_type]
+
+  rental_cars:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  taxes:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  trains_planes_travel:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  collaborators_vehicles:
+      
+    infer: false
+
+    daily_participation_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+    cap_lease_end_date: False
+
+
+  vehicles:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+
+  vehicle_contracts:
+    fetch_table_params:
+      disjunctive_cols:
+        - [plate_number]
+        -
+          - contract_reference
+          - lease_start_date
+          - lease_end_date
+          - lease_months
+          - lease_mileage
+          - contract_start_date
+          - contract_end_date
+          - contract_type
+          - car_supplier
+          - financial_rent_net
+          - maintenance_rent_net
+          - tires_rent_net
+          - financial_loss_rent_net
+          - replacement_vehicle_rent_net
+          - relay_vehicle_rent_net
+          - insurance_rent_net
+          - fuel_card_management_rent_net
+          - management_fee_rent_net
+          - assistance_rent_net
+          - telematics_rent_net
+          - financial_rent_tax_exc
+          - maintenance_rent_tax_exc
+          - tires_rent_tax_exc
+          - financial_loss_rent_tax_exc
+          - replacement_vehicle_rent_tax_exc
+          - relay_vehicle_rent_tax_exc
+          - insurance_rent_tax_exc
+          - fuel_card_management_rent_tax_exc
+          - management_fee_rent_tax_exc
+          - assistance_rent_tax_exc
+          - telematics_rent_tax_exc
+          - financial_rent_ttc
+          - maintenance_rent_ttc
+          - tires_rent_ttc
+          - financial_loss_rent_ttc
+          - replacement_vehicle_rent_ttc
+          - relay_vehicle_rent_ttc
+          - insurance_rent_ttc
+          - fuel_card_management_rent_ttc
+          - management_fee_rent_ttc
+          - assistance_rent_ttc
+          - telematics_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - accident_management_rent_ttc
+          - vignette_rent_ttc
+          - service_fees_rent_ttc
+          - accident_management_rent_tax_exc
+          - vignette_rent_tax_exc
+          - service_fees_rent_tax_exc
+          - other_rent_net
+          - other_rent_tax_exc
+          - other_rent_ttc
+          - summer_tires_contract_nb
+          - winter_tires_contract_nb
+          - tires_contract_nb
+          - restitution_date
+          - interest_rate
+          - residual_value
+          - resale_price
+          - resale_date
+      conjunctive_cols:
+          - [record_date]
+          - [synchronisation_type]
+          - [connector_name]
+          - [record_table]
+          - [file_creation_date]
+    
+    deduplicate: true
+
+  equipments:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+      conjunctive_cols:
+        - [equipment_status]
+        - [equipment_supplier]
+        - [equipment_start_date]
+        - [equipment_end_date]
+        - [equipment_code]
+        - [plate_number]
+        - - firstname
+          - lastname
+        - [employee_full_name]
+        - [organization_collaborator_id]
+        - [entity_1, entity_2, entity_3]
+        - [synchronisation_type]
+        - [connector_name]
+        - [equipment_category]
+        - [equipment_type]
+
+  equipment_categories_assignment:
+    fetch_table_params:
+      disjunctive_cols:
+        - [equipment_reference]
+        - [equipment_category]
+        - [synchronisation_type]
+        - [connector_name]
+
+  collaborator_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+  
+  business_unit_connector_ids:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']
+
+  vehicle_services:
+    fetch_table_params:
+      exclude_tables: 
+        - ['*', '*', '*']

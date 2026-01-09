@@ -1,0 +1,416 @@
+-
+  conditions:
+    sender: "Quartus <driver@holson.fr>"
+    subject: "Etat de Parc Contrat et Véhicule"
+
+  pipeline:
+    organization_slug: quartus
+    connector_name: GAC
+    dataset_name: EXPORTS
+    dataset_type: CSV_UPLOAD
+    datasource_name: FLEET_STATUS
+    input_tables: 
+      vehicles:
+        update_values: overwrite
+      vehicle_contracts:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "Joe Eung <Joe.Eung@paybyphone.com>"
+    subject: ".*(?:ACORUS|acorus).* (?:FACT|stat|facturation(?:s)?|STAT) .*"
+    recipients: "acorus@soongo.co"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: PAY_BY_PHONE
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "Joe Eung <Joe.Eung@paybyphone.com>"
+    subject: ".*(?:GRANDJOUAN|grandjouan).* (?:FACT|stat|facturation(?:s)?) .*"
+    recipients: "grandjouan@soongo.co"
+
+  pipeline:
+    organization_slug: grandjouan
+    connector_name: PAY_BY_PHONE
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "no-reply@easypark.net"
+    subject: "EasyPark | Monthly extended specification"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: EASY_PARK
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "scheduled-report-notification-no-reply via Acorus"
+    subject: "Monthly FR report for ACORUS report results"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: FLOWBIRD
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "Zeplug <noreply@zeplug.com>"
+    subject: "Rapport facturation Acorus .*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: ZEPLUG
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES_CSV
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "michael.goncalves@groupe-acorus.fr"
+    subject: ".*Facture -.*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: LEASYGO
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "noreply@fraikin.com"
+    subject: "Votre fichier PARC EN LOCATION .* ACORUS .*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: FRAIKIN
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: FLEET
+    input_tables: 
+      vehicles:
+        update_values: overwrite
+      # vehicle_contracts:
+      #   update_values: overwrite
+
+-
+  conditions:
+    sender: "noreply@fraikin.com"
+    subject: "Votre fichier FACTURATION .* ACORUS .*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: FRAIKIN
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "BO-france@alphabet.com"
+    subject: "Pub Etat de Parc AC Mensuel : ACORUS"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: ALPHABET
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: VEHICLES
+    input_tables: 
+      vehicles:
+        update_values: overwrite
+      vehicle_contracts:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "edi@alphabetcarlease.fr"
+    subject: "Facturation EDI pour la période.*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: ALPHABET
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "Julie DOMINGOS <julie.domingos@sambms.fr>"
+    subject: ".*Votre facture.*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: SAM_BMS
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "Julie DOMINGOS <julie.domingos@sambms.fr>"
+    subject: "FACTURES ENTRETIENS ET REPARATIONS .*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: SAM_BMS
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: MAINTENANCE
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "Votre Equipe de Gestion <grp-natixis-lld@lease.natixis.fr>"
+    subject: ".*Etat parc Excel Acorus .*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: BPCE
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: VEHICLES
+    input_tables: 
+      vehicles:
+        update_values: overwrite
+      vehicle_contracts:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "'Votre Equipe de Gestion' via Acorus"
+    subject: ".*Fact CSV-plus Acorus.*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: BPCE
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: RENT_EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: '"GENERIC.FR STATS-CLIENTS" <gen.fr.stats-clients@euromaster.com>'
+    subject: "Euromaster - Données ACORUS SERVICES - .*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: EUROMASTER
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: '"GENERIC.FR STATS-CLIENTS" <gen.fr.stats-clients@euromaster.com>'
+    subject: "Euromaster - Données DOMINO.*"
+
+  pipeline:
+    organization_slug: domino-rh
+    connector_name: EUROMASTER
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES_V2
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "'AYVENS Fichier facturation' via Acorus"
+    subject: "Factures électroniques (?:LOYER|FIN_DE_LOC|REFAC|FR_REM_ETA|1ER_LOYER|MODIF_CTR) .*(?:MONCELEC|ACORUS).*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: AYVENS
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "'AYVENS Fichier facturation' via Acorus"
+    subject: "Factures électroniques (?:LOYER|FIN_DE_LOC|REFAC|FR_REM_ETA|1ER_LOYER|MODIF_CTR) .*(?:MONCELEC|ACORUS).*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: AYVENS
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "AYVENS Relation clients <relation.clients.ayvens@ayvens.com>"
+    subject: "ETAT DE PARC ACORUS"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: AYVENS
+    dataset_name: CSV_UPLOAD
+    dataset_type: CSV_UPLOAD
+    datasource_name: FLEET
+    input_tables: 
+      vehicles:
+        update_values: overwrite
+      vehicle_contracts:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "PrintingEDIFrance-Support via Acorus <acorus@soongo.co>"
+    subject: "[Arval] Factures éditées .*ACORUS.*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: ARVAL
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "<PrintingEDIFrance-Support@arval.com>"
+    subject: "[Arval] Factures éditées .*QUARTUS.*"
+
+  pipeline:
+    organization_slug: quartus
+    connector_name: ARVAL
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES_V2
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "<PrintingEDIFrance-Support@arval.com>"
+    subject: "[Arval] Factures éditées .*DOMINO.*"
+
+  pipeline:
+    organization_slug: domino-rh
+    connector_name: ARVAL
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    sender: "ADV <adv@carmeleon.fr>"
+    subject: "Fichier ACORUS au .*"
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: DENTMASTER
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    subject: "InfoService AS 24 : fichier des pleins factures"
+    recipients: yanet@soongo.co
+
+  pipeline:
+    organization_slug: yanet
+    connector_name: AS24
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+      mileages:
+        update_values: overwrite
+
+-
+  conditions:
+    subject: SPEEDY - FICHIER DE FACTURATION - .* - QUARTUS GROUPE
+
+  pipeline:
+    organization_slug: quartus
+    connector_name: SPEEDY
+    dataset_name: EDI
+    dataset_type: EDI
+    datasource_name: EXPENSES
+    input_tables: 
+      expenses:
+        update_values: overwrite
+
+-
+  conditions:
+    subject: Liste sinistre .*ACORUS
+
+  pipeline:
+    organization_slug: acorus
+    connector_name: SMABTP
+    dataset_name: CSV_UPLOAD
+    dataset_type: CSV_UPLOAD
+    datasource_name: ACCIDENTS
+    input_tables: 
+      accidents:
+        update_values: overwrite

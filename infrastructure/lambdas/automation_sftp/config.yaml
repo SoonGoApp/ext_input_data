@@ -1,0 +1,76 @@
+total:
+  -
+    filename_pattern: ^TF.*
+    input_tables:
+        - expenses
+        - mileages
+    data_type: EDI
+    data_sources:
+        - [EDI, FUEL_EXPENSES]
+        - [EDI, TOLL_EXPENSES]
+        - [EDI, FEE_EXPENSES]
+        - [EDI, REIMBURSEMENTS]
+        - [EDI, OTHER_EXPENSES]
+        - [EDI, DOCUMENT_FEES]
+norauto:
+  -
+    filename_pattern: ^.*\.csv$
+    input_tables:
+        - expenses
+    data_type: EDI
+    data_sources:
+        - [EDI, EXPENSES]
+
+nibelis:
+  -
+    filename_pattern: ^Salaries.csv$
+    input_tables:
+        - collaborators
+    data_type: EDI
+    data_sources:
+        - [QUARTUS, COLLABORATORS]
+
+france-pare-brise:
+  -
+    filename_pattern: ^\d{4}-\d{2}(?:_\d{2})?_(?:ACORUS|acorus).*\.csv$
+    input_tables:
+        - accidents
+        - expenses
+    data_type: EDI
+    data_sources:
+        - [EDI, EXPENSES]
+
+gac:
+  -
+    filename_pattern: ^Etat de Parc Contrat et Vehicule\.\d{8}_\d{6}.*
+    input_tables:
+        - vehicles
+        - vehicle_contracts
+    data_type: CSV_UPLOAD
+    data_sources:
+        - [EXPORTS, FLEET_STATUS]
+  -
+    filename_pattern: ^Historique affectation(?:\.\d{8}_\d{6})?(?:\(\d+\))?.*
+    input_tables:
+        - collaborators_vehicles
+    data_type: CSV_UPLOAD
+    update_values: inc_null
+    data_sources:
+        - [EXPORTS, ASSOCIATIONS]
+
+toyota:
+  -
+    filename_pattern: ^ ?Etat_parc_\d{8}\.xlsx$
+    input_tables:
+        - vehicles
+        - vehicle_contracts
+    data_type: EDI
+    data_sources:
+        - [EDI, VEHICLES]
+  -
+    filename_pattern: ^ ?fichier_facturation_\d{8}\.csv$
+    input_tables:
+        - expenses
+    data_type: EDI
+    data_sources:
+        - [EDI, EXPENSES]

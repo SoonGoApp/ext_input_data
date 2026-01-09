@@ -1,0 +1,15 @@
+from .accidents import AccidentsModel  # NOQA
+from .equipments import EquipmentsModel  # NOQA
+from .expenses import ExpensesModel  # NOQA
+from .fines import FinesModel  # NOQA
+from .mileage_report import MileageReportsModel  # NOQA
+from .suppliers import SuppliersModel  # NOQA
+from .taxes import TaxesModel  # NOQA
+from .vehicle_associations import VehicleAssociationsModel  # NOQA
+from .vehicle_contracts import VehicleContractsModel  # NOQA
+from .vehicle_maintenance import VehicleMaintenanceModel  # NOQA
+from .vehicle_orders import VehicleOrdersModel  # NOQA
+from .vehicle_reports import VehicleReportsModel  # NOQA
+from .vehicle_status import VehicleStatusModel  # NOQA
+from .vehicle_ecoscore import VehicleEcoScoreModel  # NOQA
+from .vehicles import VehiclesModel  # NOQA

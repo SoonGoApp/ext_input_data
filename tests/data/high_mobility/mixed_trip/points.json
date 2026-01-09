@@ -1,0 +1,95 @@
+[
+    {
+        "data":{
+            "vehicle_location":{
+                "coordinates":{
+                    "data":{"latitude":0,"longitude":0},
+                    "timestamp":"2025-12-01T12:00:00"
+                    }
+                }
+        },
+        "capability":"vehicle_location",
+        "property":"coordinates",
+        "version":1,
+        "vin":"1HM6WNDF762S9H5EC"
+    },
+    {
+        "data":{
+            "vehicle_location":{
+                "coordinates":{
+                    "data":{"latitude":1,"longitude":1},
+                    "timestamp":"2025-12-01T12:01:00"
+                    }
+                }
+        },
+        "capability":"vehicle_location",
+        "property":"coordinates",
+        "version":1,
+        "vin":"1HM6WNDF762S9H5EC"
+    },
+    {
+        "data":{
+            "vehicle_location":{
+                "coordinates":{
+                    "data":{"latitude":1,"longitude":1},
+                    "timestamp":"2025-01-01 12:02:00"
+                    }
+                }
+        },
+        "capability":"vehicle_location",
+        "property":"coordinates",
+        "version":1,
+        "vin":"1HM6WNDF762S9H5ED"
+    },
+    {
+        "data": {
+            "vehicle_location": {
+                "coordinates": {
+                    "data": {
+                        "latitude": 1,
+                        "longitude": 1
+                    },
+                    "timestamp": "2025-01-01 13:00:00"
+                }
+            }
+        },
+        "capability": "vehicle_location",
+        "property": "coordinates",
+        "version": 1,
+        "vin": "1HM6WNDF762S9H5EE"
+    },
+    {
+        "data": {
+            "vehicle_location": {
+                "coordinates": {
+                    "data": {
+                        "latitude": 2,
+                        "longitude": 2
+                    },
+                    "timestamp": "2025-01-01 13:01:00"
+                }
+            }
+        },
+        "capability": "vehicle_location",
+        "property": "coordinates",
+        "version": 1,
+        "vin": "1HM6WNDF762S9H5EE"
+    },
+    {
+        "data": {
+            "vehicle_location": {
+                "coordinates": {
+                    "data": {
+                        "latitude": 3,
+                        "longitude": 3
+                    },
+                    "timestamp": "2025-01-01 14:00:00"
+                }
+            }
+        },
+        "capability": "vehicle_location",
+        "property": "coordinates",
+        "version": 1,
+        "vin": "1HM6WNDF762S9H5EE"
+    }
+]

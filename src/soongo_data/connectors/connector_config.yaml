@@ -1,0 +1,1536 @@
+---
+groupe-batisseur-d-avenir:
+  CHARGEMAP: {}
+  GBA:
+    expenses_check_dict:
+      308-GA-664-MA-CARTE_GRISE Fabien CLEMENCEAU.pdf:
+        - plate_number: GA-664-MA
+          count: 1
+      308-GP-455-QR-CARTE_GRISE Clémence PEDEAU.pdf:
+        - plate_number: GP-455-QR
+          count: 1
+      308_SW-EV_995_RP-CARTE_GRISE.pdf:
+        - plate_number: EV-995-RP
+          count: 1
+      5008-GK_961_NW-CARTE_GRISE Anne Charlotte RIBAULT.pdf:
+        - plate_number: GK-961-NW
+          count: 1
+      20191121180910.pdf:
+        - plate_number: FL-550-RA
+          count: 1
+      CARTE GRISE ALEXIS LEROY EF 624 QS.pdf:
+        - plate_number: EF-624-05  # EF-624-QS
+          count: 1
+      CARTE GRISE Camille DE SOUSA GD 602 XS.pdf:
+        - plate_number: GD-602-XS
+          count: 1
+      CARTE GRISE Gwenaëlle ZAKNOUN GF 140 KJ.pdf:
+        - plate_number: GF-140-K9  # GF-140-KJ is the truth but error handled in code
+          count: 1
+      Carte Grise KYA SPORTAGE.pdf:
+        - plate_number: GS-352-QC
+          count: 1
+      Carte grise Volvo XC 90.pdf:
+        - plate_number: GY-501-CE
+          count: 1
+      cg e 5008 BATI ARMOR GZ-858-SB.pdf:
+        - plate_number: GZ-858-SB
+          count: 1
+      FE 597 EE Carte Grise Yves BREVET.pdf:
+        - plate_number: FE-597-EE
+          count: 1
+      FF 354 SG 3008 Carte grise Emilie ESLAN sortier 5-12.pdf:
+        - plate_number: FF-354-SG
+          count: 1
+      FH 107 QT Carte grise KADJAR MG.pdf:
+        - plate_number: FH-107-QT
+          count: 1
+      FK 387 FE Carte Grise Pierre Yves LE DALL.pdf:
+        - plate_number: FK-387-FE
+          count: 1
+      FK 964 QP Carte Grise Volvo Emmanuel GOUGEON.pdf:
+        - plate_number: FK-964-QP
+          count: 1
+      FL 149 MT 5008 carte Grise Céline Le Mat sortie 30-11.pdf:
+        - plate_number: FL-149-MT
+          count: 1
+      FL 550 RA 3008 Carte grise Arnaud NAVARRO.pdf:
+        - plate_number: FL-550-RA
+          count: 1
+      FM 530 KD Carte Grise Christophe SAVARY.pdf:
+        - plate_number: FM-530-KD
+          count: 1
+      FP 396 BY Carte Grise Sylvain BOILEAU.pdf:
+        - plate_number: FP-396-BY
+          count: 1
+      FQ 096 VA carte grise PGD.pdf:
+        - plate_number: FQ-096-VA
+          count: 1
+      FQ 981 LR Carte grise JG.pdf:
+        - plate_number: FQ-981-LR
+          count: 1
+      FS 477 TT Carte Grise Armel PATRON.pdf:
+        - plate_number: FS-477-TT
+          count: 1
+      FT 530 EV Carte grise AL.pdf:
+        - plate_number: FT-530-EV
+          count: 1
+      FT 716 LA Carte grise Aymeric GARNIER.pdf:
+        - plate_number: FT-716-LA
+          count: 1
+      FV 094 RS Carte grise voiture service 308.pdf:
+        - plate_number: FV-094-RS
+          count: 1
+      FV 670 RJ Carte Grise Lidwine GAILLARD.pdf:
+        - plate_number: FV-670-RJ
+          count: 1
+      FW 976 GS vehicule AG_20210108091040.pdf:
+        - plate_number: FW-976-GS
+          count: 1
+      FX 763 DY Carte Grise Christophe DESFOSSES.pdf:
+        - plate_number: FX-763-DY
+          count: 1
+      FY 185 ZT Carte Grise Grégorie BERNARD.pdf: 
+        - plate_number: FY-185-ZT
+          count: 1
+      GA 179 ZK Carte Grise Delphine OUVRARD.pdf:
+        - plate_number: GA-179-ZK
+          count: 1
+      GA 491 VZ Carte grise David COQUANTY.pdf:
+        - plate_number: GA-491-VZ
+          count: 1
+      GA 623 ZY carte grise Yohan CICHON.pdf:
+        - plate_number: GA-623-ZY
+          count: 1
+      GB 303 KJ Carte Grise Guirec CALLAC.pdf:
+        - plate_number: GB-303-K3  # Truth is GB 303 KJ but error handled in code
+          count: 1
+      GC 271 ZS Carte grise Marie Christine JOSSE.pdf:
+        - plate_number: GC-271-ZS
+          count: 1
+      GD 026 LD Carte grise MJ.pdf:
+        - plate_number: GD-026-LD
+          count: 1
+      GD 059 NR Carte grise JT.pdf:
+        - plate_number: GD-059-NR
+          count: 1
+      GD 222 GT - Carte Grise.pdf:
+        - plate_number: GD-222-GT
+          count: 1
+      GD 451 ZV Carte grise M.Clouet - 5008.pdf:
+        - plate_number: GD-451-ZV
+          count: 1
+      GD 602 XS Carte Grise Gwenaëlle ZAKNOUN.pdf:
+        - plate_number: GD-602-XS
+          count: 1
+      GD 683 LR Carte Grise Pierre Edouard CHAMPY.pdf:
+        - plate_number: GD-683-LR
+          count: 1
+      GD 742 RM Carte Grise Vincent CHAUVET.pdf:
+        - plate_number: GD-742-RM
+          count: 1
+      GD 903 TA Carte Grise.pdf:
+        - plate_number: GD-903-TA
+          count: 1
+      GE 444 HR ZOE.pdf:
+        - plate_number: GE-A44-HR  # GE-444-HR
+          count: 1
+      GE 701 JF Carte Grise Maud COINTREL.pdf:
+        - plate_number: GE-701-JF
+          count: 1
+      GF 140 KJ Carte Grise Guillaume LEBAILLY.pdf:
+        - plate_number: GF-140-K9  # Truth is GF-140-KJ but error handled in code
+          count: 1
+      GF 899 YP Carte Grise Baptiste LENOUVEAU.pdf:
+        - plate_number: GF-899-YP
+          count: 1
+      GF  738 SN Carte Grise Xavier DESHAIS.pdf:
+        - plate_number: GF-738-SN
+          count: 1
+      GG 054 PX Carte Grise  Gwenaël Goudin.pdf:
+        - plate_number: GG-054-PX
+          count: 1
+      GG 176  PX Carte grise Benjamin FENICE.pdf:
+        - plate_number: GG-176-PX
+          count: 1
+      GG 388 NK Carte grise Aurélien CONTON.pdf:
+        - plate_number: GG-388-NK
+          count: 1
+      GG 522 BG Carte Grise Pierre Marc MELITTI.pdf:
+        - plate_number: GG-522-BG
+          count: 1
+      GG 810 PRCarte grise YE.pdf:
+        - plate_number: GG-B10-PR  # Truth is GG 810 PR but error handled in code
+          count: 1
+      GH 077 NY Carte grise Pierre DEMAS.pdf:
+        - plate_number: GH-077-NY
+          count: 1
+      GK 551 KS Carte grise PP.pdf:
+        - plate_number: GK-55i-KS  # Truth is GK-551-KS
+          count: 1
+      GK - 637 - PL Carte grise Emilie DELAUNAY.pdf:
+        - plate_number: GK-637-PL
+          count: 1
+      GM 781 FH Carte grise SF.pdf:
+        - plate_number: GM-781-FH
+          count: 1
+      GM 996 KS Carte grise SB.pdf:
+        - plate_number: GM-996-KS
+          count: 1
+      GN 215 ZQCarte Grise 2008 N. Jovanovic Achat.pdf:
+        - plate_number: GN-215-2Q  # GN-215-ZQ is the truth but error handled in code
+          count: 1
+      GN 443 CM Carte grise TUCSON.pdf:
+        - plate_number: GN-445-CM  # Truth is GN 443 CM but error handled in code
+          count: 1
+      GP 041 ZX copie conforme.pdf:
+        - plate_number: GP-D41-ZX  # Truth is GP 041 ZX but error handled in code
+          count: 1
+      GP 148 SF Carte Grise Walid FAHEM.pdf:
+        - plate_number: GP-148-SF
+          count: 1
+      GQ 545 HB Carte Grise Pierre SEVIN.pdf:
+        - plate_number: GQ-545-HB
+          count: 1
+      GR 046 SL Carte Grise Emilie ESLAN.pdf:
+        - plate_number: GR-D46-SL  # Truth is GR-046-SL
+          count: 1
+      GR 160 MN Carte Grise Hadrien Giry Deloison.pdf:
+        - plate_number: GR-160-MN
+          count: 1
+      GR 597 MF Carte Grise Patricia FONTAINE.pdf:
+        - plate_number: GR-597-MF
+          count: 1
+      GX 642 LC Carte grise volvo JG.pdf:
+        - plate_number: GX-642-LC
+          count: 1
+      GZ 609 YJ antoine Gouarin.pdf:
+        - plate_number: GZ-609-YJ
+          count: 1
+      GZ 610 YJ Lidwine Gaillard Q4.pdf:
+        - plate_number: GZ-610-Y1  # Truth is GZ 610 YJ but error handled in code
+          count: 1
+      HB 435 LJ Q4 Lecticia.pdf:
+        - plate_number: HB-435-LI  # HB-435-LJ
+          count: 1
+      HC 811 BE Damien SAVEY.pdf:
+        - plate_number: HC-S11-BE  # Truth is HC 811 BE but error handled in code
+          count: 1
+  GAN: {}
+  GREENNCAP: {}
+  API_PLAQUE: {}
+  LUCCA: {}
+
+quartus:
+  GAC: {max_date: '2025-01-31 23:59:59'}
+  GREENNCAP: {}
+  HAVAS: {}
+  CONCUR: {}
+  HOLSON: {}
+  QUARTUS: {}
+  CHARGEMAP: {}
+  TOTAL: {min_date: '2025-02-01 00:00:00'}
+  SPEEDY: {min_date: '2025-02-01 00:00:00'}
+  ARVAL: {min_date: '2025-02-01 00:00:00'}
+  AYVENS: {
+    min_date: '2025-02-01 00:00:00',
+    exc_plates: [
+      GE-078-TV,
+      GM-953-FL,
+      GV-476-KG,
+      GL-284-VQ,
+      GJ-961-SA,
+      GQ-718-BW,
+      FW-836-YB
+    ]
+  }
+  NIBELIS: {}
+  API_PLAQUE: {active_only: True}
+
+acorus:
+  ACORUS: {}
+  ALPHABET: {}
+  ATHLON: {min_date: '2021-01-01'}
+  AYVENS: {}
+  ARVAL: {min_date: '2024-09-01'}
+  API_PLAQUE: {active_only: True}
+  BPCE: {}
+  DENTMASTER: {}
+  EUROMASTER: {}
+  FLEETNOTE: {
+    max_date_dict: {
+      PAY_BY_PHONE: '2024-04-30',
+      EUROMASTER: '2023-12-31',
+      LEASEPLAN: '2024-08-01',  # Loc-action
+      OTHERS: '2024-08-31'
+    }
+  }
+  FLOWBIRD: {}
+  FRAIKIN: {}
+  GREENWAY: {
+    startDate: '2025-08-31'
+  }
+  LEASYGO: {}
+  LOC_ACTION: {min_date: '2024-08-01'}
+  MASTERNAUT: {
+    csv_max_date: '2023-10-23',
+    drop_vin: true,
+    synthetic_cost_start_date: '2024-01-01',
+    synthetic_cost: 14.6,
+    page_size: 100,
+    # min_ecoscore_date: '2025-07-20',
+    min_journey_date: '2025-10-17',
+    max_journey_date: '2025-10-21'
+  }
+  FRANCE-PARE-BRISE: {}
+  MON_PETIT_CARROSSIER: {}
+  GREENNCAP: {}
+  PAY_BY_PHONE: {min_date: '2024-05-01'}
+  SAMBMS: {}
+  SKIPR: {}
+  SMABTP: {
+    accident_contexts_exclusion: ['GLASS_BREAKAGE'],
+    deductible_level: 5000,
+    edi_start_date: '2024-10-01',
+    synthetic_insurance_start_date: '2024-09-01',
+    synthetic_accident_cost_dict : {
+      OTHER: 100,
+      GLASS_BREAKAGE: 30,
+    },
+    excluded_business_units: ['BC99'],
+    synthetic_insurance_cost_dict: [
+      {
+        model_category: [UTILITY, CITY, COMPACT, SEDAN, SUV, VAN],
+        contract_type: [LCD_LMD, LLD, LOP],
+        value: 65.97,
+      },
+      {
+        model_category: [TWO_WHEEL],
+        contract_type: ['*'],
+        value: 26.21,
+      },
+      {
+        model_category: [SCOOTER],
+        contract_type: ['*'],
+        value: 8,04,
+      },
+      {
+        model_category: [UTILITY, CITY, COMPACT, SEDAN, SUV, VAN],
+        contract_type: [ACQ],
+        value: 66.32,
+      },
+      {
+        model_category: [BIKE],
+        contract_type: ['*'],
+        value: 10.59,
+      },
+      {
+        model_category: [TRUCK],
+        contract_type: [LCD_LMD, LLD, LOP],
+        value: 118.57,
+      },
+      {
+        model_category: [UTILITY, CITY, COMPACT, SEDAN, SUV, VAN],
+        contract_type: [LCD_LMD, LLD, LOP],
+        value: 55,07,
+      },
+      {
+        model_category: [TRUCK],
+        contract_type: [ACQ],
+        value: 130,97,
+      },
+      {
+        model_category: [TRAILER],
+        contract_type: ['*'],
+        value: 22,01,
+      }
+    ],
+  }
+  TOTAL: {}
+  TOYOTA: {}
+  LUCCA: {}
+  NORAUTO: {}
+  ZEPLUG: {}
+  EASYPARK: {}
+  WEPROOV: {}
+  # MERCEDES_BENZ: {}
+
+compagnie-des-alpes:
+  GREENNCAP: {}
+  TOTAL: {}
+  ARVAL: {}
+  AYVENS: {}
+  COMPAGNIE_DES_ALPES: {}
+  API_PLAQUE: {}
+  LECLERC: {}
+  FULLI: {}
+  INFERENCE: {
+    mileage_type_start_date: '2024-01-01',
+    mileage_type_end_date: '2025-12-31',
+    insurance_category_start_date: '2024-01-01',
+    insurance_category_end_date: '2025-12-31'
+  }
+  VOLKSWAGEN_BANK: {}
+
+domino-rh:
+  EDENRED: {}
+  GREENNCAP: {}
+  HAVAS: {}
+  NOTILUS: {
+    supplier_lst: [
+      'FREE2MOVE', 'ARVAL LLD', 'BYmyCAR', 'P LEASE', 'YOOLIZ', 'LEASYS',
+      'AUTOMOBILE DU LEMAN', 'VOLKSWAGEN BANK',
+      'AUTO-GUADELOUP Pointe à Pitre', 'DIAC Location'
+    ]
+  }
+  EUROMASTER: {}
+  DOMINO: {}
+  ATHLON: {}
+  ALPHABET:
+    expenses_check_dict:
+      C56577_INV04824551_LOYER_032023.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FS-469-PX
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV04876315_LOYER_042023.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FS-469-PX
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV04919567_LOYER_052023.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FS-469-PX
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV04961358_LOYER_062023.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FS-469-PX
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05005449_LOYER_072023.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FS-469-PX
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05043336_LOYER_082023.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FS-469-PX
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05090953_LOYER_092023.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FS-469-PX
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05134239_LOYER_102023.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05156331_LOYER-DD_102023.pdf:
+        - plate_number: FS-469-PX
+          count: 4
+      C56577_INV05177917_LOYER_112023.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05227468_LOYER_122023.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05268260_LOYER_012024.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05290976_LOYER-DD_012024.pdf:
+        - plate_number: FS-469-PX
+          count: 4
+      C56577_INV05312543_LOYER_022024.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05357038_LOYER_032024.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05486468_LOYER_062024.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05600332_LOYER-DD_082024.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-469-PX
+          count: 4
+      C56577_INV05341622_MAINTENANCE_032024.pdf:
+        - plate_number: FS-379-BT
+          count: 3
+      C56577_INV05422416_LOYER-DD_042024.pdf:
+        - plate_number: FS-469-PX
+          count: 4
+      C56577_INV05379442_LOYER-DD_032024.pdf:
+        - plate_number: FS-469-PX
+          count: 4
+      C56577_INV05443394_LOYER_052024.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05399285_LOYER_042024.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05465860_LOYER-DD_052024.pdf:
+        - plate_number: FS-469-PX
+          count: 4
+      C56577_INV05509320_LOYER-DD_062024.pdf:
+        - plate_number: FS-469-PX
+          count: 4
+      C56577_INV05577203_LOYER_082024.pdf:
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05532087_LOYER_072024.pdf:
+        - plate_number: FR-118-NG
+          count: 4
+        - plate_number: FR-428-NG
+          count: 4
+        - plate_number: FS-029-JB
+          count: 4
+        - plate_number: FS-195-TQ
+          count: 3
+        - plate_number: FS-310-TQ
+          count: 3
+        - plate_number: FS-344-XR
+          count: 3
+        - plate_number: FS-345-TQ
+          count: 3
+        - plate_number: FS-357-TQ
+          count: 3
+        - plate_number: FS-379-BT
+          count: 4
+        - plate_number: FS-421-PX
+          count: 3
+        - plate_number: FS-431-PX
+          count: 3
+        - plate_number: FS-510-PX
+          count: 3
+        - plate_number: FS-579-PX
+          count: 3
+        - plate_number: FS-582-PX
+          count: 3
+        - plate_number: FS-640-EV
+          count: 4
+        - plate_number: FS-643-BT
+          count: 4
+        - plate_number: FT-069-PD
+          count: 4
+        - plate_number: FT-199-ZV
+          count: 4
+        - plate_number: FT-291-YH
+          count: 4
+        - plate_number: FT-384-PD
+          count: 4
+        - plate_number: FT-877-PC
+          count: 4
+        - plate_number: FV-843-CD
+          count: 4
+        - plate_number: FX-193-JE
+          count: 4
+        - plate_number: FX-201-BD
+          count: 4
+        - plate_number: GA-661-LS
+          count: 4
+        - plate_number: FT-690-PD
+          count: 4
+      C56577_INV05249198_LOYER-DD_122023.pdf:
+        - plate_number: FS-469-PX
+          count: 4
+      C56577_INV05555727_LOYER-DD_072024.pdf:
+        - plate_number: FS-469-PX
+          count: 4
+      C56577_INV05334521_LOYER-DD_022024.pdf:
+        - plate_number: FS-469-PX
+          count: 4
+      C56577_INV05292071_MAINTENANCE_022024.pdf:
+        - plate_number: FS-582-PX
+          count: 1
+      C56577_INV05199445_LOYER-DD_112023.pdf:
+        - plate_number: FS-469-PX
+          count: 4
+
+  FLEASE:
+    taxes_check_dict:
+      DOMINO HR.pdf:
+        - plate_number: GE-065-RA
+          count: 1
+        - plate_number: GE-925-QZ
+          count: 1
+        - plate_number: GF-393-GN
+          count: 1
+        - plate_number: GF-508-GN
+          count: 1
+      DOMINO PRESTATIONS & FORMATION.pdf:
+        - plate_number: GV-671-KV
+          count: 1
+        - plate_number: GA-992-ES
+          count: 1
+        - plate_number: GV-068-JX
+          count: 1
+        - plate_number: GS-186-RN
+          count: 1
+        - plate_number: GS-663-QR
+          count: 1
+        - plate_number: GS-668-QR
+          count: 1
+        - plate_number: FZ-835-CF
+          count: 1
+        - plate_number: GL-760-WJ
+          count: 1
+        - plate_number: GV-383-XA
+          count: 1
+        - plate_number: GV-583-LZ
+          count: 1
+        - plate_number: GM-500-LF
+          count: 1
+        - plate_number: GE-360-VS
+          count: 1
+        - plate_number: GS-184-RN
+          count: 1
+        - plate_number: GS-667-QR
+          count: 1
+        - plate_number: GT-366-AW
+          count: 1
+        - plate_number: GT-558-PH
+          count: 1
+        - plate_number: FW-020-GF
+          count: 1
+        - plate_number: GV-384-XA
+          count: 1
+        - plate_number: GS-666-QR
+          count: 1
+        - plate_number: GT-865-LG
+          count: 1
+        - plate_number: GA-827-PP
+          count: 1
+        - plate_number: GB-353-NB
+          count: 1
+        - plate_number: GT-364-AW
+          count: 1
+    expenses_check_dict:
+      Facture LPF-2024-07-10376.pdf: 2
+      Facture LPF-2024-07-10303.pdf: 4
+      Facture LPF-2024-07-10304.pdf: 2
+      Facture LPF-2024-07-10302.pdf: 2
+      Facture LPF-2024-07-10305.pdf: 4
+      Facture LPF-2024-07-9960.pdf: 27
+      Facture LPF-2024-06-9749.pdf: 2
+      Facture LPF-2024-06-9494.pdf: 26
+      Facture LPF-2024-05-8707.pdf: 2
+      Facture LPF-2024-05-9002.pdf: 26
+      Facture LPF-2024-05-8709.pdf: 2
+      Facture LPF-2024-05-8710.pdf: 2
+      Facture LPF-2024-04-8470.pdf: 23
+      Facture LPF-2024-03-8197.pdf: 2
+      Facture LPF-2024-03-7962.pdf: 22
+      Facture LPF-2024-03-7799.pdf: 2
+      Facture LPF-2024-02-7479.pdf: 21
+      Facture LPF-2024-01-7194.pdf: 2
+      Facture LPF-2024-01-7018.pdf: 20
+      Facture LPF-2024-01-6851.pdf: 2
+      Facture LPF-2024-01-6797.pdf: 2
+      Facture LPF-2023-12-6620.pdf: 18
+      Facture LPF-2023-12-6422.pdf: 2
+      Facture LPF-2023-12-6405.pdf: 2
+      Facture LPF-2023-12-6402.pdf: 2
+      Facture LPF-2023-12-6399.pdf: 2
+      Facture LPF-2023-12-6398.pdf: 2
+      Facture LPF-2023-12-6397.pdf: 2
+      Facture LPF-2023-12-6378.pdf: 2
+      Facture LPF-2023-12-6380.pdf: 2
+      Facture LPF-2023-11-6338.pdf: 2
+      Facture LPF-2023-11-6330.pdf: 2
+      Facture LPF-2023-11-6315.pdf: 2
+      Facture LPF-2023-11-6197.pdf: 7
+      Facture LPF-2023-10-5942.pdf: 2
+      Facture LPF-2023-10-5892.pdf: 6
+      Facture LPF-2023-09-5525.pdf: 6
+      Facture LPF-2023-08-5152.pdf: 6
+      Facture LPF-2023-07-4809.pdf: 6
+      Facture LPF-2023-06-4624.pdf: 2
+      Facture LPF-2023-06-4545.pdf: 5
+      Facture LPF-2023-05-4179.pdf: 5
+      Facture LPF-2023-05-4047.pdf: 2
+      Facture LPF-2023-05-4049.pdf: 2
+      Facture LPF-2023-05-4048.pdf: 2
+      Facture LPF-2023-05-4046.pdf: 2
+      Facture LPF-2023-04-3892.pdf: 1
+      Facture LPF-2023-03-3786.pdf: 2
+
+yanet:
+  YANET: {}
+  GREENNCAP: {}
+  API_PLAQUE: {}
+  AS24: {}
+
+udaf:
+  UDAF: {}
+  GREENNCAP: {}
+  API_PLAQUE: {}
+
+
+cetih:
+  CETIH: {}
+  GREENNCAP: {}
+  API_PLAQUE: {}
+
+grandjouan:
+  GRANDJOUAN: {}
+  GREENNCAP: {}
+  API_PLAQUE: {}
+  PAY_BY_PHONE: {}
+  CHARGEMAP: {}
+  SUIVI_DE_FLOTTE: {}
+
+muller-automotive:
+  MULLER_AUTOMOTIVE: {}
+  GREENNCAP: {}
+  API_PLAQUE: {}
+  DKV: {}

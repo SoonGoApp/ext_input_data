@@ -1,0 +1,5 @@
+env_var:
+  env: dev
+  credentials_folder: /home/matthieuglotz/dev/input_data/credentials
+  _soongo_test_folder: /home/matthieuglotz/dev/temp/  # Path to test folder, optional, just used for testing
+  _soongo_data_folder: /home/matthieuglotz/Documents/Data/soongo-local  # Path to data folder, mandatory for dev usage

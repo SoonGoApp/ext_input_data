@@ -1,0 +1,16 @@
+__pycache__/*
+src/soongo_data/*/__pycache__/*
+src/soongo_data/*/*/__pycache__/*
+src/soongo_data/__pycache__/*
+**/__pycache__/**
+**/__pycache__/
+data_models/*/__pycache__/*
+.vscode/*
+src/soongo_data/*/env_secrets.yaml
+src/*/__pycache__/*
+*/__pycache__/*
+*.pyc
+credentials/*
+env/config.yaml
+src/*.ipynb_checkpoints/*
+src/*.ipynb

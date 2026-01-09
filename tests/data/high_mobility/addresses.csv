@@ -1,0 +1,12 @@
+number,street,postal_code,city,geom
+64,Rue Edouard Herriot,33310,Lormont,POINT(-0.519912 44.867573)
+26,Allée de Weinstadt,79200,Parthenay,POINT(-0.218824 46.649644)
+7,Rue Georges Brassens,33240,Saint-André-de-Cubzac,POINT(-0.437888 44.994345)
+0,rue du test,75019,paris,POINT(-0.001 -0.001)
+0,bis rue du test,75019,paris,POINT(-0.002 -0.002)
+0,ter rue du test,75019,paris,POINT(0.003 -0.003)
+0,avenue du test,75019,paris,POINT(0.003 -1.003)
+1,rue du test,75019,paris,POINT(1 1)
+2,rue du test,75019,paris,POINT(2.1 1.9)
+3,rue du test,75019,paris,POINT(3 4)
+4,rue du test,75019,paris,POINT(4 4)

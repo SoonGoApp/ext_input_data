@@ -1,0 +1,1331 @@
+---
+sampling:
+
+  - nb_sampling: 300
+    conditions:
+    - table_name: [vehicles]
+      column_name: assignment_type
+      categorical_values: [COMPANY_CAR]
+    - table_name: [vehicles]
+      column_name: fiscal_type
+      categorical_values: [PERSONAL_CAR]
+    - table_name: [vehicles]
+      column_name: contract_type
+      categorical_values: [LLD]
+    - table_name: [vehicles]
+      column_name: vehicle_status
+      categorical_values: [ACTIVE, CLOSED]
+    changes:
+    - table_name: [vehicles]
+      column_names: [car_supplier]
+      categorical_values: [AYVENS, AYVENS, Athlon, LeasePlan]
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Allemagne
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Suisse
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Benelux
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Espagne
+
+        - Groupe Company > Services Généraux > RH/Finance
+        - Groupe Company > Services Généraux > Direction
+  
+    - table_name: [vehicle_associations]
+      column_names: [daily_participation]
+      categorical_values: 
+        - 0
+
+    - table_name: [train_planes, rental_cars, hotels]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.3]
+      conditions:
+      - table_name: [train_planes, rental_cars, hotels]
+        column_name: billing_date
+        min_value: '2023-01-01'
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.1]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.1]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2024-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+  - nb_sampling: 75
+    conditions:
+    - table_name: [vehicles]
+      column_name: assignment_type
+      categorical_values: [COMPANY_CAR]
+    - table_name: [vehicles]
+      column_name: fiscal_type
+      categorical_values: [PERSONAL_CAR]
+    - table_name: [vehicles]
+      column_name: contract_type
+      categorical_values: [LLD]
+    - table_name: [vehicles]
+      column_name: vehicle_status
+      categorical_values: [ACTIVE, CLOSED]
+    - table_name: [vehicles]
+      column_name: lease_start_date
+      min_value: '2023-01-01'
+    - table_name: [vehicles]
+      column_name: model
+      categorical_values: ['3008']
+    - table_name: [vehicles]
+      column_name: lease_mileage
+      min_value: 20000
+      max_value: 80000
+
+    changes:
+    - table_name: [vehicles]
+      column_names: [car_supplier]
+      categorical_values: [AYVENS, AYVENS, Athlon, LeasePlan]
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Allemagne
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Suisse
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Benelux
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Espagne
+
+        - Groupe Company > Services Généraux > RH/Finance
+        - Groupe Company > Services Généraux > Direction
+
+    - table_name: [vehicles]
+      column_names: [model]
+      categorical_values: [Q3]
+
+    - table_name: [vehicles]
+      column_names: [model_category]
+      categorical_values: [SUV]
+
+    - table_name: [vehicles]
+      column_names: [make]
+      categorical_values: [AUDI]
+
+    - table_name: [vehicles]
+      column_names: [rebate_price]
+      relative_changes: [1.3]
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.5]
+      conditions:
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values: 
+          - FINANCIAL_RENT
+          - RENT_MAINTENANCE
+  
+    - table_name: [vehicle_associations]
+      column_names: [daily_participation]
+      categorical_values: 
+        - 0
+
+    - table_name: [train_planes, rental_cars, hotels]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.4]
+      conditions:
+      - table_name: [train_planes, rental_cars, hotels]
+        column_name: billing_date
+        min_value: '2023-01-01'
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.1]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.1]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2024-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+  
+  - nb_sampling: 75
+    conditions:
+    - table_name: [vehicles]
+      column_name: assignment_type
+      categorical_values: [COMPANY_CAR]
+    - table_name: [vehicles]
+      column_name: fiscal_type
+      categorical_values: [PERSONAL_CAR]
+    - table_name: [vehicles]
+      column_name: contract_type
+      categorical_values: [LLD]
+    - table_name: [vehicles]
+      column_name: vehicle_status
+      categorical_values: [ACTIVE, CLOSED]
+    - table_name: [vehicles]
+      column_name: lease_start_date
+      min_value: '2024-01-01'
+    - table_name: [vehicles]
+      column_name: model
+      categorical_values: ['3008']
+    - table_name: [vehicles]
+      column_name: lease_mileage
+      min_value: 20000
+      max_value: 80000
+
+    changes:
+    - table_name: [vehicles]
+      column_names: [car_supplier]
+      categorical_values: [AYVENS, AYVENS, Athlon, LeasePlan]
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Allemagne
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Suisse
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Benelux
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Espagne
+
+        - Groupe Company > Services Généraux > RH/Finance
+        - Groupe Company > Services Généraux > Direction
+
+    - table_name: [vehicles]
+      column_names: [model]
+      categorical_values: ['5008']
+  
+    - table_name: [vehicles]
+      column_names: [model_category]
+      categorical_values: [SUV]
+
+    - table_name: [vehicles]
+      column_names: [rebate_price]
+      relative_changes: [1.3]
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.5]
+      conditions:
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values: 
+          - FINANCIAL_RENT
+          - RENT_MAINTENANCE
+  
+    - table_name: [vehicle_associations]
+      column_names: [daily_participation]
+      categorical_values: 
+        - 0
+
+    - table_name: [train_planes, rental_cars, hotels]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.4]
+      conditions:
+      - table_name: [train_planes, rental_cars, hotels]
+        column_name: billing_date
+        min_value: '2023-01-01'
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.1]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.1]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2024-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+  - nb_sampling: 66
+    conditions:
+    - table_name: [vehicles]
+      column_name: assignment_type
+      categorical_values: [COMPANY_CAR]
+    - table_name: [vehicles]
+      column_name: fiscal_type
+      categorical_values: [PERSONAL_CAR]
+    - table_name: [vehicles]
+      column_name: contract_type
+      categorical_values: [LCD_LMD]
+    - table_name: [vehicles]
+      column_name: vehicle_status
+      categorical_values: [ACTIVE, CLOSED]
+
+    changes:
+    - table_name: [vehicles]
+      column_names: [car_supplier]
+      categorical_values: [AYVENS, AYVENS, Athlon, LeasePlan]
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Allemagne
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Suisse
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Benelux
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Espagne
+
+        - Groupe Company > Services Généraux > RH/Finance
+        - Groupe Company > Services Généraux > Direction
+  
+    - table_name: [vehicle_associations]
+      column_names: [daily_participation]
+      categorical_values: 
+        - 0
+
+    - table_name: [train_planes, rental_cars, hotels]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.4]
+      conditions:
+      - table_name: [train_planes, rental_cars, hotels]
+        column_name: billing_date
+        min_value: '2023-01-01'
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.1]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.1]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2024-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+
+  - nb_sampling: 33
+    conditions:
+    - table_name: [vehicles]
+      column_name: assignment_type
+      categorical_values: [COMPANY_CAR]
+    - table_name: [vehicles]
+      column_name: fiscal_type
+      categorical_values: [PERSONAL_CAR]
+    - table_name: [vehicles]
+      column_name: contract_type
+      categorical_values: [LCD_LMD]
+    - table_name: [vehicles]
+      column_name: vehicle_status
+      categorical_values: [ACTIVE, CLOSED]
+    - table_name: [vehicles]
+      column_name: lease_start_date
+      min_value: '2023-01-01'
+
+    changes:
+    - table_name: [vehicles]
+      column_names: [car_supplier]
+      categorical_values: [AYVENS, AYVENS, Athlon, LeasePlan]
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Allemagne
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Suisse
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Benelux
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Espagne
+
+        - Groupe Company > Services Généraux > RH/Finance
+        - Groupe Company > Services Généraux > Direction
+  
+    - table_name: [vehicle_associations]
+      column_names: [daily_participation]
+      categorical_values: 
+        - 0
+
+    - table_name: [train_planes, rental_cars, hotels]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.4]
+      conditions:
+      - table_name: [train_planes, rental_cars, hotels]
+        column_name: billing_date
+        min_value: '2023-01-01'
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.1]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.1]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2024-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+  - nb_sampling: 200
+    conditions: 
+    - table_name: [vehicles]
+      column_name: model
+      categorical_values: [C3 AIRCROSS, C3, MEGANE]
+    - table_name: [vehicles]
+      column_name: fiscal_type
+      categorical_values: [PERSONAL_CAR]
+    - table_name: [vehicles]
+      column_name: vehicle_status
+      categorical_values: [ACTIVE, CLOSED]
+    - table_name: [vehicles]
+      column_name: contract_type
+      categorical_values: [LLD]
+    - table_name: [vehicles]
+      column_name: lease_mileage
+      min_value: 20000
+      max_value: 80000
+
+    changes:
+    - table_name: [vehicles]
+      column_names: [car_supplier]
+      categorical_values: [AYVENS, Athlon]
+
+    - table_name: [vehicles]
+      column_names: [assignment_type]
+      categorical_values: [SERVICE_VEHICLE]
+
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Services Généraux > RH/Finance
+        - Groupe Company > Services Généraux > Direction
+
+    - table_name: [vehicle_associations]
+      column_names: [daily_participation]
+      categorical_values: 
+        - 0
+
+    - table_name: [train_planes, rental_cars, hotels]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.4]
+      conditions:
+      - table_name: [train_planes, rental_cars, hotels]
+        column_name: billing_date
+        min_value: '2023-01-01'
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.9]
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      categorical_values : [0]
+      conditions:
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - COMPANY_CAR_TAX
+
+
+  - nb_sampling: 750
+    conditions: 
+    - table_name: [vehicles]
+      column_name: rebate_price
+      min_value: 30000
+      max_value: 45000
+    - table_name: [vehicles]
+      column_name: vehicle_status
+      categorical_values: [ACTIVE, CLOSED]
+    - table_name: [vehicles]
+      column_name: contract_type
+      categorical_values: [LLD]
+    changes:
+    - table_name: [vehicles]
+      column_names: [car_supplier]
+      categorical_values: [AYVENS, AYVENS, LeasePlan]
+    - table_name: [vehicles]
+      column_names: [make]
+      categorical_values: [RENAULT]
+    - table_name: [vehicles]
+      column_names: [model]
+      categorical_values: [TRAFIC]
+    - table_name: [vehicles]
+      column_names: [model_category]
+      categorical_values: [UTILITY]
+    - table_name: [vehicles]
+      column_names: [assignment_type]
+      categorical_values: [SERVICE_VEHICLE]
+    - table_name: [vehicles]
+      column_names: [fiscal_type]
+      categorical_values: [UTILITY_CAR]
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Allemagne
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Suisse
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Benelux
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Espagne
+
+    - table_name: [vehicle_associations]
+      column_names: [daily_participation]
+      categorical_values: 
+        - 0
+
+    - table_name: [train_planes, rental_cars, hotels]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.4]
+      conditions:
+      - table_name: [train_planes, rental_cars, hotels]
+        column_name: billing_date
+        min_value: '2023-01-01'
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.9]
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      categorical_values : [0]
+      conditions:
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - COMPANY_CAR_TAX
+
+    - table_name: [taxes]
+      column_names: [tax_CO2_emission]
+      categorical_values : [0]
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.2]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.2]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2024-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.4]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2022-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values: 
+          - INSURANCE_DEDUCTIBLE_COST
+          - REAL_RESTITUTION
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.4]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values: 
+          - INSURANCE_DEDUCTIBLE_COST
+          - REAL_RESTITUTION
+          - INSURANCE_VEHICLE
+
+  - nb_sampling: 750
+    conditions: 
+    - table_name: [vehicles]
+      column_name: rebate_price
+      min_value: 30000
+      max_value: 45000
+    - table_name: [vehicles]
+      column_name: vehicle_status
+      categorical_values: [ACTIVE, CLOSED]
+    - table_name: [vehicles]
+      column_name: contract_type
+      categorical_values: [LLD]
+    changes:
+    - table_name: [vehicles]
+      column_names: [car_supplier]
+      categorical_values: [AYVENS, AYVENS, LeasePlan]
+    - table_name: [vehicles]
+      column_names: [make]
+      categorical_values: [CITROEN]
+    - table_name: [vehicles]
+      column_names: [model]
+      categorical_values: [JUMPY]
+    - table_name: [vehicles]
+      column_names: [model_category]
+      categorical_values: [UTILITY]
+    - table_name: [vehicles]
+      column_names: [assignment_type]
+      categorical_values: [SERVICE_VEHICLE]
+    - table_name: [vehicles]
+      column_names: [fiscal_type]
+      categorical_values: [UTILITY_CAR]
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Allemagne
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Suisse
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Benelux
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Espagne
+
+    - table_name: [vehicle_associations]
+      column_names: [daily_participation]
+      categorical_values: 
+        - 0
+
+    - table_name: [train_planes, rental_cars, hotels]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.4]
+      conditions:
+      - table_name: [train_planes, rental_cars, hotels]
+        column_name: billing_date
+        min_value: '2023-01-01'
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.9]
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      categorical_values : [0]
+      conditions:
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - COMPANY_CAR_TAX
+
+    - table_name: [taxes]
+      column_names: [tax_CO2_emission]
+      categorical_values : [0]
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.2]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.2]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2024-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.4]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2022-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values: 
+          - INSURANCE_DEDUCTIBLE_COST
+          - REAL_RESTITUTION
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.4]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values: 
+          - INSURANCE_DEDUCTIBLE_COST
+          - REAL_RESTITUTION
+          - INSURANCE_VEHICLE
+
+
+  - nb_sampling: 200
+    conditions: 
+    - table_name: [vehicles]
+      column_name: rebate_price
+      min_value: 30000
+      max_value: 45000
+    - table_name: [vehicles]
+      column_name: vehicle_status
+      categorical_values: [ACTIVE, CLOSED]
+    - table_name: [vehicles]
+      column_name: contract_type
+      categorical_values: [LLD]
+    - table_name: [vehicles]
+      column_name: lease_start_date
+      min_value: '2023-01-01'
+    changes:
+    - table_name: [vehicles]
+      column_names: [car_supplier]
+      categorical_values: [AYVENS, AYVENS, LeasePlan]
+    - table_name: [vehicles]
+      column_names: [make]
+      categorical_values: [FIAT]
+    - table_name: [vehicles]
+      column_names: [model]
+      categorical_values: [TALENTO]
+    - table_name: [vehicles]
+      column_names: [model_category]
+      categorical_values: [UTILITY]
+    - table_name: [vehicles]
+      column_names: [assignment_type]
+      categorical_values: [SERVICE_VEHICLE]
+    - table_name: [vehicles]
+      column_names: [fiscal_type]
+      categorical_values: [UTILITY_CAR]
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Allemagne
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Suisse
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Benelux
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Espagne
+
+    - table_name: [vehicle_associations]
+      column_names: [daily_participation]
+      categorical_values: 
+        - 0
+
+    - table_name: [train_planes, rental_cars, hotels]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.4]
+      conditions:
+      - table_name: [train_planes, rental_cars, hotels]
+        column_name: billing_date
+        min_value: '2023-01-01'
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.9]
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      categorical_values : [0]
+      conditions:
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - COMPANY_CAR_TAX
+
+    - table_name: [taxes]
+      column_names: [tax_CO2_emission]
+      categorical_values : [0]
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.2]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.2]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2024-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.4]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2022-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values: 
+          - INSURANCE_DEDUCTIBLE_COST
+          - REAL_RESTITUTION
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.4]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values: 
+          - INSURANCE_DEDUCTIBLE_COST
+          - REAL_RESTITUTION
+          - INSURANCE_VEHICLE
+
+  - nb_sampling: 200
+    conditions: 
+    - table_name: [vehicles]
+      column_name: rebate_price
+      min_value: 30000
+      max_value: 45000
+    - table_name: [vehicles]
+      column_name: vehicle_status
+      categorical_values: [ACTIVE, CLOSED]
+    - table_name: [vehicles]
+      column_name: contract_type
+      categorical_values: [LLD]
+    - table_name: [vehicles]
+      column_name: lease_start_date
+      min_value: '2024-01-01'
+    changes:
+    - table_name: [vehicles]
+      column_names: [car_supplier]
+      categorical_values: [AYVENS, AYVENS, LeasePlan]
+    - table_name: [vehicles]
+      column_names: [make]
+      categorical_values: [FIAT]
+    - table_name: [vehicles]
+      column_names: [model]
+      categorical_values: [TALENTO]
+    - table_name: [vehicles]
+      column_names: [model_category]
+      categorical_values: [UTILITY]
+    - table_name: [vehicles]
+      column_names: [assignment_type]
+      categorical_values: [SERVICE_VEHICLE]
+    - table_name: [vehicles]
+      column_names: [fiscal_type]
+      categorical_values: [UTILITY_CAR]
+    - table_name: [employees, taxes, vehicles, expenses]
+      column_names: [business_unit]
+      categorical_values: 
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Paris
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Marseille
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Annecy
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Lyon
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nantes
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Bordeaux
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Tours
+        - Groupe Company > Business Unit 1 > Business Unit 1 - La Rochelle
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Nice
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Calais
+        - Groupe Company > Business Unit 1 > Business Unit 1 - Rungis
+
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Nord
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Est
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Ouest
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Sud
+        - Groupe Company > Business Unit 2 > Business Unit 2 - Centre
+        - Groupe Company > Business Unit 2 > Business Unit 2 - IDF
+
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Allemagne
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Suisse
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Benelux
+        - Groupe Company > Business Unit 3 > Business Unit 3 - Espagne
+
+    - table_name: [vehicle_associations]
+      column_names: [daily_participation]
+      categorical_values: 
+        - 0
+
+    - table_name: [train_planes, rental_cars, hotels]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.4]
+      conditions:
+      - table_name: [train_planes, rental_cars, hotels]
+        column_name: billing_date
+        min_value: '2023-01-01'
+
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [0.9]
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      categorical_values : [0]
+      conditions:
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - COMPANY_CAR_TAX
+
+    - table_name: [taxes]
+      column_names: [tax_CO2_emission]
+      categorical_values : [0]
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.2]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP98
+          - SP95_E10
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [quantity, amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.2]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2024-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values:
+          - SP95
+          - SP95_E10
+          - SP98
+          - SP100
+          - DIESEL
+          - B10
+          - B20
+          - LPG
+          - DEFAULT_GAZ
+          - E85
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.4]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2022-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values: 
+          - INSURANCE_DEDUCTIBLE_COST
+          - REAL_RESTITUTION
+
+    - table_name: [expenses]
+      column_names: [amount_tax_exc, net_amount, deductible_vat]
+      relative_changes : [1.4]
+      conditions:
+      - table_name: [expenses]
+        column_name: billing_date
+        min_value: '2023-01-01'
+      - table_name: [expenses]
+        column_name: soongo_category
+        categorical_values: 
+          - INSURANCE_DEDUCTIBLE_COST
+          - REAL_RESTITUTION
+          - INSURANCE_VEHICLE
