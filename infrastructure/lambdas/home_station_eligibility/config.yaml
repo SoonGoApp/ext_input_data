@@ -1,0 +1,10 @@
+database:
+  schema: publ
+
+tables:
+  input:
+    collaborators_table: collaborators
+
+  output:
+    geocode_table: collaborators_geocode
+    eligibility_table: collaborators_home_electric_station_eligibility
