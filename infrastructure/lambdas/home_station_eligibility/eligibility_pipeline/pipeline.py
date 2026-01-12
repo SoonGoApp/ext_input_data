@@ -5,7 +5,7 @@ from eligibility_pipeline.logger import get_logger
 
 
 logger = get_logger("Pipeline")
-rows_nb = None
+rows_nb = 20
 
 
 
