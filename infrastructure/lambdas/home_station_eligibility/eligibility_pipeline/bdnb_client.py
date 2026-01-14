@@ -1,8 +1,9 @@
 import requests
-from eligibility_pipeline.logger import get_logger
+from soongo_data.utils.logging_utils import gen_logger
 
 
-logger = get_logger("BDNB_Client")
+
+logger = gen_logger("BDNB_Client")
 
 REQUEST_TIMEOUT = 10
 MAX_RETRIES = 3

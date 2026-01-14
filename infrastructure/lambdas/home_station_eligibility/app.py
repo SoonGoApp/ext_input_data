@@ -2,7 +2,7 @@ import os
 import yaml
 import traceback
 from eligibility_pipeline import run_pipeline
-from eligibility_pipeline.logger import get_logger
+from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.secrets_utils import get_local_secret
 from soongo_data.utils.aws import send_ses_email
 
@@ -10,7 +10,7 @@ from soongo_data.utils.aws import send_ses_email
 def lambda_handler(context):
 
     try:
-        logger = get_logger("Lambda_handler")
+        logger = gen_logger("Lambda_handler")
 
         logger.info("Starting eligibility pipeline lambda")
 
@@ -32,17 +32,6 @@ def lambda_handler(context):
         )
 
         logger.info("Home Station Eligibility pipeline finished successfully")
-
-        send_ses_email(
-            sender_email="infra@soongo.co",
-            recipient_email="data@soongo.co",
-            subject="Alert: Success on Home Station Eligibility pipeline",
-            
-            body_text=(
-                f"Home Station Eligibility pipeline finished successfully"
-            ),
-            logger=logger,
-        )
 
         return {
             "status": "success"
@@ -68,4 +57,3 @@ if __name__ == "__main__":
     lambda_handler(
         context=None,
     )
-
