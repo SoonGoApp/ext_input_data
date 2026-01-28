@@ -21,3 +21,4 @@ RUN pip install --no-cache-dir --timeout=120 -r requirements_docker.txt -t ${LAM
 
 # Set the CMD to your Lambda handler
 CMD ["app.lambda_handler"]
+

@@ -8,7 +8,7 @@ logger = gen_logger("Pipeline")
 rows_nb = 20
 
 
-def geocode_pipeline(config: dict, df: pd.DataFrame, process_type: str):
+def geocode_pipeline(config: dict, df: pd.DataFrame, process_type: str) -> pd.DataFrame:
     try:
         results = []
         
@@ -38,13 +38,15 @@ def geocode_pipeline(config: dict, df: pd.DataFrame, process_type: str):
 
         logger.info(f"{process_type.upper()} Geocode Pipeline completed – {len(output_df)} rows {process_type}ed")
 
+        return output_df
+    
     except Exception as e:
         logger.exception(f"{process_type.upper()} Geocode Pipeline - Failed to run Geocode, Exception: {e}")
         raise
 
 
 
-def home_stattion_eligibility_pipeline(config: dict, df: pd.DataFrame, process_type: str):
+def home_stattion_eligibility_pipeline(config: dict, df: pd.DataFrame, process_type: str) -> pd.DataFrame:
     try:
         results = []
 
@@ -88,6 +90,8 @@ def home_stattion_eligibility_pipeline(config: dict, df: pd.DataFrame, process_t
 
         logger.info(f"{process_type.upper()} Eligibility Pipeline completed – {len(output_df)} rows {process_type}ed, {len(output_df_processed)} rows processed")
 
+        return output_df 
+    
     except Exception as e:
         logger.exception(f"{process_type.upper()} Eligibility Pipeline - Failed to run Eligibility, Exception: {e}")
         raise
