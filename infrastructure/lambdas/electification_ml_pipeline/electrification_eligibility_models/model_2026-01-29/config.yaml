@@ -1,0 +1,8 @@
+feature_selection:
+  method: importance
+  top_n_features: 30
+model_type: random_forest
+models_dir: electrification_eligibility_models
+random_state: 42
+target_threshold_km: 300.0
+test_size: 0.3

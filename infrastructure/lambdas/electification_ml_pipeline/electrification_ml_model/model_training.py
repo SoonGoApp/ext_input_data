@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import json
+import yaml
 from typing import Dict, Tuple, Optional, Any
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import StandardScaler, LabelEncoder
@@ -18,7 +19,9 @@ from sklearn.metrics import (
 from datetime import datetime
 from pathlib import Path
 from soongo_data.utils.logging_utils import gen_logger
-from electification_ml_pipeline.electrification_ml_model.feature_engineering import FeatureEngineer
+from soongo_data.utils.aws import push_folder_to_s3
+
+
 
 logger = gen_logger('Model_Training')
 
@@ -37,7 +40,6 @@ class ElectrificationModel:
         self.model_type = self.config.get('model_type', 'random_forest')
         self.model = None
         self.scaler = StandardScaler()
-        self.feature_engineer = FeatureEngineer(config=self.config)
         self.label_encoders = {}
         self.feature_names = None
         self.categorical_features = []
@@ -332,7 +334,8 @@ class ElectrificationModel:
     
 
 
-    def save_model(self, path: str):
+    def save_model(self, path: str, results: dict, config: dict):
+
         """Save model and preprocessors to disk (secure format)."""
 
         model_path = Path(path)
@@ -378,6 +381,29 @@ class ElectrificationModel:
             json.dump(metadata, f, indent=2)
 
         logger.info(f"Model saved to {model_path}")
+
+
+        # Save results
+        results_path = model_path / 'training_results.json'
+        with open(results_path, 'w') as f:
+            json.dump(results, f, indent=2, default=str)
+        
+        logger.info(f"Training results saved to {results_path}")
+        
+        # Save config used
+        config_path = model_path / 'config.yaml'
+        with open(config_path, 'w') as f:
+            yaml.dump(config, f)
+        
+        logger.info(f"Configuration saved to {config_path}")
+
+        push_folder_to_s3(
+            local_dir=model_path,
+            s3_prefix=model_path,
+            bucket_name=config["bucket_name"]
+        )
+
+        logger.info(f"Model uploaded to {config["bucket_name"]}")
     
 
 
@@ -453,7 +479,7 @@ class ElectrificationModel:
         logger.info("="*60)
         
         # Select features
-        feature_list = self.feature_engineer.select_features(features)
+        feature_list = features.columns
         logger.info(f"Using {len(feature_list)} features")
         
         # Prepare data

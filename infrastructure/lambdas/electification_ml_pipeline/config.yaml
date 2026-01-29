@@ -1,5 +1,8 @@
 # Output directories
-models_dir: "models"
+models_dir: "electrification_eligibility_models"
+
+# Bucket Name
+bucket_name: "soongo-staging-ml-models"
 
 # Model configuration
 model_type: "random_forest" # Options: random_forest, gradient_boosting, logistic

@@ -4,13 +4,12 @@ import json
 from pathlib import Path
 from datetime import datetime
 from soongo_data.utils.logging_utils import gen_logger
-from electification_ml_pipeline.electrification_ml_model.data_pipeline import DataLoader
-from electification_ml_pipeline.electrification_ml_model.feature_engineering import FeatureEngineer
-from electification_ml_pipeline.electrification_ml_model.model_training import ElectrificationModel
+from electrification_ml_model.data_pipeline import DataLoader
+from electrification_ml_model.model_training import ElectrificationModel
+
 
 
 logger = gen_logger('Train_model')
-
 
 class TrainingPipeline:
     """Orchestrates the complete training pipeline."""
@@ -18,12 +17,10 @@ class TrainingPipeline:
     def __init__(self, config: dict):
 
         self.config = config
-        self.feature_engineer = FeatureEngineer(config=self.config)
         self.data_loader = DataLoader()
         self.model = ElectrificationModel(config=self.config)
         self.results = {}
     
-
     def setup(self):
         """Setup pipeline components."""
         logger.info("="*60)
@@ -46,23 +43,11 @@ class TrainingPipeline:
         logger.info("="*60)
         
         # Save model
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        model_dir = Path(self.config['models_dir']) / 'model'
-        self.model.save_model(str(model_dir))
+        timestamp = datetime.now().strftime('%Y-%m-%d')
+        model_dir = Path(self.config['models_dir']) / f'model_{timestamp}'
         
-        # Save results
-        results_path = model_dir / 'training_results.json'
-        with open(results_path, 'w') as f:
-            json.dump(self.results, f, indent=2, default=str)
         
-        logger.info(f"Training results saved to {results_path}")
-        
-        # Save config used
-        config_path = model_dir / 'config.yaml'
-        with open(config_path, 'w') as f:
-            yaml.dump(self.config, f)
-        
-        logger.info(f"Configuration saved to {config_path}")
+        self.model.save_model(str(model_dir), self.results, self.config)
         
         return model_dir
     
@@ -75,20 +60,16 @@ class TrainingPipeline:
             self.setup()
             
             # Load data
-            tables = self.data_loader.load_all_tables()
-            
+            df = self.data_loader.load_data()
+            print(df.shape, df.columns)
+
             # Create features
-            features = self.feature_engineer.create_features(tables)
-            
+            features = df.drop(columns=['target'])
             # Create target
-            target = self.feature_engineer.create_target(tables)
+            target = df[['vehicle_id', 'target']]
             
             # Train model
             self.results = self.model.train_model(features, target)
-            
-            # Generate evaluation figures
-            # model_dir = Path(self.config['models_dir']) / "figures"
-            # self.generate_evaluation_figures(self.X_test, self.y_test, model_dir)
             
             # Save artifacts
             model_dir = self.save_artifacts()
@@ -104,9 +85,6 @@ class TrainingPipeline:
             logger.error(f"Pipeline failed: {e}", exc_info=True)
             raise
         
-
-
-
 
 
 def run_pipeline(config: dict):

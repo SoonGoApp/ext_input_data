@@ -1,0 +1,151 @@
+{
+  "train_metrics": {
+    "cv_auc_mean": 0.919006734006734,
+    "cv_auc_std": 0.03620383580804728,
+    "cv_ap_mean": 0.9926646344085025,
+    "cv_ap_std": 0.003928329468460116,
+    "train_auc": 0.9760338345864663,
+    "train_average_precision": 0.9980021467867154,
+    "val_auc": 0.8646907216494846,
+    "val_average_precision": 0.9877536875520166
+  },
+  "test_metrics": {
+    "test_auc": 0.8646907216494846,
+    "test_average_precision": 0.9877536875520166,
+    "confusion_matrix": [
+      [
+        5,
+        3
+      ],
+      [
+        16,
+        81
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.23809523809523808,
+        "recall": 0.625,
+        "f1-score": 0.3448275862068966,
+        "support": 8.0
+      },
+      "1": {
+        "precision": 0.9642857142857143,
+        "recall": 0.8350515463917526,
+        "f1-score": 0.8950276243093923,
+        "support": 97.0
+      },
+      "accuracy": 0.819047619047619,
+      "macro avg": {
+        "precision": 0.6011904761904762,
+        "recall": 0.7300257731958764,
+        "f1-score": 0.6199276052581444,
+        "support": 105.0
+      },
+      "weighted avg": {
+        "precision": 0.9089569160997732,
+        "recall": 0.819047619047619,
+        "f1-score": 0.853107621406345,
+        "support": 105.0
+      }
+    }
+  },
+  "feature_importance": [
+    {
+      "feature": "expense_amount_tax_exc_std",
+      "importance": 0.1731077699577432
+    },
+    {
+      "feature": "expense_amount_tax_exc_mean",
+      "importance": 0.14896895028219914
+    },
+    {
+      "feature": "monthly_expense_avg",
+      "importance": 0.1471008013575257
+    },
+    {
+      "feature": "energy_type",
+      "importance": 0.13335495064133093
+    },
+    {
+      "feature": "fuel_amount_tax_exc_mean",
+      "importance": 0.058807227704946036
+    },
+    {
+      "feature": "expense_amount_tax_exc_sum",
+      "importance": 0.04892538841807814
+    },
+    {
+      "feature": "fiscal_power_num",
+      "importance": 0.044368339187993815
+    },
+    {
+      "feature": "fuel_amount_tax_exc_sum",
+      "importance": 0.037288300790527085
+    },
+    {
+      "feature": "fuel_days_between_min",
+      "importance": 0.03359854246716205
+    },
+    {
+      "feature": "fuel_days_between_mean",
+      "importance": 0.033141808997695935
+    },
+    {
+      "feature": "vehicle_age_years",
+      "importance": 0.029955326419494988
+    },
+    {
+      "feature": "toll_max_amount",
+      "importance": 0.024645842757474345
+    },
+    {
+      "feature": "toll_mean_amount",
+      "importance": 0.018721726637110653
+    },
+    {
+      "feature": "lease_duration_months",
+      "importance": 0.017845653653631256
+    },
+    {
+      "feature": "toll_total_amount",
+      "importance": 0.014928445498174542
+    },
+    {
+      "feature": "fuel_quantity_sum",
+      "importance": 0.01340752359756175
+    },
+    {
+      "feature": "toll_count",
+      "importance": 0.008057649977506303
+    },
+    {
+      "feature": "fuel_refill_count",
+      "importance": 0.0074407303966292655
+    },
+    {
+      "feature": "fuel_amount_tax_exc_count",
+      "importance": 0.0063350212572149
+    },
+    {
+      "feature": "fuel_refill_close_ratio",
+      "importance": 0.0
+    },
+    {
+      "feature": "motor_power_num",
+      "importance": 0.0
+    },
+    {
+      "feature": "assignment_type",
+      "importance": 0.0
+    },
+    {
+      "feature": "fiscal_type",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_active",
+      "importance": 0.0
+    }
+  ]
+}
