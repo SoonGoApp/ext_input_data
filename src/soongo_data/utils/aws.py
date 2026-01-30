@@ -7,12 +7,15 @@ import os
 import re
 import typing
 import urllib
-from datetime import datetime
+from datetime import datetime, timezone
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from io import BytesIO, StringIO
 import zipfile
+from typing import Optional
+from collections import defaultdict
+
 
 import pandas as pd
 
@@ -457,3 +460,70 @@ def read_file_from_s3(bucket_name: str, object_key: str, encoding: str) -> str |
     except (BotoCoreError, ClientError, UnicodeDecodeError) as e:
         print(f"Error reading file from S3: {e}")
         return None
+
+
+
+def get_most_recent_s3_model_name(
+    bucket_name: str,
+    prefix: str,
+    region_name: str = "eu-west-3",
+) -> Optional[str]:
+    """
+    Return the most recent folder name under an S3 prefix.
+    """
+    s3 = boto3.client("s3", region_name=region_name)
+
+    paginator = s3.get_paginator("list_objects_v2")
+    pages = paginator.paginate(Bucket=bucket_name, Prefix=prefix)
+
+    folder_last_modified = defaultdict(
+        lambda: datetime.min.replace(tzinfo=timezone.utc)
+    )
+
+    for page in pages:
+        for obj in page.get("Contents", []):
+            key = obj["Key"]
+
+            if key.endswith("/"):
+                continue
+
+            relative_path = key[len(prefix):].lstrip("/")
+            folder_name = relative_path.split("/", 1)[0]
+
+            last_modified = obj["LastModified"] 
+
+            if last_modified > folder_last_modified[folder_name]:
+                folder_last_modified[folder_name] = last_modified
+
+    if not folder_last_modified:
+        return None
+
+    return max(folder_last_modified, key=folder_last_modified.get)
+
+
+
+
+def pull_folder_from_s3(
+    s3_prefix: str,
+    local_dir: str,
+    bucket_name: str,
+    region_name: str = "eu-west-3",
+) -> None:
+    """
+    Download a folder from S3 recursively to a local directory using static credentials.
+    """
+    s3 = boto3.client("s3", region_name=region_name)
+
+    os.makedirs(local_dir, exist_ok=True)
+
+    paginator = s3.get_paginator("list_objects_v2")
+    for page in paginator.paginate(Bucket=bucket_name, Prefix=s3_prefix):
+        for obj in page.get("Contents", []):
+            s3_key = obj["Key"]
+
+            relative_path = os.path.relpath(s3_key, s3_prefix)
+            local_path = os.path.join(local_dir, relative_path)
+
+            os.makedirs(os.path.dirname(local_path), exist_ok=True)
+
+            s3.download_file(bucket_name, s3_key, local_path)
