@@ -457,3 +457,34 @@ def read_file_from_s3(bucket_name: str, object_key: str, encoding: str) -> str |
     except (BotoCoreError, ClientError, UnicodeDecodeError) as e:
         print(f"Error reading file from S3: {e}")
         return None
+
+
+
+def push_folder_to_s3(
+    local_dir: str,
+    s3_prefix: str,
+    bucket_name: str,
+    region_name: str = "eu-west-3",
+) -> None:
+    """
+    Upload a local folder recursively to S3 using default boto3 credentials,
+    then delete the local folder.
+
+    :param local_dir: Local directory to upload.
+    :param s3_prefix: S3 prefix (folder) to upload into.
+    :param bucket_name: Name of the S3 bucket.
+    :param region_name: AWS region of the bucket.
+    """
+    s3 = boto3.client("s3", region_name=region_name)
+
+    for root, _, files in os.walk(local_dir):
+        for file in files:
+            local_path = os.path.join(root, file)
+            relative_path = os.path.relpath(local_path, local_dir)
+            s3_key = f"{s3_prefix}/{relative_path}".replace("\\", "/")
+
+            try:
+                s3.upload_file(local_path, bucket_name, s3_key)
+                print(f"Uploaded {local_path} -> s3://{bucket_name}/{s3_key}")
+            except Exception as e:
+                print(f"Failed to upload {local_path}: {e}")
