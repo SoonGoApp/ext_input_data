@@ -3,10 +3,11 @@ from eligibility_pipeline.bdnb_client import get_cle_interop_adr, get_building_u
 import eligibility_pipeline.repository as rp
 from soongo_data.utils.logging_utils import gen_logger
 
+
 logger = gen_logger("Pipeline")
 
 
-def home_stattion_eligibility_pipeline(config: dict, df: pd.DataFrame, process_type: str) -> pd.DataFrame:
+def home_station_eligibility_pipeline(config: dict, df: pd.DataFrame, process_type: str) -> pd.DataFrame:
     try:
         rows_nb = config['nb_rows_to_process']
 
@@ -48,13 +49,11 @@ def home_stattion_eligibility_pipeline(config: dict, df: pd.DataFrame, process_t
         raise
 
 
-
-
 # MAIN PIPELINE
 def run_pipeline(config: dict):
     # Pipeline for New Collaborators # INSERT
     collaborators_source_df = rp.get_collaborators_to_process(config=config)
-    home_stattion_eligibility_pipeline(
+    home_station_eligibility_pipeline(
         config=config,
         df=collaborators_source_df,
         process_type='insert'
@@ -63,7 +62,7 @@ def run_pipeline(config: dict):
     # Pipeline for Collaborators with new Address # UPDATE
     collaborators_to_update_df = rp.get_collaborators_to_update(config=config)
     if collaborators_to_update_df.shape[0] != 0:
-        home_stattion_eligibility_pipeline(
+        home_station_eligibility_pipeline(
             config=config,
             df=collaborators_to_update_df,
             process_type='update'

@@ -12,7 +12,6 @@ engine = gen_engine(
     database_url=os.environ["DATABASE_URL"]
 )
 
-
 def insert_collaborators_eligibility_data(config: dict, df: pd.DataFrame, process_type: str):
     try:
         SCHEMA = config["database"]["schema"]
@@ -50,7 +49,6 @@ def insert_collaborators_eligibility_data(config: dict, df: pd.DataFrame, proces
         raise
 
 
-
 def ensure_tables_exist(config: dict):
     try:
         SCHEMA = config["database"]["schema"]
@@ -76,7 +74,6 @@ def ensure_tables_exist(config: dict):
         raise
 
 
-
 def get_collaborators_to_process(config: dict, limit: int | None = None) -> pd.DataFrame:
     try:
         SCHEMA = config["database"]["schema"]
@@ -86,61 +83,39 @@ def get_collaborators_to_process(config: dict, limit: int | None = None) -> pd.D
         ensure_tables_exist(config=config)
 
         query = rf"""
-        SELECT
-            c.id,
-
-            CASE
-                WHEN s.street_part IS NULL
-                    OR TRIM(s.street_part) = ''
-                    OR s.street_part !~ '[A-ZÀ-ÖØ-öø-ÿ]'
-                THEN NULL
-                ELSE UPPER(
-                    TRIM(
-                        s.street_part || ' ' ||
-                        COALESCE(s.postal_code, '') || ' ' ||
-                        COALESCE(s.city, '')
-                    )
-                )
-            END AS full_address
-
-        FROM {SCHEMA}.{COLLABORATORS_TABLE} c
-
-        LEFT JOIN {SCHEMA}.{ELIGIBILITY_TABLE} e
-            ON c.id = e.collaborator_id
-
-        LEFT JOIN (
+        WITH cleaned_addresses AS (
             SELECT
-                c2.id,
-
-                /* cleaned postal code */
+                c.id,
+                
+                -- Cleaned postal code
                 REGEXP_REPLACE(
-                    REGEXP_REPLACE(TRIM(c2.personal_postal_code), '[\r\n\t]+', ' ', 'g'),
+                    REGEXP_REPLACE(TRIM(c.personal_postal_code), '[\r\n\t]+', ' ', 'g'),
                     '\s{2,}', ' ',
                     'g'
                 ) AS postal_code,
 
-                /* cleaned city */
+                -- Cleaned city
                 REGEXP_REPLACE(
-                    REGEXP_REPLACE(TRIM(c2.personal_city), '[\r\n\t]+', ' ', 'g'),
+                    REGEXP_REPLACE(TRIM(c.personal_city), '[\r\n\t]+', ' ', 'g'),
                     '\s{2,}', ' ',
                     'g'
                 ) AS city,
 
-                /* street_part logic */
+                -- Street part logic
                 CASE
-                    WHEN COALESCE(TRIM(c2.personal_address), '') = ''
-                        AND COALESCE(TRIM(c2.personal_street_name), '') <> ''
+                    WHEN COALESCE(TRIM(c.personal_address), '') = ''
+                        AND COALESCE(TRIM(c.personal_street_name), '') <> ''
                         AND COALESCE(
-                            TRIM(REGEXP_REPLACE(c2.personal_street_number::text, '\.0$', '')),
+                            TRIM(REGEXP_REPLACE(c.personal_street_number::text, '\.0$', '')),
                             ''
                         ) <> ''
                     THEN
                         REGEXP_REPLACE(
                             REGEXP_REPLACE(
                                 CONCAT(
-                                    REGEXP_REPLACE(c2.personal_street_number::text, '\.0$', ''),
+                                    REGEXP_REPLACE(c.personal_street_number::text, '\.0$', ''),
                                     ' ',
-                                    TRIM(c2.personal_street_name)
+                                    TRIM(c.personal_street_name)
                                 ),
                                 '[\r\n\t]+', ' ', 'g'
                             ),
@@ -148,20 +123,40 @@ def get_collaborators_to_process(config: dict, limit: int | None = None) -> pd.D
                             'g'
                         )
 
-                    WHEN COALESCE(TRIM(c2.personal_address), '') ~ '^[0-9]+'
+                    WHEN COALESCE(TRIM(c.personal_address), '') ~ '^[0-9]+'
                     THEN
                         REGEXP_REPLACE(
-                            REGEXP_REPLACE(TRIM(c2.personal_address), '[\r\n\t]+', ' ', 'g'),
+                            REGEXP_REPLACE(TRIM(c.personal_address), '[\r\n\t]+', ' ', 'g'),
                             '\s{2,}', ' ',
                             'g'
                         )
 
                     ELSE NULL
                 END AS street_part
+                
+            FROM {SCHEMA}.{COLLABORATORS_TABLE} c
+        )
+        SELECT
+            ca.id,
+            
+            CASE
+                WHEN ca.street_part IS NULL
+                    OR TRIM(ca.street_part) = ''
+                    OR ca.street_part !~ '[A-ZÀ-ÖØ-öø-ÿ]'
+                THEN NULL
+                ELSE UPPER(
+                    TRIM(
+                        ca.street_part || ' ' ||
+                        COALESCE(ca.postal_code, '') || ' ' ||
+                        COALESCE(ca.city, '')
+                    )
+                )
+            END AS full_address
 
-            FROM {SCHEMA}.{COLLABORATORS_TABLE} c2
-        ) s
-            ON s.id = c.id
+        FROM cleaned_addresses ca
+
+        LEFT JOIN {SCHEMA}.{ELIGIBILITY_TABLE} e
+            ON ca.id = e.collaborator_id
 
         WHERE e.collaborator_id IS NULL;
         """
@@ -183,7 +178,6 @@ def get_collaborators_to_process(config: dict, limit: int | None = None) -> pd.D
         raise
 
 
-
 def get_collaborators_to_update(config: dict, limit: int | None = None) -> pd.DataFrame:
     try:
 
@@ -192,54 +186,39 @@ def get_collaborators_to_update(config: dict, limit: int | None = None) -> pd.Da
         COLLABORATORS_TABLE = config["tables"]["input"]["collaborators_table"]
 
         query = rf"""
-        SELECT
-            c.id,
-            UPPER(
-                TRIM(
-                    s.street_part || ' ' ||
-                    COALESCE(s.postal_code, '') || ' ' ||
-                    COALESCE(s.city, '')
-                )
-            ) AS full_address
-
-        FROM {SCHEMA}.{COLLABORATORS_TABLE} c
-
-        INNER JOIN {SCHEMA}.{ELIGIBILITY_TABLE} e
-            ON c.id = e.collaborator_id
-
-        INNER JOIN (
+        WITH cleaned_addresses AS (
             SELECT
-                c2.id,
-
+                c.id,
+                
                 -- Clean postal code
                 REGEXP_REPLACE(
-                    REGEXP_REPLACE(TRIM(c2.personal_postal_code), '[\r\n\t]+', ' ', 'g'),
+                    REGEXP_REPLACE(TRIM(c.personal_postal_code), '[\r\n\t]+', ' ', 'g'),
                     '\s{2,}', ' ',
                     'g'
                 ) AS postal_code,
 
                 -- Clean city
                 REGEXP_REPLACE(
-                    REGEXP_REPLACE(TRIM(c2.personal_city), '[\r\n\t]+', ' ', 'g'),
+                    REGEXP_REPLACE(TRIM(c.personal_city), '[\r\n\t]+', ' ', 'g'),
                     '\s{2,}', ' ',
                     'g'
                 ) AS city,
 
                 -- Compute street part
                 CASE
-                    WHEN COALESCE(TRIM(c2.personal_address), '') = ''
-                        AND COALESCE(TRIM(c2.personal_street_name), '') <> ''
+                    WHEN COALESCE(TRIM(c.personal_address), '') = ''
+                        AND COALESCE(TRIM(c.personal_street_name), '') <> ''
                         AND COALESCE(
-                            TRIM(REGEXP_REPLACE(c2.personal_street_number::text, '\.0$', '')),
+                            TRIM(REGEXP_REPLACE(c.personal_street_number::text, '\.0$', '')),
                             ''
                         ) <> ''
                     THEN
                         REGEXP_REPLACE(
                             REGEXP_REPLACE(
                                 CONCAT(
-                                    REGEXP_REPLACE(c2.personal_street_number::text, '\.0$', ''),
+                                    REGEXP_REPLACE(c.personal_street_number::text, '\.0$', ''),
                                     ' ',
-                                    TRIM(c2.personal_street_name)
+                                    TRIM(c.personal_street_name)
                                 ),
                                 '[\r\n\t]+', ' ', 'g'
                             ),
@@ -247,32 +226,45 @@ def get_collaborators_to_update(config: dict, limit: int | None = None) -> pd.Da
                             'g'
                         )
 
-                    WHEN COALESCE(TRIM(c2.personal_address), '') ~ '^[0-9]+'
+                    WHEN COALESCE(TRIM(c.personal_address), '') ~ '^[0-9]+'
                     THEN
                         REGEXP_REPLACE(
-                            REGEXP_REPLACE(TRIM(c2.personal_address), '[\r\n\t]+', ' ', 'g'),
+                            REGEXP_REPLACE(TRIM(c.personal_address), '[\r\n\t]+', ' ', 'g'),
                             '\s{2,}', ' ',
                             'g'
                         )
 
                     ELSE NULL
                 END AS street_part
+                
+            FROM {SCHEMA}.{COLLABORATORS_TABLE} c
+        )
+        SELECT
+            ca.id,
+            UPPER(
+                TRIM(
+                    ca.street_part || ' ' ||
+                    COALESCE(ca.postal_code, '') || ' ' ||
+                    COALESCE(ca.city, '')
+                )
+            ) AS full_address
 
-            FROM {SCHEMA}.{COLLABORATORS_TABLE} c2
-        ) s
-            ON s.id = c.id
+        FROM cleaned_addresses ca
+
+        INNER JOIN {SCHEMA}.{ELIGIBILITY_TABLE} e
+            ON ca.id = e.collaborator_id
 
         WHERE
             -- Computed full_address is valid
-            s.street_part IS NOT NULL
-            AND TRIM(s.street_part) <> ''
+            ca.street_part IS NOT NULL
+            AND TRIM(ca.street_part) <> ''
 
             -- And the address has changed
             AND TRIM(UPPER(e.personal_address)) <> UPPER(
                 TRIM(
-                    s.street_part || ' ' ||
-                    COALESCE(s.postal_code, '') || ' ' ||
-                    COALESCE(s.city, '')
+                    ca.street_part || ' ' ||
+                    COALESCE(ca.postal_code, '') || ' ' ||
+                    COALESCE(ca.city, '')
                 )
             );
         """
