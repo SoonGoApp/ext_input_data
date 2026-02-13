@@ -8,3 +8,5 @@ tables:
   output:
     geocode_table: collaborators_geocode
     eligibility_table: collaborators_home_electric_station_eligibility
+
+nb_rows_to_process: 20

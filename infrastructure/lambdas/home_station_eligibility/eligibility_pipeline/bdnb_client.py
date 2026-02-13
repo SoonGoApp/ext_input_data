@@ -9,7 +9,7 @@ MAX_RETRIES = 3
 BDNB_BASE_URL = "https://api.bdnb.io/v1/bdnb"
 
 
-def get_geocode_data(address: str) -> str | None:
+def get_cle_interop_adr(address: str) -> str | None:
     try:
         resp = requests.get(
             f"{BDNB_BASE_URL}/geocodage",
@@ -21,20 +21,18 @@ def get_geocode_data(address: str) -> str | None:
         features = resp.json().get("features", [])
         
         if len(features) == 0:
-            return None, None, None
+            return None
 
         cle_interop_adr = features[0]["properties"]["id"]
-        longitude = features[0]["geometry"]["coordinates"][0]
-        latitude = features[0]["geometry"]["coordinates"][1]
 
-        return cle_interop_adr, longitude, latitude
+        return cle_interop_adr
 
     except Exception as e:
         logger.exception(f"Failed to fetch geocode info, Exception: {e}")
         return None
 
 
-def get_building_infos(cle_interop_adr: str) -> str | None:
+def get_building_usage(cle_interop_adr: str) -> str | None:
     try:
         resp = requests.get(
             f"{BDNB_BASE_URL}/donnees/batiment_groupe_complet/adresse",
@@ -43,21 +41,15 @@ def get_building_infos(cle_interop_adr: str) -> str | None:
         )
 
         resp.raise_for_status()
-        
         data = resp.json()
 
         if len(data) != 0:
             data = data[0]
-
-            usage_batiment = data.get("usage_principal_bdnb_open")
-            type_batiment = data.get("type_batiment_dpe")
-            nb_logement = data.get("nb_log")
-            nb_niveau = data.get("nb_niveau")
-            s_geom = data.get("s_geom_groupe")
-            surface = data.get("surface_emprise_sol")
-
-            return usage_batiment, type_batiment, nb_logement, nb_niveau, s_geom, surface
-        return None, None, None, None, None, None
+            building_usage = data.get("usage_principal_bdnb_open")
+            
+            return building_usage
+        
+        return None
 
     except Exception as e:
         logger.exception(f"Failed to fetch building info, Exception: {e}")

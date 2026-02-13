@@ -6,115 +6,11 @@ from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.db import gen_engine
 
 
-
-
-
-
 logger = gen_logger("DB_INTERACTIONS")
 
 engine = gen_engine(
     database_url=os.environ["DATABASE_URL"]
 )
-
-
-
-def get_collaborators_geocode_to_process(config: dict, limit: int | None = None) -> pd.DataFrame:
-    try:
-        SCHEMA = config["database"]["schema"]
-        ELIGIBILITY_TABLE = config["tables"]["output"]["eligibility_table"]
-        GEOCODE_TABLE = config["tables"]["output"]["geocode_table"]
-
-        query = rf"""
-            SELECT g.collaborator_id,
-                g.cle_interop_adr,
-                g.personal_address
-            FROM {SCHEMA}.{GEOCODE_TABLE} g
-            LEFT JOIN {SCHEMA}.{ELIGIBILITY_TABLE} e
-                ON g.collaborator_id = e.collaborator_id
-            WHERE e.collaborator_id IS NULL
-        """
-
-        if limit:
-            query += " LIMIT :limit"
-
-        with engine.connect() as conn:
-            return pd.read_sql(
-                text(query),
-                conn,
-                params={"limit": limit} if limit else None
-            )
-    
-    except Exception as e:
-        logger.exception(f"Failed load geocode data, Exception: {e}")
-        raise
-
-
-def get_collaborators_geocode_to_update(config: dict, limit: int | None = None) -> pd.DataFrame:
-    try:
-        SCHEMA = config["database"]["schema"]
-        ELIGIBILITY_TABLE = config["tables"]["output"]["eligibility_table"]
-        GEOCODE_TABLE = config["tables"]["output"]["geocode_table"]
-
-        query = rf"""
-            SELECT g.collaborator_id,
-                   g.cle_interop_adr,
-                   g.personal_address
-            FROM {SCHEMA}.{GEOCODE_TABLE} g
-            INNER JOIN {SCHEMA}.{ELIGIBILITY_TABLE} e
-                ON g.collaborator_id = e.collaborator_id
-            WHERE g.personal_address IS DISTINCT FROM e.personal_address
-        """
-
-        if limit:
-            query += " LIMIT :limit"
-
-        with engine.connect() as conn:
-            return pd.read_sql(
-                text(query),
-                conn,
-                params={"limit": limit} if limit else None
-            )
-    
-    except Exception as e:
-        logger.exception(f"Failed load geocode data, Exception: {e}")
-        raise
-
-
-
-def insert_collaborators_geocode_data(config: dict, df: pd.DataFrame, process_type: str):
-    try:
-        SCHEMA = config["database"]["schema"]
-        GEOCODE_TABLE = config["tables"]["output"]["geocode_table"]
-
-        metadata = MetaData(schema=SCHEMA)
-        table = Table(GEOCODE_TABLE, metadata, autoload_with=engine)
-
-        with engine.begin() as conn:
-            if process_type == "insert":
-                stmt = insert(table)
-                conn.execute(stmt, df.to_dict(orient="records"))
-
-            elif process_type == "update":
-                stmt = pg_insert(table).values(df.to_dict(orient="records"))
-                stmt = stmt.on_conflict_do_update(
-                    index_elements=["collaborator_id"],
-                    set_={
-                        "personal_address": stmt.excluded.personal_address,
-                        "cle_interop_adr": stmt.excluded.cle_interop_adr,
-                        "longitude": stmt.excluded.longitude,
-                        "latitude": stmt.excluded.latitude,
-                        "source": stmt.excluded.source,
-                        "created_at": stmt.excluded.created_at,
-                    }
-                )
-                conn.execute(stmt)
-            else:
-                raise ValueError(f"Unknown process_type: {process_type}")
-
-    except Exception as e:
-        logger.exception(f"Failed insert/update geocode data, Exception: {e}")
-        raise
-
 
 
 def insert_collaborators_eligibility_data(config: dict, df: pd.DataFrame, process_type: str):
@@ -138,14 +34,8 @@ def insert_collaborators_eligibility_data(config: dict, df: pd.DataFrame, proces
                     index_elements=["collaborator_id"], 
                     set_={
                         "personal_address": stmt.excluded.personal_address,
-                        "eligibility_status": stmt.excluded.eligibility_status,
+                        "cle_interop_adr": stmt.excluded.cle_interop_adr,
                         "building_usage": stmt.excluded.building_usage,
-                        "building_type": stmt.excluded.building_type,
-                        "housing_units": stmt.excluded.housing_units,
-                        "building_levels": stmt.excluded.building_levels,
-                        "ground_surface": stmt.excluded.ground_surface,
-                        "total_surface": stmt.excluded.total_surface,
-                        "has_garden": stmt.excluded.has_garden,
                         "source": stmt.excluded.source,
                         "created_at": stmt.excluded.created_at,
                     }
@@ -165,22 +55,8 @@ def ensure_tables_exist(config: dict):
     try:
         SCHEMA = config["database"]["schema"]
         ELIGIBILITY_TABLE = config["tables"]["output"]["eligibility_table"]
-        GEOCODE_TABLE = config["tables"]["output"]["geocode_table"]
 
         with engine.begin() as conn:
-
-            conn.execute(text(rf"""
-                CREATE TABLE IF NOT EXISTS {SCHEMA}.{GEOCODE_TABLE} (
-                    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-                    collaborator_id UUID NOT NULL UNIQUE,
-                    personal_address TEXT,
-                    cle_interop_adr TEXT,
-                    longitude DOUBLE PRECISION,
-                    latitude DOUBLE PRECISION,
-                    source TEXT,
-                    created_at TIMESTAMP DEFAULT NOW()
-                );
-            """))
 
             conn.execute(text(rf"""
                 CREATE TABLE IF NOT EXISTS {SCHEMA}.{ELIGIBILITY_TABLE} (
@@ -188,14 +64,8 @@ def ensure_tables_exist(config: dict):
                     collaborator_id UUID NOT NULL UNIQUE,
 
                     personal_address TEXT,
-                    eligibility_status TEXT,
+                    cle_interop_adr TEXT,
                     building_usage TEXT,
-                    building_type TEXT,
-                    housing_units DOUBLE PRECISION,
-                    building_levels DOUBLE PRECISION,
-                    ground_surface DOUBLE PRECISION,
-                    total_surface DOUBLE PRECISION,
-                    has_garden TEXT,
                     source TEXT,
                     created_at TIMESTAMP DEFAULT NOW()
                 );
@@ -206,28 +76,6 @@ def ensure_tables_exist(config: dict):
         raise
 
 
-def cleanup_geocode_table(config: dict):
-    try:
-        SCHEMA = config["database"]["schema"]
-        ELIGIBILITY_TABLE = config["tables"]["output"]["eligibility_table"]
-        GEOCODE_TABLE = config["tables"]["output"]["geocode_table"]
-
-        with engine.begin() as conn:
-            conn.execute(text(rf"""
-                DELETE FROM {SCHEMA}.{GEOCODE_TABLE} g
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM {SCHEMA}.{ELIGIBILITY_TABLE} e
-                    WHERE e.collaborator_id = g.collaborator_id
-                );
-            """))
-
-    except Exception as e:
-        logger.exception(f"Failed to cleanup geocode table, Exception: {e}")
-        raise
-
-
-
 
 def get_collaborators_to_process(config: dict, limit: int | None = None) -> pd.DataFrame:
     try:
@@ -236,7 +84,6 @@ def get_collaborators_to_process(config: dict, limit: int | None = None) -> pd.D
         COLLABORATORS_TABLE = config["tables"]["input"]["collaborators_table"]
 
         ensure_tables_exist(config=config)
-        cleanup_geocode_table(config=config)
 
         query = rf"""
         SELECT
@@ -445,4 +292,3 @@ def get_collaborators_to_update(config: dict, limit: int | None = None) -> pd.Da
     except Exception as e:
         logger.exception(f"Failed to load collaborators to update, Exception: {e}")
         raise
-
