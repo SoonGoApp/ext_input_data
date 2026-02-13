@@ -1,0 +1,9 @@
+# Output directories
+models_dir: "models"
+
+bucket_name: "soongo-staging-ml-models"
+model_folder: "rent_cost_models"
+
+predictions_table: "vehicles_rent_cost_predictions"
+predictions_m_view: "vehicles_rent_cost_predictions_mv"
+schema: "publ"
