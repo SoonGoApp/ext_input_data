@@ -1,8 +1,6 @@
 SELECT_ALL_FEATURES_TRAINING = rf"""
--- Complete Feature Engineering SQL Query
-
 WITH 
--- Base vehicle selection
+-- Base vehicle selection (reusing your existing view logic)
 masternaut_vehicles AS (
     SELECT m.vehicle_id
     FROM publ.mileages m
@@ -22,7 +20,9 @@ ranked_collaborators AS (
             PARTITION BY cv.vehicle_id
             ORDER BY
                 CASE WHEN cv.date_to IS NULL OR cv.date_to > CURRENT_DATE THEN 0 ELSE 1 END,
-                cv.date_to DESC NULLS LAST
+                cv.date_to DESC NULLS LAST,
+                cv.date_from DESC NULLS LAST,
+                cv.id DESC  -- Deterministic tiebreaker
         ) AS rn
     FROM publ.collaborators_vehicles cv
 ),
@@ -71,7 +71,7 @@ mileage_stats AS (
     GROUP BY mpv.vehicle_id
 ),
 
--- Calculate target variable from raw mileages 
+-- Calculate target variable from raw mileages (matching Python logic exactly)
 mileage_daily_km AS (
     SELECT
         m.vehicle_id,
@@ -162,8 +162,7 @@ fuel_expenses AS (
     INNER JOIN base_vehicles bv 
         ON ex.vehicle_id = bv.vehicle_id 
         AND ex.collaborator_id = bv.current_collaborator_id
-    WHERE LOWER(ex.soongo_category) LIKE '%fuel%' 
-       OR LOWER(ex.soongo_category) LIKE '%carburant%'
+    WHERE ex.soongo_category = ANY(publ.fuel_categories())
     GROUP BY ex.vehicle_id
 ),
 
@@ -177,8 +176,7 @@ fuel_with_dates AS (
     INNER JOIN base_vehicles bv 
         ON ex.vehicle_id = bv.vehicle_id 
         AND ex.collaborator_id = bv.current_collaborator_id
-    WHERE (LOWER(ex.soongo_category) LIKE '%fuel%' 
-        OR LOWER(ex.soongo_category) LIKE '%carburant%')
+    WHERE ex.soongo_category = ANY(publ.fuel_categories())
       AND ex.billing_date IS NOT NULL
 ),
 
@@ -216,23 +214,35 @@ toll_expenses AS (
     GROUP BY ex.vehicle_id
 )
 
--- Final feature assembly - ONLY SELECTED FEATURES (only vehicles with mileage data)
+-- Final feature assembly - SELECTED FEATURES + MILEAGE FEATURES (only vehicles with mileage data)
 SELECT
     bv.vehicle_id,
     
-    -- Numeric features (from select_features function)
-    bv.vehicle_age_years,
-    bv.lease_duration_months,
-    bv.fiscal_power_num,
-    bv.motor_power_num,
+    -- Vehicle features (use median from all vehicles for missing values)
+    COALESCE(bv.vehicle_age_years, (SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY vehicle_age_years) FROM base_vehicles)) AS vehicle_age_years,
+    COALESCE(bv.lease_duration_months, (SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY lease_duration_months) FROM base_vehicles)) AS lease_duration_months,
+    COALESCE(bv.fiscal_power_num, (SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY fiscal_power_num) FROM base_vehicles WHERE fiscal_power_num IS NOT NULL)) AS fiscal_power_num,
+    COALESCE(bv.motor_power_num, (SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY motor_power_num) FROM base_vehicles WHERE motor_power_num IS NOT NULL)) AS motor_power_num,
     
-    -- Global expense behavior
-    COALESCE(es.expense_amount_tax_exc_sum, 0) AS expense_amount_tax_exc_sum,
-    COALESCE(es.expense_amount_tax_exc_mean, 0) AS expense_amount_tax_exc_mean,
-    COALESCE(es.expense_amount_tax_exc_std, 0) AS expense_amount_tax_exc_std,
-    COALESCE(es.expense_amount_tax_exc_sum / NULLIF(es.expense_month_start_nunique + 1, 0), 0) AS monthly_expense_avg,
+    -- Mileage features (use mean for missing - it's usage data)
+    COALESCE(ms.mileage_driven_mean, (SELECT AVG(mileage_driven_mean) FROM mileage_stats WHERE mileage_driven_mean IS NOT NULL)) AS mileage_driven_mean,
+    COALESCE(ms.mileage_driven_std, (SELECT AVG(mileage_driven_std) FROM mileage_stats WHERE mileage_driven_std IS NOT NULL)) AS mileage_driven_std,
+    COALESCE(ms.mileage_driven_max, (SELECT AVG(mileage_driven_max) FROM mileage_stats WHERE mileage_driven_max IS NOT NULL)) AS mileage_driven_max,
+    COALESCE(ms.mileage_driven_min, (SELECT AVG(mileage_driven_min) FROM mileage_stats WHERE mileage_driven_min IS NOT NULL)) AS mileage_driven_min,
+    COALESCE(ms.mileage_driven_sum, (SELECT AVG(mileage_driven_sum) FROM mileage_stats WHERE mileage_driven_sum IS NOT NULL)) AS mileage_driven_sum,
+    COALESCE(ms.mileage_month_count, (SELECT AVG(mileage_month_count) FROM mileage_stats WHERE mileage_month_count IS NOT NULL)) AS mileage_month_count,
+    COALESCE(ms.first_days_diff_mean, (SELECT AVG(first_days_diff_mean) FROM mileage_stats WHERE first_days_diff_mean IS NOT NULL)) AS first_days_diff_mean,
+    COALESCE(ms.next_days_diff_mean, (SELECT AVG(next_days_diff_mean) FROM mileage_stats WHERE next_days_diff_mean IS NOT NULL)) AS next_days_diff_mean,
+    COALESCE(ms.mileage_driven_std / NULLIF(ms.mileage_driven_mean + 1, 0), (SELECT AVG(mileage_driven_std / NULLIF(mileage_driven_mean + 1, 0)) FROM mileage_stats WHERE mileage_driven_mean IS NOT NULL AND mileage_driven_std IS NOT NULL)) AS mileage_variability,
+    COALESCE((ms.first_days_diff_mean + ms.next_days_diff_mean) / 2.0, (SELECT AVG((first_days_diff_mean + next_days_diff_mean) / 2.0) FROM mileage_stats WHERE first_days_diff_mean IS NOT NULL AND next_days_diff_mean IS NOT NULL)) AS avg_days_between_readings,
     
-    -- Fuel behavior
+    -- Expense features (use mean for missing - it's usage data)
+    COALESCE(es.expense_amount_tax_exc_sum, (SELECT AVG(expense_amount_tax_exc_sum) FROM expense_stats WHERE expense_amount_tax_exc_sum IS NOT NULL)) AS expense_amount_tax_exc_sum,
+    COALESCE(es.expense_amount_tax_exc_mean, (SELECT AVG(expense_amount_tax_exc_mean) FROM expense_stats WHERE expense_amount_tax_exc_mean IS NOT NULL)) AS expense_amount_tax_exc_mean,
+    COALESCE(es.expense_amount_tax_exc_std, (SELECT AVG(expense_amount_tax_exc_std) FROM expense_stats WHERE expense_amount_tax_exc_std IS NOT NULL)) AS expense_amount_tax_exc_std,
+    COALESCE(es.expense_amount_tax_exc_sum / NULLIF(es.expense_month_start_nunique + 1, 0), (SELECT AVG(expense_amount_tax_exc_sum / NULLIF(expense_month_start_nunique + 1, 0)) FROM expense_stats WHERE expense_amount_tax_exc_sum IS NOT NULL AND expense_month_start_nunique IS NOT NULL)) AS monthly_expense_avg,
+    
+    -- Fuel features (0 if missing - absence means no fuel expenses)
     COALESCE(fe.fuel_amount_tax_exc_sum, 0) AS fuel_amount_tax_exc_sum,
     COALESCE(fe.fuel_amount_tax_exc_mean, 0) AS fuel_amount_tax_exc_mean,
     COALESCE(fe.fuel_amount_tax_exc_count, 0) AS fuel_amount_tax_exc_count,
@@ -242,7 +252,7 @@ SELECT
     COALESCE(ft.fuel_days_between_min, 0) AS fuel_days_between_min,
     COALESCE(ft.fuel_refill_close_ratio, 0) AS fuel_refill_close_ratio,
     
-    -- Toll behavior
+    -- Toll features (0 if missing - absence means no toll usage)
     COALESCE(te.toll_total_amount, 0) AS toll_total_amount,
     COALESCE(te.toll_max_amount, 0) AS toll_max_amount,
     COALESCE(te.toll_mean_amount, 0) AS toll_mean_amount,

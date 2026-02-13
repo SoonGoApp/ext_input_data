@@ -8,6 +8,7 @@ from electrification_ml_model.model_training import ElectrificationModel
 
 logger = gen_logger('Train_model')
 
+
 class TrainingPipeline:
     """Orchestrates the complete training pipeline."""
     
@@ -39,9 +40,7 @@ class TrainingPipeline:
         logger.info("="*60)
         
         # Save model
-        timestamp = datetime.now().strftime('%Y-%m-%d')
-        print(timestamp)
-        model_dir = Path(self.config['models_dir']) / f'model_{timestamp}'
+        model_dir = Path(self.config['models_dir']) / f'model_{datetime.now().strftime('%Y-%m-%d')}'
         
         self.model.save_model(str(model_dir), self.results, self.config)
         

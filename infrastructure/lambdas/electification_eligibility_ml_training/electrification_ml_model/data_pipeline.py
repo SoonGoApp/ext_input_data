@@ -6,7 +6,6 @@ from electrification_ml_model.sql_requests import SELECT_ALL_FEATURES_TRAINING
 from sqlalchemy import text
 
 
-
 logger = gen_logger('Data_Load')
 
 

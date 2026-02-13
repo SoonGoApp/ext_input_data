@@ -1,26 +1,29 @@
-
 import pandas as pd
 import numpy as np
-import joblib
 import json
 import yaml
 import shutil
 from typing import Dict, Tuple, Optional, Any
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.linear_model import LogisticRegression
-from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import numpy as np
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+import onnx
 
 from sklearn.metrics import (
-    roc_auc_score, precision_recall_curve, classification_report,
-    confusion_matrix, average_precision_score, roc_curve, auc
+    roc_auc_score, classification_report, confusion_matrix, 
+    average_precision_score, roc_curve, auc
 )
 
 from datetime import datetime
 from pathlib import Path
-from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.aws import push_folder_to_s3
+from soongo_data.utils.logging_utils import gen_logger
 
 
 logger = gen_logger('Model_Training')
@@ -39,6 +42,7 @@ class ElectrificationModel:
         self.config = config
         self.model_type = self.config.get('model_type', 'random_forest')
         self.model = None
+        self.threshold = 0.55
         self.scaler = StandardScaler()
         self.label_encoders = {}
         self.feature_names = None
@@ -50,40 +54,10 @@ class ElectrificationModel:
         
     def _get_model(self) -> Any:
         """Get the appropriate model based on model_type."""
+        model_params = self.config.get("model_params", {})
         models = {
             'random_forest': RandomForestClassifier(
-                n_estimators=200,
-                max_depth=10,
-                min_samples_split=20,
-                min_samples_leaf=10,
-                class_weight='balanced',
-                random_state=42,
-                n_jobs=-1
-            ),
-            'gradient_boosting': GradientBoostingClassifier(
-                n_estimators=100,
-                learning_rate=0.1,
-                max_depth=5,
-                min_samples_split=20,
-                min_samples_leaf=10,
-                random_state=42
-            ),
-            'logistic': LogisticRegression(
-                class_weight='balanced',
-                random_state=42,
-                max_iter=1000
-            ),
-            'xgboost': XGBClassifier(
-                n_estimators=100,
-                learning_rate=0.1,
-                max_depth=5,
-                min_child_weight=10,
-                subsample=0.8,
-                colsample_bytree=0.8,
-                scale_pos_weight=1,
-                random_state=42,
-                n_jobs=-1,
-                eval_metric='logloss'
+                 **model_params
             )
         }
         return models.get(self.model_type, models['random_forest'])
@@ -156,10 +130,7 @@ class ElectrificationModel:
         for i, col_idx in enumerate(feature_list):
             col_mean = col_means[i]
             col_std = col_stds[i]
-            
-            # Replace NaN with mean
-            X[np.isnan(X[:, i]), i] = col_mean if not np.isnan(col_mean) else 0
-            
+                        
             # Clip extreme values (beyond 5 standard deviations)
             if not np.isnan(col_std) and col_std > 0:
                 lower_bound = col_mean - 5 * col_std
@@ -307,17 +278,18 @@ class ElectrificationModel:
             logger.warning("Model does not support feature importance.")
             return pd.DataFrame()
     
+
+
     def evaluate(
         self, 
         X_test: pd.DataFrame, 
         y_test: pd.Series,
-        threshold: float = 0.50
     ) -> Dict[str, Any]:
         logger.info("Evaluating model...")
         
         # Get predictions
         y_pred_proba = self.predict_proba(X_test)
-        y_pred = (y_pred_proba >= threshold).astype(int)
+        y_pred = (y_pred_proba >= self.threshold).astype(int)
         
         # Calculate metrics
         metrics = {
@@ -333,18 +305,71 @@ class ElectrificationModel:
         return metrics
     
 
-
     def save_model(self, path: str, results: dict, config: dict):
-
-        """Save model and preprocessors to disk (secure format)."""
+        """Save model and preprocessors to disk using ONNX format (secure)."""
 
         model_path = Path(path)
         model_path.mkdir(parents=True, exist_ok=True)
-
-        joblib.dump(self.model, model_path / "model.joblib")
-        joblib.dump(self.scaler, model_path / "scaler.joblib")
-        joblib.dump(self.label_encoders, model_path / "label_encoders.joblib")
-
+        
+        # ============== CONVERT MODEL TO ONNX ==============
+        try:
+            # Determine input type based on features
+            n_features = len(self.feature_names)
+            initial_type = [('float_input', FloatTensorType([None, n_features]))]
+            
+            # Convert sklearn model to ONNX
+            onnx_model = convert_sklearn(
+                self.model,
+                initial_types=initial_type,
+                target_opset=12,  # Use a stable opset version
+                options={
+                    'zipmap': False  # Disable zipmap for cleaner output
+                }
+            )
+            
+            # Save ONNX model
+            onnx.save_model(onnx_model, str(model_path / "model.onnx"))
+            logger.info("Model saved to model.onnx")
+            
+        except Exception as e:
+            logger.error(f"Error converting model to ONNX: {str(e)}")
+            raise
+        
+        # ============== SAVE SCALER AS JSON ==============
+        if self.scaler is not None:
+            scaler_data = {"scaler_type": type(self.scaler).__name__}
+            
+            if isinstance(self.scaler, StandardScaler):
+                scaler_data.update({
+                    "mean": self.scaler.mean_.tolist() if hasattr(self.scaler, 'mean_') else None,
+                    "var": self.scaler.var_.tolist() if hasattr(self.scaler, 'var_') else None,
+                    "scale": self.scaler.scale_.tolist() if hasattr(self.scaler, 'scale_') else None,
+                    "n_features": int(self.scaler.n_features_in_),
+                    "with_mean": self.scaler.with_mean,
+                    "with_std": self.scaler.with_std,
+                })
+            else:
+                logger.warning(f"Unsupported scaler type: {type(self.scaler)}")
+                scaler_data = None
+            
+            if scaler_data:
+                with open(model_path / "scaler.json", "w") as f:
+                    json.dump(scaler_data, f, indent=2)
+                logger.info("Scaler saved to scaler.json")
+        
+        # ============== SAVE LABEL ENCODERS AS JSON ==============
+        if self.label_encoders is not None:
+            encoders_data = {}
+            for feature_name, encoder in self.label_encoders.items():
+                encoders_data[feature_name] = {
+                    "classes": encoder.classes_.tolist(),
+                }
+            
+            with open(model_path / "label_encoders.json", "w") as f:
+                json.dump(encoders_data, f, indent=2)
+            logger.info("Label encoders saved to label_encoders.json")
+        
+        # ============== CLEAN MEDIAN VALUES ==============
         median_values_clean = {}
         for key, value in getattr(self, "median_values_", {}).items():
             if isinstance(value, float):
@@ -354,7 +379,8 @@ class ElectrificationModel:
                     median_values_clean[key] = float(value)
             else:
                 median_values_clean[key] = value
-
+        
+        # ============== CLEAN METRICS ==============
         metrics_clean = {}
         for key, value in self.metrics.items():
             if isinstance(value, float):
@@ -366,7 +392,8 @@ class ElectrificationModel:
                 metrics_clean[key] = value
             else:
                 metrics_clean[key] = value
-
+        
+        # ============== SAVE METADATA ==============
         metadata = {
             "model_type": self.model_type,
             "feature_names": self.feature_names,
@@ -375,37 +402,37 @@ class ElectrificationModel:
             "metrics": metrics_clean,
             "median_values": median_values_clean,
             "trained_at": datetime.now().isoformat(),
+            "version": "1.0.0",
+            "format": "onnx",
+            "n_features": n_features,
         }
-
+        
         with open(model_path / "metadata.json", "w") as f:
             json.dump(metadata, f, indent=2)
-
-        logger.info(f"Model saved to {model_path}")
-
-
-        # Save results
+        logger.info(f"Metadata saved to {model_path}/metadata.json")
+        
+        # ============== SAVE RESULTS ==============
         results_path = model_path / 'training_results.json'
         with open(results_path, 'w') as f:
             json.dump(results, f, indent=2, default=str)
-        
         logger.info(f"Training results saved to {results_path}")
         
-        # Save config used
+        # ============== SAVE CONFIG ==============
         config_path = model_path / 'config.yaml'
         with open(config_path, 'w') as f:
             yaml.dump(config, f)
-        
         logger.info(f"Configuration saved to {config_path}")
-
+        
+        # ============== UPLOAD TO S3 ==============
         push_folder_to_s3(
             local_dir=model_path,
-            s3_prefix=model_path,
+            s3_prefix=str(model_path),
             bucket_name=config["bucket_name"]
         )
 
         self.remove_model_folder_from_local()
-
-        logger.info(f"Model uploaded to {config["bucket_name"]}")
+        
+        logger.info(f"Model uploaded to {config['bucket_name']}")
     
 
 
@@ -501,6 +528,12 @@ class ElectrificationModel:
             logger.info(feature_importance.head(10).to_string())
             self.results['feature_importance'] = feature_importance.to_dict('records')
         
+
+        self.generate_evaluation_figures(
+            X_test=X_test,
+            y_test=y_test
+        )
+
         # Store test data for figure generation
         self.X_test = X_test
         self.y_test = y_test
@@ -508,9 +541,119 @@ class ElectrificationModel:
         return self.results
     
 
+
     def remove_model_folder_from_local(self):
         local_folder = Path(self.config['models_dir'])
         try:
             shutil.rmtree(local_folder)
         except Exception as e:
             print(f"Failed to delete folder {local_folder}: {e}")
+
+
+
+    def generate_evaluation_figures(
+        self, 
+        X_test: pd.DataFrame, 
+        y_test: pd.Series,
+    ):
+        """
+        Generate and save evaluation figures.
+        
+        Args:
+            X_test: Test features
+            y_test: Test target
+            output_dir: Directory to save figures
+        """
+
+        logger.info("\n" + "="*60)
+        logger.info("GENERATING EVALUATION FIGURES")
+        logger.info("="*60)
+
+
+        output_dir = Path(self.config['models_dir']) / f'model_{datetime.now().strftime('%Y-%m-%d')}'
+        figures_dir = output_dir / 'figures'
+        figures_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Get predictions
+        y_pred_proba = self.predict_proba(X_test)
+        y_pred = (y_pred_proba >= self.threshold).astype(int)
+        
+        # Set style
+        sns.set_style("whitegrid")
+        plt.rcParams['figure.figsize'] = (12, 8)
+        
+        # 1. Confusion Matrix
+        fig, ax = plt.subplots(figsize=(8, 6))
+        cm = confusion_matrix(y_test, y_pred)
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax, 
+                   xticklabels=['Non-Eligible', 'Eligible'],
+                   yticklabels=['Non-Eligible', 'Eligible'])
+        ax.set_ylabel('True Label', fontsize=12, fontweight='bold')
+        ax.set_xlabel('Predicted Label', fontsize=12, fontweight='bold')
+        ax.set_title('Confusion Matrix - Electrification Eligibility', 
+                    fontsize=14, fontweight='bold')
+        plt.tight_layout()
+        plt.savefig(figures_dir / '01_confusion_matrix.png', dpi=300, bbox_inches='tight')
+        logger.info("✓ Saved: 01_confusion_matrix.png")
+        plt.close()
+        
+        # 2. ROC Curve
+        fig, ax = plt.subplots(figsize=(10, 8))
+        fpr, tpr, _ = roc_curve(y_test, y_pred_proba)
+        roc_auc = auc(fpr, tpr)
+        
+        ax.plot(fpr, tpr, color='darkorange', lw=2.5, 
+               label=f'ROC curve (AUC = {roc_auc:.4f})')
+        ax.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--', label='Random Classifier')
+        ax.set_xlim([0.0, 1.0])
+        ax.set_ylim([0.0, 1.05])
+        ax.set_xlabel('False Positive Rate', fontsize=12, fontweight='bold')
+        ax.set_ylabel('True Positive Rate', fontsize=12, fontweight='bold')
+        ax.set_title('ROC Curve - Electrification Eligibility Model', 
+                    fontsize=14, fontweight='bold')
+        ax.legend(loc="lower right", fontsize=11)
+        ax.grid(alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(figures_dir / '02_roc_curve.png', dpi=300, bbox_inches='tight')
+        logger.info("✓ Saved: 02_roc_curve.png")
+        plt.close()
+        
+        # 3. Feature Importance (Top 15)
+        feature_importance = self.get_feature_importance()
+        if not feature_importance.empty:
+            fig, ax = plt.subplots(figsize=(10, 8))
+            top_features = feature_importance.head(15)
+            
+            ax.barh(range(len(top_features)), top_features['importance'], color='steelblue')
+            ax.set_yticks(range(len(top_features)))
+            ax.set_yticklabels(top_features['feature'])
+            ax.set_xlabel('Importance Score', fontsize=12, fontweight='bold')
+            ax.set_title('Top 15 Most Important Features', fontsize=14, fontweight='bold')
+            ax.invert_yaxis()
+            ax.grid(axis='x', alpha=0.3)
+            
+            plt.tight_layout()
+            plt.savefig(figures_dir / '05_feature_importance.png', dpi=300, bbox_inches='tight')
+            logger.info("✓ Saved: 05_feature_importance.png")
+            plt.close()
+        
+        # 4. Classification Report (Text as Image)
+        report = classification_report(y_test, y_pred, 
+                                      target_names=['Non-Eligible', 'Eligible'])
+        
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.axis('tight')
+        ax.axis('off')
+        ax.text(0.5, 0.5, report, transform=ax.transAxes, 
+               fontsize=11, verticalalignment='center', horizontalalignment='center',
+               family='monospace',
+               bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+        ax.set_title('Classification Report', fontsize=14, fontweight='bold', pad=20)
+        
+        plt.tight_layout()
+        plt.savefig(figures_dir / '06_classification_report.png', dpi=300, bbox_inches='tight')
+        logger.info("✓ Saved: 06_classification_report.png")
+        plt.close()
+        
+        logger.info(f"\n✓ All figures saved to: {figures_dir}")
+
