@@ -4,15 +4,6 @@ models_dir: "models"
 bucket_name: "soongo-staging-ml-models"
 model_folder: "electrification_eligibility_models"
 
-# Model configuration
-model_type: "random_forest" # Options: random_forest, gradient_boosting, logistic
-target_threshold_km: 300.0
-
-# Training parameters
-test_size: 0.3
-random_state: 42
-
-# Feature selection
-feature_selection:
-  method: "importance"
-  top_n_features: 30
+scores_table: "vehicles_electrification_eligibility_score"
+scores_m_view: "vehicles_electrification_eligibility_score_mv"
+schema: "publ"

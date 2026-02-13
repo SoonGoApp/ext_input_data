@@ -12,7 +12,7 @@ class InferencePipeline:
     def __init__(self, config: dict):
 
         self.config = config
-        self.data_loader = DataLoader()
+        self.data_loader = DataLoader(config=self.config)
         self.model = ElectrificationModel(config=self.config)
         self.predictions = None
     
@@ -29,7 +29,7 @@ class InferencePipeline:
             features_df['score'] = self.predictions
 
             final_df = features_df[['vehicle_id', 'score']]
-            final_df.loc[:, 'model'] = self.config['model_type']
+            final_df.loc[:, 'model'] = self.model.model_type
 
             self.data_loader.write_results_to_db(final_df)
 

@@ -9,16 +9,14 @@ from sqlalchemy import text, Table, MetaData, insert
 logger = gen_logger('Data_Load')
 
 
-
 class DataLoader:
     """Handles data loading from various sources."""
-    def __init__(self):
+    def __init__(self, config: dict):
         self.engine = gen_engine()
-        self.output_table = "vehicles_electrification_eligibility_score"
-        self.output_mv = "vehicles_electrification_eligibility_score_mv"
-        self.schema = "publ"
-
-
+        self.config = config
+        self.output_table = self.config['scores_table']
+        self.output_mv = self.config['scores_m_view']
+        self.schema = self.config['schema']
 
     def load_from_sql(self, query: str, table_name: str) -> pd.DataFrame:
         """Load data from database using SQL query."""
@@ -40,7 +38,6 @@ class DataLoader:
         return df
     
     
-
     def insert_predictions_to_table(self, df: pd.DataFrame):
         try:
             metadata = MetaData(schema=self.schema)
