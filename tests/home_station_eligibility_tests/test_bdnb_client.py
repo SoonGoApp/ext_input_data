@@ -1,7 +1,3 @@
-"""
-Tests unitaires simples pour bdnb_client.py
-"""
-
 import pytest
 from unittest.mock import patch, Mock
 from infrastructure.lambdas.home_station_eligibility.eligibility_pipeline.bdnb_client import (

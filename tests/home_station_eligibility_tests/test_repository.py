@@ -1,7 +1,3 @@
-"""
-Tests unitaires simples pour repository.py
-"""
-
 import pytest
 import pandas as pd
 from unittest.mock import patch, Mock, MagicMock

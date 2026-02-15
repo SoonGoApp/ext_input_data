@@ -21,7 +21,13 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = [
+    "src",
+    "infrastructure/lambdas/home_station_eligibility"
+]
+filterwarnings = [
+    "ignore::sqlalchemy.exc.MovedIn20Warning"
+]
 
 [tool.ruff]
 exclude = [
@@ -80,3 +86,5 @@ line-ending = "auto"
 docstring-code-format = true
 docstring-code-line-length = "dynamic"
 skip-magic-trailing-comma = false
+
+

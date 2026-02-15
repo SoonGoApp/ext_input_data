@@ -38,6 +38,7 @@ def lambda_handler(context):
         }
     
     except Exception as error:
+        # print(traceback.format_exception(error))
         logger.error(
             f'Error on Home Station Eligibility pipeline with traceback {traceback.format_exception(error)}',
         )
