@@ -1,4 +1,5 @@
 
+import os
 import pandas as pd
 from soongo_data.utils.db import gen_engine
 from soongo_data.utils.logging_utils import gen_logger
@@ -12,8 +13,9 @@ logger = gen_logger('Data_Load')
 class DataLoader:
     """Handles data loading from various sources."""
     def __init__(self):
-        self.engine = gen_engine()
-
+        self.engine = gen_engine(
+            database_url=os.environ["DATABASE_URL"]
+        )
 
     def load_from_sql(self, query: str, table_name: str) -> pd.DataFrame:
         """Load data from database using SQL query."""
