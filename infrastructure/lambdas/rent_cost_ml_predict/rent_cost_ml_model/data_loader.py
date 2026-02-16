@@ -1,4 +1,5 @@
 
+import os
 import pandas as pd
 from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.db import gen_engine
@@ -12,7 +13,9 @@ logger = gen_logger('Data_Load')
 class DataLoader:
     """Handles data loading from various sources."""
     def __init__(self, config: dict):
-        self.engine = gen_engine()
+        self.engine = gen_engine(
+            database_url=os.environ["DATABASE_URL"]
+        )
         self.config = config
         self.output_table = self.config['predictions_table']
         self.output_mv = self.config['predictions_m_view']
