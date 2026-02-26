@@ -1,3 +1,7 @@
+"""
+Tests unitaires simples pour pipeline.py
+"""
+
 import pytest
 import pandas as pd
 from unittest.mock import patch, MagicMock
@@ -116,9 +120,17 @@ class TestRunPipeline:
     @patch('infrastructure.lambdas.home_station_eligibility.eligibility_pipeline.pipeline.home_station_eligibility_pipeline')
     @patch('infrastructure.lambdas.home_station_eligibility.eligibility_pipeline.pipeline.rp.get_collaborators_to_update')
     @patch('infrastructure.lambdas.home_station_eligibility.eligibility_pipeline.pipeline.rp.get_collaborators_to_process')
-    def test_run_pipeline_with_updates(self, mock_get_to_process, mock_get_to_update, mock_pipeline, mock_config):
+    def test_run_pipeline_with_updates(self, mock_get_to_process, mock_get_to_update, mock_pipeline):
         """Test pipeline complet avec insertions et updates"""
         # Arrange
+        config = {
+            "database": {"schema": "test_schema"},
+            "tables": {
+                "input": {"collaborators_table": "collaborators"},
+                "output": {"eligibility_table": "eligibility"}
+            },
+            "nb_rows_to_process": None
+        }
         mock_df_insert = pd.DataFrame([{"id": "123", "full_address": "10 RUE PARIS"}])
         mock_df_update = pd.DataFrame([{"id": "456", "full_address": "20 RUE LYON"}])
         
@@ -126,7 +138,7 @@ class TestRunPipeline:
         mock_get_to_update.return_value = mock_df_update
 
         # Act
-        run_pipeline(mock_config)
+        run_pipeline(config)
 
         # Assert
         assert mock_pipeline.call_count == 2
@@ -138,9 +150,17 @@ class TestRunPipeline:
     @patch('infrastructure.lambdas.home_station_eligibility.eligibility_pipeline.pipeline.home_station_eligibility_pipeline')
     @patch('infrastructure.lambdas.home_station_eligibility.eligibility_pipeline.pipeline.rp.get_collaborators_to_update')
     @patch('infrastructure.lambdas.home_station_eligibility.eligibility_pipeline.pipeline.rp.get_collaborators_to_process')
-    def test_run_pipeline_no_updates(self, mock_get_to_process, mock_get_to_update, mock_pipeline, mock_config):
+    def test_run_pipeline_no_updates(self, mock_get_to_process, mock_get_to_update, mock_pipeline):
         """Test pipeline sans updates"""
         # Arrange
+        config = {
+            "database": {"schema": "test_schema"},
+            "tables": {
+                "input": {"collaborators_table": "collaborators"},
+                "output": {"eligibility_table": "eligibility"}
+            },
+            "nb_rows_to_process": None
+        }
         mock_df_insert = pd.DataFrame([{"id": "123", "full_address": "10 RUE PARIS"}])
         mock_df_update = pd.DataFrame(columns=["id", "full_address"])  # DataFrame vide
         
@@ -148,25 +168,33 @@ class TestRunPipeline:
         mock_get_to_update.return_value = mock_df_update
 
         # Act
-        run_pipeline(mock_config)
+        run_pipeline(config)
 
         # Assert
         assert mock_pipeline.call_count == 1  # Seulement insert, pas de update
-        mock_pipeline.assert_called_once_with(config=mock_config, df=mock_df_insert, process_type='insert')
+        mock_pipeline.assert_called_once_with(config=config, df=mock_df_insert, process_type='insert')
 
     @patch('infrastructure.lambdas.home_station_eligibility.eligibility_pipeline.pipeline.home_station_eligibility_pipeline')
     @patch('infrastructure.lambdas.home_station_eligibility.eligibility_pipeline.pipeline.rp.get_collaborators_to_update')
     @patch('infrastructure.lambdas.home_station_eligibility.eligibility_pipeline.pipeline.rp.get_collaborators_to_process')
-    def test_run_pipeline_empty_data(self, mock_get_to_process, mock_get_to_update, mock_pipeline, mock_config):
+    def test_run_pipeline_empty_data(self, mock_get_to_process, mock_get_to_update, mock_pipeline):
         """Test pipeline avec données vides"""
         # Arrange
+        config = {
+            "database": {"schema": "test_schema"},
+            "tables": {
+                "input": {"collaborators_table": "collaborators"},
+                "output": {"eligibility_table": "eligibility"}
+            },
+            "nb_rows_to_process": None
+        }
         empty_df = pd.DataFrame(columns=["id", "full_address"])
         
         mock_get_to_process.return_value = empty_df
         mock_get_to_update.return_value = empty_df
 
         # Act
-        run_pipeline(mock_config)
+        run_pipeline(config)
 
         # Assert
         assert mock_pipeline.call_count == 1  # Seulement insert appelé
