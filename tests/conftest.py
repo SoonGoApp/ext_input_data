@@ -9,6 +9,9 @@ from pandas.testing import assert_frame_equal
 from testcontainers.localstack import LocalStackContainer
 from testcontainers.postgres import PostgresContainer
 
+from sqlalchemy import create_engine
+from sqlalchemy.pool import StaticPool
+
 from soongo_data.utils.logging_utils import gen_logger
 
 
