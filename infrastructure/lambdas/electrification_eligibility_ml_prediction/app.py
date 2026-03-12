@@ -21,10 +21,10 @@ def lambda_handler(context):
         with open(config_path, "r") as file:
             pipeline_config = yaml.safe_load(file)
 
-        # db_info = get_local_secret(
-        #     logger=logger,
-        # )
-        # os.environ["DATABASE_URL"] = db_info["DATABASE_URL"]
+        db_info = get_local_secret(
+            logger=logger,
+        )
+        os.environ["DATABASE_URL"] = db_info["DATABASE_URL"]
 
         # Run pipeline
         run_pipeline(
