@@ -192,8 +192,6 @@ class ElectrificationModel:
             'cv_ap_std': cv_ap_scores.std()
         }
         
-        logger.info(f"CV AUC: {metrics['cv_auc_mean']:.4f} (+/- {metrics['cv_auc_std']:.4f})")
-        logger.info(f"CV AP: {metrics['cv_ap_mean']:.4f} (+/- {metrics['cv_ap_std']:.4f})")
         
         # Train final model on full training set
         logger.info("Training final model on full training set...")
@@ -217,12 +215,10 @@ class ElectrificationModel:
             
             metrics['val_auc'] = val_auc
             metrics['val_average_precision'] = val_ap
-            
-            logger.info(f"Validation AUC: {val_auc:.4f}, AP: {val_ap:.4f}")
         
         self.metrics = metrics
         
-        logger.info(f"Training complete. Train AUC: {train_auc:.4f}")
+        logger.info(f"Training complete.")
         
         return metrics
     
@@ -298,9 +294,6 @@ class ElectrificationModel:
             'confusion_matrix': confusion_matrix(y_test, y_pred).tolist(),
             'classification_report': classification_report(y_test, y_pred, output_dict=True)
         }
-        
-        logger.info(f"Test AUC: {metrics['test_auc']:.4f}")
-        logger.info(f"Test AP: {metrics['test_average_precision']:.4f}")
         
         return metrics
     
@@ -470,12 +463,7 @@ class ElectrificationModel:
             self, 
             features: pd.DataFrame, 
             target: pd.DataFrame
-        ):
-
-        logger.info("\n" + "="*60)
-        logger.info("STEP 5: MODEL TRAINING")
-        logger.info("="*60)
-        
+        ):        
         # Select features
         feature_list = features.columns
         logger.info(f"Using {len(feature_list)} features")
@@ -514,9 +502,6 @@ class ElectrificationModel:
         self.results['train_metrics'] = train_metrics
         
         # Evaluate on test set
-        logger.info("\n" + "="*60)
-        logger.info("STEP 6: MODEL EVALUATION")
-        logger.info("="*60)
         
         test_metrics = self.evaluate(X_test, y_test)
         self.results['test_metrics'] = test_metrics
@@ -524,8 +509,6 @@ class ElectrificationModel:
         # Feature importance
         feature_importance = self.get_feature_importance()
         if not feature_importance.empty:
-            logger.info("\nTop 10 Most Important Features:")
-            logger.info(feature_importance.head(10).to_string())
             self.results['feature_importance'] = feature_importance.to_dict('records')
         
 
@@ -547,7 +530,7 @@ class ElectrificationModel:
         try:
             shutil.rmtree(local_folder)
         except Exception as e:
-            print(f"Failed to delete folder {local_folder}: {e}")
+            logger.error(f"Failed to delete folder {local_folder}: {e}")
 
 
 
@@ -564,12 +547,6 @@ class ElectrificationModel:
             y_test: Test target
             output_dir: Directory to save figures
         """
-
-        logger.info("\n" + "="*60)
-        logger.info("GENERATING EVALUATION FIGURES")
-        logger.info("="*60)
-
-
         output_dir = Path(self.config['models_dir']) / f'model_{datetime.now().strftime('%Y-%m-%d')}'
         figures_dir = output_dir / 'figures'
         figures_dir.mkdir(parents=True, exist_ok=True)
@@ -594,7 +571,6 @@ class ElectrificationModel:
                     fontsize=14, fontweight='bold')
         plt.tight_layout()
         plt.savefig(figures_dir / '01_confusion_matrix.png', dpi=300, bbox_inches='tight')
-        logger.info("✓ Saved: 01_confusion_matrix.png")
         plt.close()
         
         # 2. ROC Curve
@@ -615,7 +591,6 @@ class ElectrificationModel:
         ax.grid(alpha=0.3)
         plt.tight_layout()
         plt.savefig(figures_dir / '02_roc_curve.png', dpi=300, bbox_inches='tight')
-        logger.info("✓ Saved: 02_roc_curve.png")
         plt.close()
         
         # 3. Feature Importance (Top 15)
@@ -634,7 +609,6 @@ class ElectrificationModel:
             
             plt.tight_layout()
             plt.savefig(figures_dir / '05_feature_importance.png', dpi=300, bbox_inches='tight')
-            logger.info("✓ Saved: 05_feature_importance.png")
             plt.close()
         
         # 4. Classification Report (Text as Image)
@@ -652,7 +626,6 @@ class ElectrificationModel:
         
         plt.tight_layout()
         plt.savefig(figures_dir / '06_classification_report.png', dpi=300, bbox_inches='tight')
-        logger.info("✓ Saved: 06_classification_report.png")
         plt.close()
         
         logger.info(f"\n✓ All figures saved to: {figures_dir}")

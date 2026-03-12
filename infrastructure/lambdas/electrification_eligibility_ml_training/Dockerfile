@@ -8,8 +8,6 @@ ENV env=$build_env
 # Copy the function code and dependencies
 COPY infrastructure/lambdas/electification_eligibility_ml_training/app.py ${LAMBDA_TASK_ROOT}/
 COPY infrastructure/lambdas/electification_eligibility_ml_training/config.yaml ${LAMBDA_TASK_ROOT}/
-COPY infrastructure/lambdas/electification_eligibility_ml_training/electification_ml_model \
-     ${LAMBDA_TASK_ROOT}/electification_ml_model
 COPY requirements_docker.txt ./
 COPY src/soongo_data ${LAMBDA_TASK_ROOT}/soongo_data/
 COPY credentials ${LAMBDA_TASK_ROOT}/credentials/
