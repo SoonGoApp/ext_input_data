@@ -3,7 +3,7 @@ from soongo_data.utils.eligibility_electrif_predict.data_pipeline import DataLoa
 from soongo_data.utils.eligibility_electrif_predict.model_predict import ElectrificationModel
 
 
-logger = gen_logger('Inference_model')
+logger = gen_logger('Elec_Eligibility_Predict - Inference_model')
 
 
 class InferencePipeline:

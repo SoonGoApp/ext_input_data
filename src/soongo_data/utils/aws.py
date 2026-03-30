@@ -461,7 +461,6 @@ def read_file_from_s3(bucket_name: str, object_key: str, encoding: str) -> str |
         return None
 
 
-
 def push_folder_to_s3(
     local_dir: str,
     s3_prefix: str,
@@ -491,7 +490,7 @@ def push_folder_to_s3(
                 print(f"Failed to upload {local_path}: {e}")
 
 
-def get_most_recent_s3_model_name(
+def s3_get_most_recent_folder(
     bucket_name: str,
     prefix: str,
     region_name: str = "eu-west-3",
@@ -527,8 +526,6 @@ def get_most_recent_s3_model_name(
         return None
 
     return max(folder_last_modified, key=folder_last_modified.get)
-
-
 
 
 def pull_folder_from_s3(

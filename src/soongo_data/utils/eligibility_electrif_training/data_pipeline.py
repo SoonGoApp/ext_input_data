@@ -6,7 +6,7 @@ from soongo_data.utils.eligibility_electrif_training.sql_requests import SELECT_
 from sqlalchemy import text
 
 
-logger = gen_logger('Data_Load')
+logger = gen_logger('Elec_Eligibility_Training - Data_Load')
 
 
 class DataLoader:

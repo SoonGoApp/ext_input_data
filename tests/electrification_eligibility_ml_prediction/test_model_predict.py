@@ -4,15 +4,15 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from unittest.mock import MagicMock, patch
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import StandardScaler
 
 
 # ── config & helpers ──────────────────────────────────────────────────────────
 
 CONFIG = {
-    "model_type": "random_forest",
-    "models_dir": "/tmp/test_models",
-    "bucket_name": "test-bucket",
+    "model_type":   "random_forest",
+    "models_dir":   "/tmp/test_models",
+    "bucket_name":  "test-bucket",
     "model_folder": "models",
 }
 
@@ -26,23 +26,23 @@ def make_df(n=20):
 
 def make_metadata():
     return {
-        "model_type": "random_forest",
-        "feature_names": ["age", "mileage", "energy_type"],
+        "model_type":           "random_forest",
+        "feature_names":        ["age", "mileage", "energy_type"],
         "categorical_features": ["energy_type"],
-        "numeric_features": ["age", "mileage"],
-        "metrics": {},
-        "median_values": {"age": 5.0, "mileage": 250.0},
+        "numeric_features":     ["age", "mileage"],
+        "metrics":              {},
+        "median_values":        {"age": 5.0, "mileage": 250.0},
     }
 
 def make_scaler_data():
     return {
         "scaler_type": "StandardScaler",
-        "mean":  [5.0, 250.0, 0.5],
-        "var":   [4.0, 10000.0, 0.25],
-        "scale": [2.0, 100.0, 0.5],
-        "n_features": 3,
-        "with_mean": True,
-        "with_std": True,
+        "mean":        [5.0, 250.0, 0.5],
+        "var":         [4.0, 10000.0, 0.25],
+        "scale":       [2.0, 100.0, 0.5],
+        "n_features":  3,
+        "with_mean":   True,
+        "with_std":    True,
     }
 
 def make_encoders_data():
@@ -55,7 +55,6 @@ def make_encoders_data():
 def model(tmp_path):
     """ElectrificationModel avec S3 et artifacts mockés."""
 
-    # Le code construit : models_dir / last_model_name
     model_subdir = tmp_path / "model_2024-01-01"
     model_subdir.mkdir()
 
@@ -64,11 +63,14 @@ def model(tmp_path):
     (model_subdir / "scaler.json").write_text(json.dumps(make_scaler_data()))
     (model_subdir / "label_encoders.json").write_text(json.dumps(make_encoders_data()))
 
-    # Patcher DANS le namespace du module qui les utilise (evite les problemes de cache)
-    with patch("soongo_data.utils.eligibility_electrif_predict.model_predict.get_most_recent_s3_model_name", return_value="model_2024-01-01"), \
+    # s3_get_most_recent_folder remplace get_most_recent_s3_model_name
+    # pull_folder_from_s3 vient de soongo_data.utils.aws
+    with patch("soongo_data.utils.eligibility_electrif_predict.model_predict.s3_get_most_recent_folder",
+               return_value="model_2024-01-01"), \
          patch("soongo_data.utils.eligibility_electrif_predict.model_predict.pull_folder_from_s3"), \
          patch("soongo_data.utils.eligibility_electrif_predict.model_predict.logger", MagicMock()), \
          patch("onnxruntime.InferenceSession", return_value=MagicMock()):
+
         from soongo_data.utils.eligibility_electrif_predict.model_predict import ElectrificationModel
         cfg = {**CONFIG, "models_dir": str(tmp_path)}
         m = ElectrificationModel(config=cfg)

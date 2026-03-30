@@ -10,7 +10,7 @@ from soongo_data.utils.aws import send_ses_email
 def lambda_handler(context):
 
     try:
-        logger = gen_logger("Lambda_handler")
+        logger = gen_logger("Elec_Eligibility_Training")
 
         logger.info("Starting train eligibility model lambda")
 

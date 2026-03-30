@@ -6,7 +6,7 @@ from soongo_data.utils.eligibility_electrif_training.data_pipeline import DataLo
 from soongo_data.utils.eligibility_electrif_training.model_training import ElectrificationModel
 
 
-logger = gen_logger('Train_model')
+logger = gen_logger('Elec_Eligibility_Training - Train_model')
 
 
 class TrainingPipeline:

@@ -5,13 +5,13 @@ import json
 import shutil
 from pathlib import Path
 import onnxruntime as ort
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import StandardScaler, OrdinalEncoder
 
 from soongo_data.utils.logging_utils import gen_logger
-from soongo_data.utils.aws import pull_folder_from_s3, get_most_recent_s3_model_name
+from soongo_data.utils.aws import pull_folder_from_s3, s3_get_most_recent_folder
 
 
-logger = gen_logger('Model_PREDICITON')
+logger = gen_logger('Elec_Eligibility_Predict - Model_Prediction')
 
 class ElectrificationModel:
     """Handles model training and prediction for electrification eligibility."""
@@ -28,7 +28,7 @@ class ElectrificationModel:
         self.model = None
         self.scaler = None
         self.label_encoders = {}
-
+        self.std_nb = 5
         self.feature_names = None
         self.categorical_features = []
         self.numeric_features = []
@@ -40,7 +40,7 @@ class ElectrificationModel:
     
 
     def load_model_from_s3(self):
-        last_model_name = get_most_recent_s3_model_name(
+        last_model_name = s3_get_most_recent_folder(
             bucket_name=self.config['bucket_name'],
             prefix=self.config['model_folder']
         )
@@ -96,16 +96,21 @@ class ElectrificationModel:
         
         # LOAD LABEL ENCODERS FROM JSON 
         encoders_path = model_path / "label_encoders.json"
-        
+
         if encoders_path.exists():
             with open(encoders_path, "r") as f:
                 encoders_data = json.load(f)
             
             self.label_encoders = {}
             for feature_name, encoder_info in encoders_data.items():
-                encoder = LabelEncoder()
-                encoder.classes_ = np.array(encoder_info["classes"])
+                encoder = OrdinalEncoder(
+                    handle_unknown='use_encoded_value',
+                    unknown_value=-1
+                )
+                categories = np.array(encoder_info["classes"])
+                encoder.fit(pd.DataFrame(categories, columns=[feature_name]))
                 self.label_encoders[feature_name] = encoder
+
             
         else:
             self.label_encoders = None
@@ -144,8 +149,6 @@ class ElectrificationModel:
     ) -> np.ndarray:
         df = df.copy()
         
-        # Separate numeric and categorical features
-        
         self.categorical_features = df[feature_list].select_dtypes(
                 include=['object', 'category']
             ).columns.tolist()
@@ -153,33 +156,14 @@ class ElectrificationModel:
         self.numeric_features = [
             f for f in feature_list if f not in self.categorical_features
         ]
-        
-        # Handle categorical features
+
+        # Handle categorical features with OrdinalEncoder
         for col in self.categorical_features:
             if col in df.columns:
-                # Handle unseen categories by replacing with the most frequent seen category
-                filled_col = df[col].astype(str).fillna('MISSING')
-                
-                # Get valid classes from encoder
-                valid_classes = set(self.label_encoders[col].classes_)
-                
-                # Replace unseen values with first valid class (typically 'MISSING' or most common)
-                default_class = self.label_encoders[col].classes_[0]
-                filled_col = filled_col.apply(
-                    lambda x: x if x in valid_classes else default_class
-                )
-                df[col] = self.label_encoders[col].transform(filled_col)
+                df[col] = self.label_encoders[col].transform(df[[col]])
         
-        # Handle numeric features
-        for col in self.numeric_features:
-            if col in df.columns:
-                # Fill missing with median
-                df[col] = df[col].fillna(self.median_values_.get(col, 0))
-        
-        # Convert to matrix
         X = df[feature_list].values
         
-        # Handle infinite and extremely large values
         logger.info(f"Checking features for infinite/extreme values...")
         
         # Replace inf with NaN first
@@ -195,8 +179,8 @@ class ElectrificationModel:
                         
             # Clip extreme values (beyond 5 standard deviations)
             if not np.isnan(col_std) and col_std > 0:
-                lower_bound = col_mean - 5 * col_std
-                upper_bound = col_mean + 5 * col_std
+                lower_bound = col_mean - self.std_nb * col_std
+                upper_bound = col_mean + self.std_nb * col_std
                 X[:, i] = np.clip(X[:, i], lower_bound, upper_bound)
         
         # Final check for any remaining NaN or inf

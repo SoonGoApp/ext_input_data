@@ -2,11 +2,10 @@ import os
 import pytest
 import pandas as pd
 import numpy as np
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 
 # ── config ───
-
 CONFIG = {
     "scores_table": "electrification_scores",
     "scores_m_view": "electrification_scores_today",
@@ -38,49 +37,63 @@ def loader():
 def test_init_engine_created(loader):
     assert loader.engine is not None
 
-def test_init_output_table(loader):
-    assert loader.output_table == CONFIG["scores_table"]
+def test_init_config_stored(loader):
+    assert loader.config == CONFIG
 
-def test_init_output_mv(loader):
-    assert loader.output_mv == CONFIG["scores_m_view"]
-
-def test_init_schema(loader):
-    assert loader.schema == CONFIG["schema"]
+def test_init_no_output_table_attr(loader):
+    assert not hasattr(loader, "output_table")
+    assert not hasattr(loader, "output_mv")
+    assert not hasattr(loader, "schema")
 
 
 # ── load_data ───
 
 def test_load_data_returns_dataframe(loader):
     sample = make_df()
+    mock_conn = MagicMock()
+    loader.engine.connect.return_value.__enter__ = MagicMock(return_value=mock_conn)
+    loader.engine.connect.return_value.__exit__ = MagicMock(return_value=False)
+
     with patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.pd.read_sql", return_value=sample):
         result = loader.load_data()
+
     assert isinstance(result, pd.DataFrame)
 
 def test_load_data_returns_correct_rows(loader):
     sample = make_df(15)
+    mock_conn = MagicMock()
+    loader.engine.connect.return_value.__enter__ = MagicMock(return_value=mock_conn)
+    loader.engine.connect.return_value.__exit__ = MagicMock(return_value=False)
+
     with patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.pd.read_sql", return_value=sample):
         result = loader.load_data()
+
     assert len(result) == 15
 
 def test_load_data_raises_on_error(loader):
+    mock_conn = MagicMock()
+    loader.engine.connect.return_value.__enter__ = MagicMock(return_value=mock_conn)
+    loader.engine.connect.return_value.__exit__ = MagicMock(return_value=False)
+
     with patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.pd.read_sql",
                side_effect=Exception("DB error")):
         with pytest.raises(Exception, match="DB error"):
             loader.load_data()
 
-
-# ── ensure_table_exist ───
-
-def test_ensure_table_exist_executes_sql(loader):
+def test_load_data_uses_text_query(loader):
+    """Vérifie que load_data passe bien un objet text() à pd.read_sql"""
+    sample = make_df()
     mock_conn = MagicMock()
-    loader.ensure_table_exist(mock_conn)
-    mock_conn.execute.assert_called_once()
+    loader.engine.connect.return_value.__enter__ = MagicMock(return_value=mock_conn)
+    loader.engine.connect.return_value.__exit__ = MagicMock(return_value=False)
 
-def test_ensure_table_exist_uses_correct_table(loader):
-    mock_conn = MagicMock()
-    loader.ensure_table_exist(mock_conn)
-    sql_arg = mock_conn.execute.call_args[0][0]
-    assert CONFIG["scores_table"] in str(sql_arg)
+    with patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.pd.read_sql",
+               return_value=sample) as mock_read_sql:
+        loader.load_data()
+
+    call_args = mock_read_sql.call_args
+    from sqlalchemy import TextClause
+    assert isinstance(call_args[0][0], TextClause)
 
 
 # ── delete_todays_rows ───
@@ -90,44 +103,105 @@ def test_delete_todays_rows_executes_sql(loader):
     loader.delete_todays_rows(mock_conn)
     mock_conn.execute.assert_called_once()
 
-def test_delete_todays_rows_uses_correct_table(loader):
+def test_delete_todays_rows_targets_correct_table(loader):
     mock_conn = MagicMock()
     loader.delete_todays_rows(mock_conn)
     sql_arg = mock_conn.execute.call_args[0][0]
-    assert CONFIG["scores_table"] in str(sql_arg)
+    assert "vehicles_electrification_eligibility_score" in str(sql_arg)
 
-
-# ── refresh_today_materialized_view ───
-
-def test_refresh_mv_executes_sql(loader):
+def test_delete_todays_rows_filters_on_current_date(loader):
     mock_conn = MagicMock()
-    loader.refresh_today_materialized_view(mock_conn)
-    assert mock_conn.execute.call_count == 2  # DROP + CREATE
-
-def test_refresh_mv_uses_correct_view_name(loader):
-    mock_conn = MagicMock()
-    loader.refresh_today_materialized_view(mock_conn)
-    all_sql = " ".join(str(c[0][0]) for c in mock_conn.execute.call_args_list)
-    assert CONFIG["scores_m_view"] in all_sql
+    loader.delete_todays_rows(mock_conn)
+    sql_arg = mock_conn.execute.call_args[0][0]
+    assert "CURRENT_DATE" in str(sql_arg)
 
 
-# ── write_results_to_db ──
+# ── insert_predictions_to_table ───
 
-def test_write_results_calls_all_steps(loader):
+def test_insert_predictions_calls_bulk_insert(loader):
     df = make_df()
-    with patch.object(loader, "ensure_table_exist") as mock_ensure, \
-         patch.object(loader, "delete_todays_rows") as mock_delete, \
-         patch.object(loader, "insert_predictions_to_table") as mock_insert, \
-         patch.object(loader, "refresh_today_materialized_view") as mock_refresh:
+    mock_session = MagicMock()
+
+    with patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.Table"), \
+         patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.MetaData"), \
+         patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.registry"), \
+         patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.Session") as mock_session_cls:
+
+        mock_session_cls.return_value.__enter__ = MagicMock(return_value=mock_session)
+        mock_session_cls.return_value.__exit__ = MagicMock(return_value=False)
+
+        loader.insert_predictions_to_table(df)
+
+    mock_session.bulk_insert_mappings.assert_called_once()
+    mock_session.commit.assert_called_once()
+
+def test_insert_predictions_passes_correct_records(loader):
+    df = make_df(5)
+    mock_session = MagicMock()
+
+    with patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.Table"), \
+         patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.MetaData"), \
+         patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.registry"), \
+         patch("soongo_data.utils.eligibility_electrif_predict.data_pipeline.Session") as mock_session_cls:
+
+        mock_session_cls.return_value.__enter__ = MagicMock(return_value=mock_session)
+        mock_session_cls.return_value.__exit__ = MagicMock(return_value=False)
+
+        loader.insert_predictions_to_table(df)
+
+    records_passed = mock_session.bulk_insert_mappings.call_args[0][1]
+    assert len(records_passed) == 5
+
+
+# ── write_results_to_db ───
+
+def test_write_results_calls_delete_and_insert(loader):
+    df = make_df()
+    mock_conn = MagicMock()
+    loader.engine.begin.return_value.__enter__ = MagicMock(return_value=mock_conn)
+    loader.engine.begin.return_value.__exit__ = MagicMock(return_value=False)
+
+    with patch.object(loader, "delete_todays_rows") as mock_delete, \
+         patch.object(loader, "insert_predictions_to_table") as mock_insert:
         loader.write_results_to_db(df)
 
-    mock_ensure.assert_called_once()
-    mock_delete.assert_called_once()
-    mock_insert.assert_called_once()
-    mock_refresh.assert_called_once()
+    mock_delete.assert_called_once_with(mock_conn)
+    mock_insert.assert_called_once_with(df)
+
+def test_write_results_no_longer_calls_ensure_or_refresh(loader):
+    df = make_df()
+    mock_conn = MagicMock()
+    loader.engine.begin.return_value.__enter__ = MagicMock(return_value=mock_conn)
+    loader.engine.begin.return_value.__exit__ = MagicMock(return_value=False)
+
+    with patch.object(loader, "delete_todays_rows"), \
+         patch.object(loader, "insert_predictions_to_table"):
+        loader.write_results_to_db(df)
+
+    assert not hasattr(loader, "ensure_table_exist")
+    assert not hasattr(loader, "refresh_today_materialized_view")
 
 def test_write_results_raises_on_error(loader):
     df = make_df()
-    with patch.object(loader, "ensure_table_exist", side_effect=Exception("DB failed")):
+    mock_conn = MagicMock()
+    loader.engine.begin.return_value.__enter__ = MagicMock(return_value=mock_conn)
+    loader.engine.begin.return_value.__exit__ = MagicMock(return_value=False)
+
+    with patch.object(loader, "delete_todays_rows", side_effect=Exception("DB failed")):
         with pytest.raises(Exception, match="DB failed"):
             loader.write_results_to_db(df)
+
+def test_write_results_uses_transaction(loader):
+    """write_results_to_db doit utiliser engine.begin() (transaction atomique)"""
+    df = make_df()
+    mock_conn = MagicMock()
+    loader.engine.begin.return_value.__enter__ = MagicMock(return_value=mock_conn)
+    loader.engine.begin.return_value.__exit__ = MagicMock(return_value=False)
+
+    loader.engine.begin.reset_mock()
+
+    with patch.object(loader, "delete_todays_rows"), \
+         patch.object(loader, "insert_predictions_to_table"):
+        loader.write_results_to_db(df)
+
+    loader.engine.begin.assert_called_once()

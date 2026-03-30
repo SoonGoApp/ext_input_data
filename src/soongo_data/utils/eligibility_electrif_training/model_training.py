@@ -5,7 +5,7 @@ import yaml
 import shutil
 from typing import Dict, Tuple, Optional, Any
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler, OrdinalEncoder
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -26,7 +26,7 @@ from soongo_data.utils.aws import push_folder_to_s3
 from soongo_data.utils.logging_utils import gen_logger
 
 
-logger = gen_logger('Model_Training')
+logger = gen_logger('Elec_Eligibility_Training - Model_Training')
 
 
 class ElectrificationModel:
@@ -43,6 +43,7 @@ class ElectrificationModel:
         self.model_type = self.config.get('model_type', 'random_forest')
         self.model = None
         self.threshold = 0.55
+        self.std_nb = 5
         self.scaler = StandardScaler()
         self.label_encoders = {}
         self.feature_names = None
@@ -62,6 +63,7 @@ class ElectrificationModel:
         }
         return models.get(self.model_type, models['random_forest'])
     
+
     def preprocess_features(
         self, 
         df: pd.DataFrame, 
@@ -78,41 +80,19 @@ class ElectrificationModel:
             self.numeric_features = [
                 f for f in feature_list if f not in self.categorical_features
             ]
-        
+
         # Handle categorical features
         for col in self.categorical_features:
             if col in df.columns:
                 if fit:
-                    self.label_encoders[col] = LabelEncoder()
-                    # Fill NaN with MISSING before encoding
-                    filled_col = df[col].astype(str).fillna('MISSING')
-                    self.label_encoders[col].fit(filled_col)
-                    df[col] = self.label_encoders[col].transform(filled_col)
-                else:
-                    # Handle unseen categories by replacing with the most frequent seen category
-                    filled_col = df[col].astype(str).fillna('MISSING')
-                    
-                    # Get valid classes from encoder
-                    valid_classes = set(self.label_encoders[col].classes_)
-                    
-                    # Replace unseen values with first valid class (typically 'MISSING' or most common)
-                    default_class = self.label_encoders[col].classes_[0]
-                    filled_col = filled_col.apply(
-                        lambda x: x if x in valid_classes else default_class
+                    self.label_encoders[col] = OrdinalEncoder(
+                        handle_unknown='use_encoded_value',
+                        unknown_value=-1
                     )
-                    df[col] = self.label_encoders[col].transform(filled_col)
-        
-        # Handle numeric features
-        for col in self.numeric_features:
-            if col in df.columns:
-                # Fill missing with median
-                if fit:
-                    median_val = df[col].median()
-                    self.median_values_ = getattr(self, 'median_values_', {})
-                    self.median_values_[col] = median_val
-                    df[col] = df[col].fillna(median_val)
+                    self.label_encoders[col].fit(df[[col]])
+                    df[col] = self.label_encoders[col].transform(df[[col]])
                 else:
-                    df[col] = df[col].fillna(self.median_values_.get(col, 0))
+                    df[col] = self.label_encoders[col].transform(df[[col]])
         
         # Convert to matrix
         X = df[feature_list].values
@@ -133,8 +113,8 @@ class ElectrificationModel:
                         
             # Clip extreme values (beyond 5 standard deviations)
             if not np.isnan(col_std) and col_std > 0:
-                lower_bound = col_mean - 5 * col_std
-                upper_bound = col_mean + 5 * col_std
+                lower_bound = col_mean - self.std_nb * col_std
+                upper_bound = col_mean + self.std_nb * col_std
                 X[:, i] = np.clip(X[:, i], lower_bound, upper_bound)
         
         # Final check for any remaining NaN or inf
@@ -150,7 +130,6 @@ class ElectrificationModel:
         
         return X
     
-
 
     def train(
         self,
@@ -355,7 +334,7 @@ class ElectrificationModel:
             encoders_data = {}
             for feature_name, encoder in self.label_encoders.items():
                 encoders_data[feature_name] = {
-                    "classes": encoder.classes_.tolist(),
+                    "classes": encoder.categories_[0].tolist(),
                 }
             
             with open(model_path / "label_encoders.json", "w") as f:
