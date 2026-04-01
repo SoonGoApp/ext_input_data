@@ -135,6 +135,11 @@ src/soongo_data/utils/uploads.py
 src/soongo_data/utils/adress_utils/cedex.py
 src/soongo_data/utils/adress_utils/codes_postaux.py
 src/soongo_data/utils/adress_utils/departements.py
+src/soongo_data/utils/eligibility_electrif_predict/__init__.py
+src/soongo_data/utils/eligibility_electrif_predict/data_pipeline.py
+src/soongo_data/utils/eligibility_electrif_predict/inference_pipeline.py
+src/soongo_data/utils/eligibility_electrif_predict/model_predict.py
+src/soongo_data/utils/eligibility_electrif_predict/sql_requests.py
 src/soongo_data/utils/eligibility_electrif_training/__init__.py
 src/soongo_data/utils/eligibility_electrif_training/data_pipeline.py
 src/soongo_data/utils/eligibility_electrif_training/model_training.py
