@@ -1,0 +1,28 @@
+{
+  "vehicle_age_category": {
+    "classes": [
+      "0-2",
+      "2-5",
+      "5-10",
+      "UNKNOWN"
+    ]
+  },
+  "lease_duration_category": {
+    "classes": [
+      "24-36",
+      "36-48",
+      "48+",
+      "UNKNOWN"
+    ]
+  },
+  "assignment_type": {
+    "classes": [
+      "COMPANY_CAR"
+    ]
+  },
+  "fiscal_type": {
+    "classes": [
+      "PERSONAL_CAR"
+    ]
+  }
+}
