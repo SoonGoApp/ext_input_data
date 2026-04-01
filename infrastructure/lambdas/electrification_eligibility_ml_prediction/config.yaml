@@ -1,0 +1,9 @@
+# Output directories
+models_dir: "models"
+
+bucket_name: "soongo-staging-ml-models"
+model_folder: "electrification_eligibility_models"
+
+scores_table: "vehicles_electrification_eligibility_score"
+scores_m_view: "vehicles_electrification_eligibility_score_mv"
+schema: "publ"
