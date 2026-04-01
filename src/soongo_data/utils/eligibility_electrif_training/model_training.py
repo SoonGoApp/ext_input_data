@@ -402,7 +402,7 @@ class ElectrificationModel:
             bucket_name=config["bucket_name"]
         )
 
-        # self.remove_model_folder_from_local()
+        self.remove_model_folder_from_local()
         
         logger.info(f"Model uploaded to {config['bucket_name']}")
     
