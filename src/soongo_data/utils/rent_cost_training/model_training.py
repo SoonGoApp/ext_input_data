@@ -5,7 +5,7 @@ import yaml
 import shutil
 from typing import Dict, Tuple, Optional, Any
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler, OrdinalEncoder
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -25,7 +25,7 @@ from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.aws import push_folder_to_s3
 
 
-logger = gen_logger('Model_Training')
+logger = gen_logger('Rent_Cost_Train - Model_Training')
 
 
 class RentCostModel:
@@ -62,7 +62,6 @@ class RentCostModel:
                 **model_params
             )
         }
-        logger.info(f"SELECTED MODEL: {self.model_type}")
         return models.get(self.model_type, models['hist_gradient_boosting'])
 
 
@@ -87,43 +86,18 @@ class RentCostModel:
         for col in self.categorical_features:
             if col in df.columns:
                 if fit:
-                    self.label_encoders[col] = LabelEncoder()
-                    # Fill NaN with MISSING before encoding
-                    filled_col = df[col].astype(str).fillna('MISSING')
-                    self.label_encoders[col].fit(filled_col)
-                    df[col] = self.label_encoders[col].transform(filled_col)
-                else:
-                    # Handle unseen categories by replacing with the most frequent seen category
-                    filled_col = df[col].astype(str).fillna('MISSING')
-                    
-                    # Get valid classes from encoder
-                    valid_classes = set(self.label_encoders[col].classes_)
-                    
-                    # Replace unseen values with first valid class (typically 'MISSING' or most common)
-                    default_class = self.label_encoders[col].classes_[0]
-                    filled_col = filled_col.apply(
-                        lambda x: x if x in valid_classes else default_class
+                    self.label_encoders[col] = OrdinalEncoder(
+                        handle_unknown='use_encoded_value',
+                        unknown_value=-1
                     )
-                    df[col] = self.label_encoders[col].transform(filled_col)
-        
-        # Handle numeric features
-        for col in self.numeric_features:
-            if col in df.columns:
-                # Fill missing with median
-                if fit:
-                    median_val = df[col].median()
-                    self.median_values_ = getattr(self, 'median_values_', {})
-                    self.median_values_[col] = median_val
-                    df[col] = df[col].fillna(median_val)
+                    self.label_encoders[col].fit(df[[col]])
+                    df[col] = self.label_encoders[col].transform(df[[col]])
                 else:
-                    df[col] = df[col].fillna(self.median_values_.get(col, 0))
+                    df[col] = self.label_encoders[col].transform(df[[col]])
         
         # Convert to matrix
         X = df[feature_list].values
-        
-        # Handle infinite and extremely large values
-        logger.info(f"Checking features for infinite/extreme values...")
-        
+                
         # Scale features
         if fit:
             X = self.scaler.fit_transform(X)
@@ -160,7 +134,6 @@ class RentCostModel:
         return X_train, X_test, y_train, y_test
 
 
-
     def model_fit(
         self,
         X_train: pd.DataFrame,
@@ -184,8 +157,6 @@ class RentCostModel:
         base_model = self._get_model()
 
         # Cross-validation on training set (REGRESSION METRICS)
-        logger.info("Performing 5-fold cross-validation...")
-
         cv_rmse = cross_val_score(
             base_model,
             X_train_processed,
@@ -222,21 +193,7 @@ class RentCostModel:
             "cv_r2_std": cv_r2.std()
         }
 
-        logger.info(
-            f"CV RMSE: {metrics['cv_rmse_mean']:.2f} "
-            f"(+/- {metrics['cv_rmse_std']:.2f})"
-        )
-        logger.info(
-            f"CV MAE:  {metrics['cv_mae_mean']:.2f} "
-            f"(+/- {metrics['cv_mae_std']:.2f})"
-        )
-        logger.info(
-            f"CV R²:   {metrics['cv_r2_mean']:.3f} "
-            f"(+/- {metrics['cv_r2_std']:.3f})"
-        )
-
         # Train final model on full training set
-        logger.info("Training final model on full training set...")
         self.model = self._get_model()
         self.model.fit(X_train_processed, y_train)
 
@@ -247,30 +204,20 @@ class RentCostModel:
         return metrics
 
 
-
     def train_model(
         self,
         features: pd.DataFrame, 
         target: pd.DataFrame
     ) -> Tuple[Any, Any]:
 
-        logger.info("="*60)
-        logger.info("TRAINING MODEL")
-        logger.info("="*60)
-        
         # Select features
         feature_list = features.columns
-        logger.info(f"Using {len(feature_list)} features")
 
         # Prepare data
         feature_cols = [col for col in features.columns if col not in ['vehicle_id', 'id']]
         feature_cols = [col for col in feature_cols if col in feature_list]
 
-        # Merge features and target
-        # data = features[['vehicle_id'] + feature_cols].merge(target, on='vehicle_id', how='inner')
-
         X_train, X_test, y_train, y_test = self.prepare_train_test_split(
-            # features_df=pd.concat([pd.DataFrame({'vehicle_id': data['vehicle_id']}), X], axis=1),
             features_df=features,
             target_df=target,
             test_size=self.config.get('test_size', 0.3),
@@ -289,18 +236,12 @@ class RentCostModel:
         self.results['train_metrics'] = train_metrics
 
         # Evaluate on test set
-        logger.info("\n" + "="*60)
-        logger.info("MODEL EVALUATION")
-        logger.info("="*60)
-        
         test_metrics = self.evaluate(X_train, y_train, X_test, y_test)
         self.results['test_metrics'] = test_metrics
         
         # Feature importance
         feature_importance = self.get_feature_importance()
         if not feature_importance.empty:
-            logger.info("\nTop 10 Most Important Features:")
-            logger.info(feature_importance.head(15).to_string())
             self.results['feature_importance'] = feature_importance.to_dict('records')
         
         self.generate_evaluation_figures(
@@ -315,8 +256,6 @@ class RentCostModel:
         return self.results
     
 
-
-
     def evaluate(
         self,
         X_train: pd.DataFrame,
@@ -324,9 +263,6 @@ class RentCostModel:
         X_test: pd.DataFrame,
         y_test: pd.Series
     ) -> Dict[str, float]:
-
-        logger.info("Evaluating model performance...")
-
         # Preprocess features (NO fitting here)
         X_train_processed = self.preprocess_features(
             X_train, self.feature_names, fit=False
@@ -349,20 +285,8 @@ class RentCostModel:
             "test_r2": float(r2_score(y_test, y_pred_test)),
         }
 
-        logger.info("=" * 60)
-        logger.info("MODEL PERFORMANCE")
-        logger.info("=" * 60)
-        logger.info(f"Training MAE:  {metrics['train_mae']:.2f} €/month")
-        logger.info(f"Test MAE:      {metrics['test_mae']:.2f} €/month")
-        logger.info(f"Training RMSE:{metrics['train_rmse']:.2f} €/month")
-        logger.info(f"Test RMSE:    {metrics['test_rmse']:.2f} €/month")
-        logger.info(f"Training R²:  {metrics['train_r2']:.3f}")
-        logger.info(f"Test R²:      {metrics['test_r2']:.3f}")
-        logger.info("=" * 60)
-
         return metrics
     
-
 
     def get_feature_importance(self) -> pd.DataFrame:
         """
@@ -382,11 +306,9 @@ class RentCostModel:
             
             return importance
         else:
-            logger.warning("Model does not support feature importance.")
             return pd.DataFrame()
     
     
-
     def save_model(self, path: str, results: dict, config: dict):
         """
         Save model and preprocessors to disk using ONNX format.
@@ -404,14 +326,12 @@ class RentCostModel:
             initial_type = [("float_input", FloatTensorType([None, n_features]))]
 
             if self.model_type == "xgboost":
-                logger.info("Converting XGBoost model to ONNX...")
                 onnx_model = convert_xgboost(
                     self.model,
                     initial_types=initial_type,
                     target_opset=12
                 )
             else:
-                logger.info("Converting sklearn model to ONNX...")
                 onnx_model = convert_sklearn(
                     self.model,
                     initial_types=initial_type,
@@ -419,12 +339,10 @@ class RentCostModel:
                 )
 
             onnx.save_model(onnx_model, model_path / "model.onnx")
-            logger.info("ONNX model saved successfully")
 
         except Exception as e:
             logger.exception("ONNX conversion failed")
             raise RuntimeError(f"ONNX conversion failed: {e}")
-
 
         # SAVE SCALER
         if self.scaler is not None:
@@ -442,23 +360,19 @@ class RentCostModel:
                 with open(model_path / "scaler.json", "w") as f:
                     json.dump(scaler_data, f, indent=2)
 
-                logger.info("Scaler saved")
             else:
-                logger.warning(f"Unsupported scaler type: {type(self.scaler)}")
+                logger.error(f"Unsupported scaler type: {type(self.scaler)}")
 
-
-        # SAVE LABEL ENCODERS
-        if getattr(self, "label_encoders", None):
-            encoders_data = {
-                feature: encoder.classes_.tolist()
-                for feature, encoder in self.label_encoders.items()
-            }
-
+        # SAVE LABEL ENCODERS AS JSON
+        if self.label_encoders is not None:
+            encoders_data = {}
+            for feature_name, encoder in self.label_encoders.items():
+                encoders_data[feature_name] = {
+                    "classes": encoder.categories_[0].tolist(),
+                }
+            
             with open(model_path / "label_encoders.json", "w") as f:
                 json.dump(encoders_data, f, indent=2)
-
-            logger.info("Label encoders saved")
-
 
         # CLEAN MEDIAN VALUES
         median_values_clean = {}
@@ -493,19 +407,13 @@ class RentCostModel:
         with open(model_path / "metadata.json", "w") as f:
             json.dump(metadata, f, indent=2)
 
-        logger.info("Metadata saved")
-
         # SAVE TRAINING RESULTS
         with open(model_path / "training_results.json", "w") as f:
             json.dump(results, f, indent=2, default=str)
 
-        logger.info("Training results saved")
-
         # SAVE CONFIG
         with open(model_path / "config.yaml", "w") as f:
             yaml.dump(config, f)
-
-        logger.info("Config saved")
 
         # UPLOAD TO S3
         push_folder_to_s3(
@@ -519,14 +427,12 @@ class RentCostModel:
         logger.info(f"Model successfully uploaded to S3 bucket {config['bucket_name']}")
 
 
-
     def remove_model_folder_from_local(self):
         local_folder = Path(self.config['models_dir'])
         try:
             shutil.rmtree(local_folder)
         except Exception as e:
-            print(f"Failed to delete folder {local_folder}: {e}")
-
+            logger.error(f"Failed to delete folder {local_folder}: {e}")
 
 
     def generate_evaluation_figures(
@@ -537,10 +443,6 @@ class RentCostModel:
         """
         Generate and save regression evaluation figures.
         """
-
-        logger.info("\n" + "=" * 60)
-        logger.info("GENERATING REGRESSION EVALUATION FIGURES")
-        logger.info("=" * 60)
 
         output_dir = Path(self.config["models_dir"]) / f"model_{datetime.now().strftime('%Y-%m-%d')}"
         figures_dir = output_dir / "figures"
@@ -581,7 +483,6 @@ class RentCostModel:
         plt.savefig(figures_dir / "01_predicted_vs_actual.png", dpi=300)
         plt.close()
 
-
         # 2. Residuals vs Predicted
         fig, ax = plt.subplots(figsize=(10, 6))
         ax.scatter(y_pred, residuals, alpha=0.5)
@@ -593,7 +494,6 @@ class RentCostModel:
         plt.savefig(figures_dir / "02_residuals_vs_predicted.png", dpi=300)
         plt.close()
 
-
         # 3. Residual Distribution
         fig, ax = plt.subplots(figsize=(10, 6))
         sns.histplot(residuals, bins=50, kde=True, ax=ax)
@@ -602,7 +502,6 @@ class RentCostModel:
         plt.savefig(figures_dir / "03_residual_distribution.png", dpi=300)
         plt.close()
 
-
         # 4. Absolute Error Distribution
         fig, ax = plt.subplots(figsize=(10, 6))
         sns.histplot(abs_errors, bins=50, kde=True, ax=ax)
@@ -610,7 +509,6 @@ class RentCostModel:
         plt.tight_layout()
         plt.savefig(figures_dir / "04_absolute_error_distribution.png", dpi=300)
         plt.close()
-
 
         # 5. Feature Importance
         feature_importance = self.get_feature_importance()
@@ -623,5 +521,3 @@ class RentCostModel:
             plt.tight_layout()
             plt.savefig(figures_dir / "05_feature_importance.png", dpi=300)
             plt.close()
-
-        logger.info(f"✓ All regression figures saved to: {figures_dir}")

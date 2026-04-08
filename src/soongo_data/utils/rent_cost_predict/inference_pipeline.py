@@ -1,9 +1,9 @@
-from rent_cost_ml_model.data_loader import DataLoader
-from rent_cost_ml_model.model_predict import RentalCostPredictor
+from soongo_data.utils.rent_cost_predict.data_loader import DataLoader
+from soongo_data.utils.rent_cost_predict.model_predict import RentalCostPredictor
 from soongo_data.utils.logging_utils import gen_logger
 
 
-logger = gen_logger('Inference_model')
+logger = gen_logger('Rent_Cost_Predict -  - Inference')
 
 
 class InferencePipeline:
@@ -18,8 +18,6 @@ class InferencePipeline:
 
     def run(self):
         """Main prediction script."""
-        logger.info("RENTAL COST PREDICTOR")
-        
         try:
     
             # Load data
@@ -29,7 +27,7 @@ class InferencePipeline:
             self.predictions = self.model.predict_cost(features_df.drop(columns=['vehicle_id']))
             features_df['predicted_total_rent_tax_exc'] = self.predictions
 
-            final_df = features_df[['vehicle_id', 'predicted_total_rent_tax_exc']]
+            final_df = features_df[['vehicle_id', 'predicted_total_rent_tax_exc']].copy()
             final_df.loc[:, 'model'] = self.model.model_type
 
             self.data_loader.write_results_to_db(final_df)
@@ -43,7 +41,6 @@ class InferencePipeline:
         except Exception as e:
             logger.error(f"Prediction failed: {str(e)}", exc_info=True)
             raise
-
 
 
 def run_pipeline(config: dict):

@@ -1,7 +1,7 @@
 import os
 import yaml
 import traceback
-from rent_cost_ml_model import run_pipeline
+from soongo_data.utils.rent_cost_predict import run_pipeline
 from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.secrets_utils import get_local_secret
 from soongo_data.utils.aws import send_ses_email
@@ -10,7 +10,7 @@ from soongo_data.utils.aws import send_ses_email
 def lambda_handler(context):
 
     try:
-        logger = gen_logger("Lambda_handler")
+        logger = gen_logger("Rent_Cost_Predict")
 
         logger.info("Starting predictions cost model lambda")
 
