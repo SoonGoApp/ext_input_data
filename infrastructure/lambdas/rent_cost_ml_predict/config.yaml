@@ -1,0 +1,5 @@
+# Output directories
+models_dir: "models"
+
+bucket_name: "soongo-staging-ml-models"
+model_folder: "rent_cost_models"

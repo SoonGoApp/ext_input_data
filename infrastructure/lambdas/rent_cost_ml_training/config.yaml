@@ -1,0 +1,25 @@
+# Output directories
+models_dir: "rent_cost_models"
+
+# Bucket Name
+bucket_name: "soongo-staging-ml-models"
+
+# Model configuration
+model_type: "hist_gradient_boosting" 
+model_params:
+  max_iter: 300
+  learning_rate: 0.05
+  max_depth: 7
+  min_samples_leaf: 10
+  l2_regularization: 0.1
+  random_state: 42
+  verbose: 0
+
+# Training parameters
+test_size: 0.3
+random_state: 42
+
+# Feature selection
+feature_selection:
+  method: "importance"
+  top_n_features: 30
