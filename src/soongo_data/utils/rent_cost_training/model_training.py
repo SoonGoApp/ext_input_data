@@ -309,7 +309,7 @@ class RentCostModel:
             return pd.DataFrame()
     
     
-    def save_model(self, path: str, results: dict, config: dict):
+    def save_model(self, results: dict, config: dict):
         """
         Save model and preprocessors to disk using ONNX format.
         Supports XGBoost and sklearn models.
@@ -317,7 +317,8 @@ class RentCostModel:
 
         logger.info("Saving model artifacts...")
 
-        model_path = Path(path)
+        model_path = Path(self.config['models_dir']) / f'model_{datetime.now().strftime('%Y-%m-%d')}'
+
         model_path.mkdir(parents=True, exist_ok=True)
 
         # ONNX MODEL EXPORT
@@ -415,16 +416,9 @@ class RentCostModel:
         with open(model_path / "config.yaml", "w") as f:
             yaml.dump(config, f)
 
-        # UPLOAD TO S3
-        push_folder_to_s3(
-            local_dir=model_path,
-            s3_prefix=str(model_path),
-            bucket_name=config["bucket_name"]
-        )
-
-        self.remove_model_folder_from_local()
-
         logger.info(f"Model successfully uploaded to S3 bucket {config['bucket_name']}")
+
+        return Path(model_path)
 
 
     def remove_model_folder_from_local(self):

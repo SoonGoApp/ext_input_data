@@ -1,8 +1,14 @@
+import os
 from pathlib import Path
 from datetime import datetime
-from soongo_data.utils.rent_cost_training.data_loader import DataLoader
+import pandas as pd
+from sqlalchemy import text
 from soongo_data.utils.rent_cost_training.model_training import RentCostModel
+from soongo_data.utils.rent_cost_training.sql_requests import SELECT_ALL_FEATURES_TRAINING
+from soongo_data.utils.aws import push_folder_to_s3
+from soongo_data.utils.db import gen_engine
 from soongo_data.utils.logging_utils import gen_logger
+
 
 logger = gen_logger('Rent_Cost_Train - Train_Pipeline')
 
@@ -13,7 +19,9 @@ class TrainingPipeline:
     def __init__(self, config: dict):
 
         self.config = config
-        self.data_loader = DataLoader()
+        self.engine = gen_engine(
+            database_url=os.environ["DATABASE_URL"]
+        )
         self.model = RentCostModel(config=self.config)
         self.results = {}
     
@@ -26,17 +34,6 @@ class TrainingPipeline:
                 parents=True, exist_ok=True
             )
 
-    
-    def save_artifacts(self):
-        """Save model and results."""
-
-        # Save model
-        model_dir = Path(self.config['models_dir']) / f'model_{datetime.now().strftime('%Y-%m-%d')}'
-        self.model.save_model(str(model_dir), self.results, self.config)
-        
-        return model_dir
-    
-
     def run(self):
         """Execute complete training pipeline."""
         try:
@@ -44,11 +41,12 @@ class TrainingPipeline:
             self.setup()
             
             # Load data
-            df = self.data_loader.load_data()
+            with self.engine.connect() as conn:
+                df = pd.read_sql(text(SELECT_ALL_FEATURES_TRAINING), conn)
 
             # Create features
             features = df.drop(columns=['target'])
-            
+
             # Create target
             target = df[['vehicle_id', 'target']]
             
@@ -56,9 +54,18 @@ class TrainingPipeline:
             self.results = self.model.train_model(features, target)
             
             # Save artifacts
-            model_dir = self.save_artifacts()
+            model_dir = self.model.save_model(self.results, self.config)
+
+            # UPLOAD TO S3
+            push_folder_to_s3(
+                local_dir=model_dir,
+                s3_prefix=str(model_dir),
+                bucket_name=self.config["bucket_name"]
+            )
+
+            self.model.remove_model_folder_from_local()
             
-            return model_dir
+            return True
             
         except Exception as e:
             logger.error(f"Pipeline failed: {e}", exc_info=True)
@@ -69,4 +76,3 @@ def run_pipeline(config: dict):
     # Run pipeline
     pipeline = TrainingPipeline(config=config)
     pipeline.run()
-

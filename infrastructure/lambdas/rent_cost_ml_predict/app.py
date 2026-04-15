@@ -39,14 +39,14 @@ def lambda_handler(context):
     
     except Exception as error:
         logger.error(
-            f'Error on Rent Cost ML MODEL pipeline with traceback {traceback.format_exception(error)}',
+            f'Error on Rent Cost ML Predict MODEL pipeline with traceback {traceback.format_exception(error)}',
         )
         send_ses_email(
             sender_email="infra@soongo.co",
             recipient_email="data@soongo.co",
             subject="Alert: Error on Rent Cost ML MODEL pipeline",
             body_text=(
-                f"Rent Cost ML MODELpipeline failed"
+                f"Rent Cost ML Predict MODEL pipeline failed"
                 f"with traceback {traceback.format_exception(error)}"
             ),
             logger=logger,

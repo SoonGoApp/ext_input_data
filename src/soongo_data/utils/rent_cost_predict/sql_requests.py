@@ -23,14 +23,11 @@ WITH base AS (
         v.energy != 'ELECTRIC'
         AND vc.contract_type != 'ACQ'
         AND v.entry_into_fleet_date IS NOT NULL
-        AND v.energy IS NOT NULL
         AND v.fiscal_power IS NOT NULL
         AND v.seat_count IS NOT NULL
         AND v.motor_power IS NOT NULL
-        AND v.transmission IS NOT NULL
         AND vc.lease_months IS NOT NULL
         AND vc.lease_mileage IS NOT NULL
-        AND vc.contract_type IS NOT NULL
 ),
 
 stats AS (
@@ -41,7 +38,7 @@ stats AS (
 
 SELECT
     b.vehicle_id,
-    b.energy,
+    COALESCE(b.energy,        'unknown')        AS energy,
     b.age,
     b.entry_year,
     COALESCE(b.segment,       'unknown')        AS segment,

@@ -192,7 +192,7 @@ class RentalCostPredictor:
         return X
     
 
-    def predict_cost(self, X: pd.DataFrame) -> np.ndarray:
+    def predict(self, X: pd.DataFrame) -> np.ndarray:
         """
         Predict rental costs.
         

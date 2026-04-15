@@ -24,7 +24,7 @@ class InferencePipeline:
             features_df = self.data_loader.load_data()
             
             # Predict Values
-            self.predictions = self.model.predict_cost(features_df.drop(columns=['vehicle_id']))
+            self.predictions = self.model.predict(features_df.drop(columns=['vehicle_id']))
             features_df['predicted_total_rent_tax_exc'] = self.predictions
 
             final_df = features_df[['vehicle_id', 'predicted_total_rent_tax_exc']].copy()

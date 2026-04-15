@@ -23,13 +23,10 @@ WITH base AS (
     WHERE
         vc.total_rent_tax_exc IS NOT NULL
         AND vc.total_rent_tax_exc != '0'
-        AND v.energy IS NOT NULL
         AND v.entry_into_fleet_date IS NOT NULL
-        AND vc.contract_type IS NOT NULL
         AND v.fiscal_power IS NOT NULL
         AND v.seat_count IS NOT NULL
         AND v.motor_power IS NOT NULL
-        AND v.transmission IS NOT NULL
         AND vc.lease_months IS NOT NULL
         AND vc.lease_mileage IS NOT NULL
         AND vc.contract_type != 'ACQ'

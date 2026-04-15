@@ -1,4 +1,3 @@
-
 import os
 import pandas as pd
 from soongo_data.utils.logging_utils import gen_logger
@@ -37,7 +36,7 @@ class DataLoader:
     def insert_predictions_to_table(self, df: pd.DataFrame):
         try:
             metadata = MetaData(schema='publ')
-            predictions_table = Table("vehicles_electrification_eligibility_score", metadata, autoload_with=self.engine)
+            predictions_table = Table("vehicles_rent_cost_predictions", metadata, autoload_with=self.engine)
             mapper_registry = registry()
             PredictionMapped = type("PredictionMapped", (object,), {})
             mapper_registry.map_imperatively(PredictionMapped, predictions_table)
@@ -71,7 +70,6 @@ class DataLoader:
 
     def write_results_to_db(self, df: pd.DataFrame):
         """Main function to write all results to db in a single transaction"""
-        
         try:
             with self.engine.begin() as conn:
                 self.delete_todays_rows(conn)
