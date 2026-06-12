@@ -11,10 +11,10 @@ from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.aws import pull_folder_from_s3, s3_get_most_recent_folder
 
 
-logger = gen_logger('Rent_Cost_Predict - Model_Predict')
+logger = gen_logger('Sell_Cost_Predict - Model_Predict')
 
 
-class RentalCostPredictor:
+class SellCostPredictor:
     """Handles model training and prediction for rental cost."""
     
     def __init__(self, config):

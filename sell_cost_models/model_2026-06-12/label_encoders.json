@@ -1,0 +1,37 @@
+{
+  "energy": {
+    "classes": [
+      "DIESEL",
+      "ELECTRIC",
+      "GAZ",
+      "GAZ_HYBRID_NO_RECHARGE"
+    ]
+  },
+  "segment": {
+    "classes": [
+      "CITY",
+      "COMPACT",
+      "SUV",
+      "TRUCK",
+      "UTILITY"
+    ]
+  },
+  "brand": {
+    "classes": [
+      "CITRO\u00cbN",
+      "FIAT",
+      "FORD",
+      "IVECO",
+      "NISSAN",
+      "PEUGEOT",
+      "RENAULT"
+    ]
+  },
+  "transmission": {
+    "classes": [
+      "AUTOMATIC",
+      "MANUAL",
+      "unknown"
+    ]
+  }
+}

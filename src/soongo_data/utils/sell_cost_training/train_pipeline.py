@@ -3,14 +3,14 @@ from pathlib import Path
 from datetime import datetime
 import pandas as pd
 from sqlalchemy import text
-from soongo_data.utils.rent_cost_training.model_training import RentCostModel
-from soongo_data.utils.rent_cost_training.sql_requests import SELECT_ALL_FEATURES_TRAINING
+from soongo_data.utils.sell_cost_training.model_training import SellCostModel
+from soongo_data.utils.sell_cost_training.sql_requests import SELECT_ALL_FEATURES_TRAINING
 from soongo_data.utils.aws import push_folder_to_s3
 from soongo_data.utils.db import gen_engine
 from soongo_data.utils.logging_utils import gen_logger
 
 
-logger = gen_logger('Rent_Cost_Train - Train_Pipeline')
+logger = gen_logger('Sell_Cost_Train - Train_Pipeline')
 
 
 class TrainingPipeline:
@@ -22,7 +22,7 @@ class TrainingPipeline:
         self.engine = gen_engine(
             database_url=os.environ["DATABASE_URL"]
         )
-        self.model = RentCostModel(config=self.config)
+        self.model = SellCostModel(config=self.config)
         self.results = {}
     
     def setup(self):
@@ -63,7 +63,7 @@ class TrainingPipeline:
                 bucket_name=self.config["bucket_name"]
             )
 
-            self.model.remove_model_folder_from_local()
+            # self.model.remove_model_folder_from_local()
             
             return True
             

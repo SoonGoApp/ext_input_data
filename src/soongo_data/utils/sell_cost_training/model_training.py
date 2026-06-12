@@ -25,10 +25,10 @@ from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.aws import push_folder_to_s3
 
 
-logger = gen_logger('Rent_Cost_Train - Model_Training')
+logger = gen_logger('Sell_Cost_Train - Model_Training')
 
 
-class RentCostModel:
+class SellCostModel:
     """Handles model training and evaluation."""
     
     def __init__(self, config: Dict):
@@ -51,7 +51,7 @@ class RentCostModel:
 
         self.test_size = config.get('test_size', 0.3)
         self.random_state = config.get('random_state', 42)
-        self.performance_metrics = {}
+        self.feature_importance = {} 
 
 
     def _get_model(self) -> Any:

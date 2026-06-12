@@ -2,12 +2,12 @@ import os
 import pandas as pd
 from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.db import gen_engine
-from soongo_data.utils.rent_cost_predict.sql_requests import SELECT_ALL_FEATURES_PREDICTION
+from soongo_data.utils.sell_cost_predict.sql_requests import SELECT_ALL_FEATURES_PREDICTION
 from sqlalchemy import text, Table, MetaData
 from sqlalchemy.orm import registry, Session
 
 
-logger = gen_logger('Rent_Cost_Predict - Data_Load')
+logger = gen_logger('Sell_Cost_Predict - Data_Load')
 
 
 class DataLoader:
@@ -36,7 +36,7 @@ class DataLoader:
     def insert_predictions_to_table(self, df: pd.DataFrame):
         try:
             metadata = MetaData(schema='publ')
-            predictions_table = Table("vehicles_rent_cost_predictions", metadata, autoload_with=self.engine)
+            predictions_table = Table("vehicles_sell_cost_predictions", metadata, autoload_with=self.engine)
             mapper_registry = registry()
             PredictionMapped = type("PredictionMapped", (object,), {})
             mapper_registry.map_imperatively(PredictionMapped, predictions_table)
@@ -57,7 +57,7 @@ class DataLoader:
         """
         try:
             delete_sql = f"""
-                DELETE FROM publ.vehicles_rent_cost_predictions
+                DELETE FROM publ.vehicles_sell_cost_predictions
                 WHERE created_at::date = CURRENT_DATE;
             """
 

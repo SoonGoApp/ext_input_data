@@ -1,5 +1,5 @@
 """
-Tests unitaires pour app.py - Rent Cost Predict
+Tests unitaires pour app.py - Sell Cost (Rebate Price) ML Training
 """
 
 import pytest
@@ -17,17 +17,16 @@ FAKE_DB_INFO = {"DATABASE_URL": "postgresql://user:pass@localhost/db"}
 @pytest.fixture(autouse=True)
 def mock_all_deps():
     """Mock TOUTES les dépendances AVANT import"""
-    with patch("infrastructure.lambdas.rent_cost_ml_predict.app.run_pipeline") as mock_run, \
-         patch("infrastructure.lambdas.rent_cost_ml_predict.app.gen_logger") as mock_logger, \
-         patch("infrastructure.lambdas.rent_cost_ml_predict.app.get_local_secret") as mock_secret, \
-         patch("infrastructure.lambdas.rent_cost_ml_predict.app.send_ses_email") as mock_email, \
+    with patch("infrastructure.lambdas.sell_cost_ml_training.app.run_pipeline") as mock_run, \
+         patch("infrastructure.lambdas.sell_cost_ml_training.app.gen_logger") as mock_logger, \
+         patch("infrastructure.lambdas.sell_cost_ml_training.app.get_local_secret") as mock_secret, \
+         patch("infrastructure.lambdas.sell_cost_ml_training.app.send_ses_email") as mock_email, \
          patch("builtins.open", mock_open(read_data="bucket_name: test-bucket\nmodels_dir: /tmp/models")), \
          patch("yaml.safe_load", return_value=FAKE_CONFIG):
-        
-        # Configure les mocks
+
         mock_logger.return_value = MagicMock()
         mock_secret.return_value = FAKE_DB_INFO
-        
+
         yield {
             "run_pipeline": mock_run,
             "send_ses_email": mock_email,
@@ -38,7 +37,7 @@ def mock_all_deps():
 
 def get_handler():
     """Import et retourne le lambda_handler"""
-    import infrastructure.lambdas.rent_cost_ml_predict.app as app_module
+    import infrastructure.lambdas.sell_cost_ml_training.app as app_module
     return app_module.lambda_handler
 
 
@@ -118,13 +117,13 @@ def test_email_subject_contains_alert(mock_all_deps):
     assert "Alert" in kwargs.get("subject", "")
 
 
-def test_email_subject_mentions_rent_cost(mock_all_deps):
-    """Test que le sujet mentionne Rent Cost"""
+def test_email_subject_mentions_sell_cost(mock_all_deps):
+    """Test que le sujet mentionne Sell Cost"""
     mock_all_deps["run_pipeline"].side_effect = RuntimeError("oops")
     handler = get_handler()
     handler(context=None)
     _, kwargs = mock_all_deps["send_ses_email"].call_args
-    assert "Rent Cost" in kwargs.get("subject", "")
+    assert "Sell Cost" in kwargs.get("subject", "")
 
 
 def test_handles_file_not_found(mock_all_deps):

@@ -1,7 +1,7 @@
 import os
 import yaml
 import traceback
-from soongo_data.utils.rent_cost_training import run_pipeline
+from soongo_data.utils.sell_cost_predict import run_pipeline
 from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.secrets_utils import get_local_secret
 from soongo_data.utils.aws import send_ses_email
@@ -10,9 +10,9 @@ from soongo_data.utils.aws import send_ses_email
 def lambda_handler(context):
 
     try:
-        logger = gen_logger("Rent_Cost_Train")
+        logger = gen_logger("Sell_Cost_Predict")
 
-        logger.info("Starting train rent cost model lambda")
+        logger.info("Starting sell predictions cost model lambda")
 
         config_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -31,7 +31,7 @@ def lambda_handler(context):
             config=pipeline_config,
         )
 
-        logger.info("Rent Cost ML MODEL pipeline finished successfully")
+        logger.info("Sell Cost ML MODEL pipeline finished successfully")
 
         return {
             "status": "success"
@@ -39,14 +39,14 @@ def lambda_handler(context):
     
     except Exception as error:
         logger.error(
-            f'Error on Rent Cost ML Train MODEL pipeline with traceback {traceback.format_exception(error)}',
+            f'Error on Sell Cost ML Predict MODEL pipeline with traceback {traceback.format_exception(error)}',
         )
         send_ses_email(
             sender_email="infra@soongo.co",
             recipient_email="data@soongo.co",
-            subject="Alert: Error on Rent Cost ML Train MODEL pipeline",
+            subject="Alert: Error on Sell Cost ML MODEL pipeline",
             body_text=(
-                f"Rent Cost ML MODEL pipeline failed"
+                f"Sell Cost ML Predict MODEL pipeline failed"
                 f"with traceback {traceback.format_exception(error)}"
             ),
             logger=logger,
