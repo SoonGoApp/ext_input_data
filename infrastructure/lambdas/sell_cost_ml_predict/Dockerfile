@@ -6,8 +6,8 @@ ARG build_env
 ENV env=$build_env
 
 # Copy the function code and dependencies
-COPY infrastructure/lambdas/rent_cost_ml_predict/app.py ${LAMBDA_TASK_ROOT}/
-COPY infrastructure/lambdas/rent_cost_ml_predict/config.yaml ${LAMBDA_TASK_ROOT}/
+COPY infrastructure/lambdas/sell_cost_ml_predict/app.py ${LAMBDA_TASK_ROOT}/
+COPY infrastructure/lambdas/sell_cost_ml_predict/config.yaml ${LAMBDA_TASK_ROOT}/
 COPY requirements_docker.txt ./
 COPY src/soongo_data ${LAMBDA_TASK_ROOT}/soongo_data/
 COPY credentials ${LAMBDA_TASK_ROOT}/credentials/
