@@ -3,7 +3,7 @@ from soongo_data.utils.sell_cost_predict.model_predict import SellCostPredictor
 from soongo_data.utils.logging_utils import gen_logger
 
 
-logger = gen_logger('Sell_Cost_Predict -  - Inference')
+logger = gen_logger('Sell_Cost_Predict - Inference')
 
 
 class InferencePipeline:
@@ -14,15 +14,19 @@ class InferencePipeline:
         self.data_loader = DataLoader(config=self.config)
         self.model = SellCostPredictor(config=self.config)
         self.predictions = None
-  
 
     def run(self):
-        """Main prediction script."""
+        """Main prediction script. Predit uniquement les vehicules en
+        contrat ACQ (filtre applique cote SQL, sql_requests.py)."""
         try:
-    
-            # Load data
+
+            # Load data (vehicules ACQ uniquement)
             features_df = self.data_loader.load_data()
-            
+
+            if features_df.empty:
+                logger.info("Aucun vehicule ACQ a predire aujourd'hui - pipeline terminee.")
+                return features_df
+
             # Predict Values
             self.predictions = self.model.predict(features_df.drop(columns=['vehicle_id']))
             features_df['predicted_rebate_price'] = self.predictions
@@ -37,7 +41,7 @@ class InferencePipeline:
             logger.info("PIPELINE COMPLETED SUCCESSFULLY")
 
             return final_df
-            
+
         except Exception as e:
             logger.error(f"Prediction failed: {str(e)}", exc_info=True)
             raise

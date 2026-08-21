@@ -41,8 +41,13 @@ class TrainingPipeline:
             self.setup()
             
             # Load data
+            # with self.engine.connect() as conn:
+            #     # df = pd.read_sql(text(SELECT_ALL_FEATURES_TRAINING), conn)
+            #     df = pd.read_sql(SELECT_ALL_FEATURES_TRAINING, conn)
+
             with self.engine.connect() as conn:
-                df = pd.read_sql(text(SELECT_ALL_FEATURES_TRAINING), conn)
+                result = conn.execute(text(SELECT_ALL_FEATURES_TRAINING))
+                df = pd.DataFrame(result.fetchall(), columns=result.keys())
 
             # Create features
             features = df.drop(columns=['target'])

@@ -23,7 +23,9 @@ class DataLoader:
         """Load data from database using SQL query."""
         try:
                 with self.engine.connect() as conn:
-                    df = pd.read_sql(text(SELECT_ALL_FEATURES_PREDICTION), conn)
+                    result = conn.execute(text(SELECT_ALL_FEATURES_PREDICTION))
+                    df = pd.DataFrame(result.fetchall(), columns=result.keys())
+
                 logger.info(f"Loaded {len(df)} rows from ALL_PROCESSED_SQL")
                 logger.info(f"Data Shape {df.shape}")
                 return df

@@ -1,44 +1,40 @@
-
-import pandas as pd
-import numpy as np
 import json
 import shutil
 from pathlib import Path
+from typing import Optional
+
+import numpy as np
 import onnxruntime as ort
+import pandas as pd
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler
 
-from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.aws import pull_folder_from_s3, s3_get_most_recent_folder
-
+from soongo_data.utils.logging_utils import gen_logger
 
 logger = gen_logger('Sell_Cost_Predict - Model_Predict')
 
 
 class SellCostPredictor:
-    """Handles model training and prediction for rental cost."""
-    
     def __init__(self, config):
-        """
-        Initialize the model.
-        
-        Args:
-            model_type: Type of model ('random_forest', 'gradient_boosting', 'logistic')
-        """
         self.config = config
-        self.model_type = None
+        self.model_type: Optional[str] = None
+        self.model_format: Optional[str] = None 
         self.model = None
-        self.scaler = None
+        self.scaler: Optional[StandardScaler] = None
         self.label_encoders = {}
-        self.std_nb = 5
+        self.std_nb = 5  # largeur du clipping de securite, en unites de std du TRAINING
         self.feature_names = None
         self.categorical_features = []
         self.numeric_features = []
         self.metrics = {}
-        self.results = {}
-        
+        self.median_values_ = {}
+
         self.model_local_path = self.load_model_from_s3()
         self.load_model_artifacts(self.model_local_path)
-    
+
+    # ------------------------------------------------------------------
+    # S3 LOADING
+    # ------------------------------------------------------------------
 
     def load_model_from_s3(self):
         last_model_name = s3_get_most_recent_folder(
@@ -56,51 +52,75 @@ class SellCostPredictor:
         )
         return local_model_dir
 
+    # ------------------------------------------------------------------
+    # LOAD ARTIFACTS
+    # ------------------------------------------------------------------
 
     def load_model_artifacts(self, path: str):
-        """Load model and related artifacts from disk (ONNX + JSON format)."""
-        
+        """Charge le modele + preprocesseurs, en miroir de SellCostModel.save_model."""
+
         model_path = Path(path)
-        
+
         if not model_path.exists():
             raise FileNotFoundError(f"Model directory not found: {model_path}")
-        
-        # LOAD ONNX MODEL
-        onnx_model_path = model_path / "model.onnx"
-        if not onnx_model_path.exists():
-            raise FileNotFoundError(f"ONNX model not found: {onnx_model_path}")
-        
-        self.model = ort.InferenceSession(str(onnx_model_path))
 
-        # LOAD SCALER FROM JSON
+        # ── METADATA ──
+        metadata_path = model_path / "metadata.json"
+        if not metadata_path.exists():
+            raise FileNotFoundError(f"Metadata not found: {metadata_path}")
+
+        with open(metadata_path, "r") as f:
+            metadata = json.load(f)
+
+        self.model_type = metadata.get("model_type")
+        self.model_format = metadata.get("format", "onnx")
+        self.feature_names = metadata.get("feature_names")
+        self.categorical_features = metadata.get("categorical_features") or []
+        self.numeric_features = metadata.get("numeric_features") or []
+        self.metrics = metadata.get("metrics")
+        self.median_values_ = metadata.get("median_values") or {}
+
+        if not self.feature_names:
+            raise ValueError("metadata.json ne contient pas 'feature_names'")
+
+        # ── MODELE ──────────────────────────────────────────────────────
+        if self.model_format == "cbm":
+            from catboost import CatBoostRegressor
+            cbm_path = model_path / "model.cbm"
+            if not cbm_path.exists():
+                raise FileNotFoundError(f"CatBoost model not found: {cbm_path}")
+            self.model = CatBoostRegressor()
+            self.model.load_model(str(cbm_path), format="cbm")
+        else:
+            onnx_model_path = model_path / "model.onnx"
+            if not onnx_model_path.exists():
+                raise FileNotFoundError(f"ONNX model not found: {onnx_model_path}")
+            self.model = ort.InferenceSession(str(onnx_model_path))
+
+        # ── SCALER (absent pour catboost) ─────────────────────────────
         scaler_json_path = model_path / "scaler.json"
-        
         if scaler_json_path.exists():
             with open(scaler_json_path, "r") as f:
                 scaler_data = json.load(f)
-            
+
             self.scaler = StandardScaler()
-            if scaler_data.get("mean") is not None:
-                self.scaler.mean_ = np.array(scaler_data["mean"])
-            if scaler_data.get("var") is not None:
-                self.scaler.var_ = np.array(scaler_data["var"])
-            if scaler_data.get("scale") is not None:
-                self.scaler.scale_ = np.array(scaler_data["scale"])
+            self.scaler.mean_ = np.array(scaler_data["mean"])
+            self.scaler.var_ = np.array(scaler_data["var"])
+            self.scaler.scale_ = np.array(scaler_data["scale"])
             self.scaler.n_features_in_ = scaler_data["n_features"]
             self.scaler.with_mean = scaler_data.get("with_mean", True)
             self.scaler.with_std = scaler_data.get("with_std", True)
-            
         else:
             self.scaler = None
-            logger.error("No scaler found")
-        
-        # LOAD LABEL ENCODERS FROM JSON 
-        encoders_path = model_path / "label_encoders.json"
+            if self.model_format != "cbm":
+                logger.error("No scaler found")
 
+        # ── LABEL ENCODERS (absents pour catboost) ─────────────────────
+        encoders_path = model_path / "label_encoders.json"
         if encoders_path.exists():
             with open(encoders_path, "r") as f:
                 encoders_data = json.load(f)
-            
+
             self.label_encoders = {}
             for feature_name, encoder_info in encoders_data.items():
                 encoder = OrdinalEncoder(
@@ -110,27 +130,15 @@ class SellCostPredictor:
                 categories = np.array(encoder_info["classes"])
                 encoder.fit(pd.DataFrame(categories, columns=[feature_name]))
                 self.label_encoders[feature_name] = encoder
-
         else:
-            self.label_encoders = None
-            logger.error("No label encoders found")
-        
+            self.label_encoders = {}
+            if self.model_format != "cbm":
+                logger.error("No label encoders found")
 
-        # LOAD METADATA
-        metadata_path = model_path / "metadata.json"
-        if not metadata_path.exists():
-            raise FileNotFoundError(f"Metadata not found: {metadata_path}")
-        
-        with open(metadata_path, "r") as f:
-            metadata = json.load(f)
-        
-        self.model_type = metadata.get("model_type")
-        self.feature_names = metadata.get("feature_names")
-        self.categorical_features = metadata.get("categorical_features")
-        self.numeric_features = metadata.get("numeric_features")
-        self.metrics = metadata.get("metrics")
-        self.median_values_ = metadata.get("median_values")
-
+        logger.info(
+            f"Model loaded: type={self.model_type} format={self.model_format} "
+            f"n_features={len(self.feature_names)}"
+        )
 
     def remove_model_folder_from_local(self):
         local_folder = Path(self.config['models_dir'])
@@ -139,83 +147,90 @@ class SellCostPredictor:
         except Exception as e:
             logger.error(f"Failed to delete folder {local_folder}: {e}")
 
+    # ------------------------------------------------------------------
+    # PREPROCESSING 
+    # ------------------------------------------------------------------
 
-    def preprocess_features(
-        self, 
-        df: pd.DataFrame, 
-        feature_list: list,
-    ) -> np.ndarray:
+    def preprocess_features(self, df: pd.DataFrame, feature_list: list):
         df = df.copy()
-        
-        # Separate numeric and categorical features
-        self.categorical_features = df[feature_list].select_dtypes(
-                include=['object', 'category']
-            ).columns.tolist()
-        
-        self.numeric_features = [
-            f for f in feature_list if f not in self.categorical_features
-        ]
-        
-        # Handle categorical features with OrdinalEncoder
+
+        missing_cols = [c for c in feature_list if c not in df.columns]
+        if missing_cols:
+            raise ValueError(
+                f"Colonnes manquantes dans les donnees de prediction: {missing_cols} "
+                f"(attendues par le modele entraine: {feature_list})"
+            )
+
+        # ── CatBoost : pas d'encoding, pas de scaling (comme au training) ──
+        if self.model_type == "catboost":
+            return df[feature_list]
+
+        # ── Autres modeles : OrdinalEncoder ────
         for col in self.categorical_features:
             if col in df.columns:
+                if col not in self.label_encoders:
+                    raise ValueError(f"Pas de label encoder charge pour '{col}'")
                 df[col] = self.label_encoders[col].transform(df[[col]])
-        
-        # Convert to matrix
-        X = df[feature_list].values
-        
-        # Replace inf with NaN first
+
+        X = df[feature_list].values.astype(float)
+
         X = np.where(np.isinf(X), np.nan, X)
-        
-        # Handle NaN values before scaling
-        col_means = np.nanmean(X, axis=0)
-        col_stds = np.nanstd(X, axis=0)
-        
-        for i, col_idx in enumerate(feature_list):
-            col_mean = col_means[i]
-            col_std = col_stds[i]
-                        
-            # Clip extreme values (beyond 5 standard deviations)
-            if not np.isnan(col_std) and col_std > 0:
-                lower_bound = col_mean - self.std_nb * col_std
-                upper_bound = col_mean + self.std_nb * col_std
-                X[:, i] = np.clip(X[:, i], lower_bound, upper_bound)
-        
-        # Final check for any remaining NaN or inf
+        nan_mask = ~np.isfinite(X)
+        if nan_mask.any() and self.scaler is not None:
+            for i in range(X.shape[1]):
+                if nan_mask[:, i].any():
+                    X[nan_mask[:, i], i] = self.scaler.mean_[i]
+
+        if self.scaler is not None:
+            lower = self.scaler.mean_ - self.std_nb * self.scaler.scale_
+            upper = self.scaler.mean_ + self.std_nb * self.scaler.scale_
+            X = np.clip(X, lower, upper)
+
+            X = self.scaler.transform(X)
+        else:
+            logger.warning("No scaler available - features used unscaled")
+
         if np.any(~np.isfinite(X)):
-            logger.warning("Still found non-finite values after cleaning, replacing with 0")
+            logger.warning("Non-finite values remaining after cleaning, replacing with 0")
             X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
-        
-        # Scale features
-        X = self.scaler.transform(X)
-        
+
         return X
-    
+
+    # ------------------------------------------------------------------
+    # PREDICT
+    # ------------------------------------------------------------------
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         """
-        Predict rental costs.
-        
+        Predit le cout de reprise.
+
         Args:
-            X: Input features
-            
+            X: features d'entree (memes colonnes que feature_names, sans
+               vehicle_id)
+
         Returns:
-            Array of probability scores
+            Array des predictions
         """
-        
         if self.model is None:
-            raise ValueError("Model not trained. Call train() first.")
-        
-        # Preprocess features
+            raise ValueError("Model not loaded.")
+
         X_processed = self.preprocess_features(X, self.feature_names)
-        
-        # Ensure X is float32 for ONNX
+
+        if self.model_type == "catboost":
+            from catboost import Pool
+            cat_indices = [
+                self.feature_names.index(c)
+                for c in self.categorical_features
+                if c in self.feature_names
+            ]
+            pool = Pool(X_processed, cat_features=cat_indices)
+            preds = self.model.predict(pool)
+            return np.asarray(preds).flatten()
+
+        # ONNX (hist_gradient_boosting, lightgbm, xgboost)
         X_processed = np.array(X_processed, dtype=np.float32)
-        
-        # Get input name from ONNX model
         input_name = self.model.get_inputs()[0].name
-        
-        # Run inference
+
         try:
             outputs = self.model.run(None, {input_name: X_processed})
         except Exception as e:
