@@ -1,0 +1,31 @@
+# Output directories
+models_dir: "sell_cost_models"
+
+# Bucket Name
+bucket_name: "soongo-staging-ml-models"
+
+
+model_type: "catboost"
+model_params:
+  iterations: 500
+  learning_rate: 0.03
+  depth: 4
+  l2_leaf_reg: 3.0
+  random_seed: 42
+  verbose: 0
+  eval_metric: "MAE"
+
+
+use_optuna: false        # active Optuna
+optuna_n_trials: 100    # 100 trials ≈ 10 min
+use_shap: true          # active SHAP
+
+
+# Training parameters
+test_size: 0.3
+random_state: 42
+
+# Feature selection
+feature_selection:
+  method: "importance"
+  top_n_features: 30
