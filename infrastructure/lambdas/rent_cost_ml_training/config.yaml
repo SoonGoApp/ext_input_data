@@ -4,16 +4,19 @@ models_dir: "rent_cost_models"
 # Bucket Name
 bucket_name: "soongo-staging-ml-models"
 
-# Model configuration
-model_type: "hist_gradient_boosting" 
+model_type: "catboost"
 model_params:
-  max_iter: 300
-  learning_rate: 0.05
-  max_depth: 7
-  min_samples_leaf: 10
-  l2_regularization: 0.1
-  random_state: 42
+  iterations: 500
+  learning_rate: 0.03
+  depth: 4
+  l2_leaf_reg: 3.0
+  random_seed: 42
   verbose: 0
+  eval_metric: "MAE"
+
+use_optuna: True         # active Optuna
+optuna_n_trials: 100     # 100 trials ≈ 10 min
+use_shap: true           # active SHAP
 
 # Training parameters
 test_size: 0.3

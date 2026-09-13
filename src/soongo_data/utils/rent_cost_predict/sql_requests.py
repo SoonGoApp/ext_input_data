@@ -1,20 +1,20 @@
 SELECT_ALL_FEATURES_PREDICTION = rf"""
 WITH base AS (
     SELECT
-        v.id                                                AS vehicle_id,
-        'ELECTRIC'                                          AS energy,
-        DATE_PART('year', AGE(v.entry_into_fleet_date))     AS age,
-        EXTRACT(YEAR FROM v.entry_into_fleet_date)          AS entry_year,
-        vm.model_category                                   AS segment,
-        vb.name                                             AS brand,
-        vc.lease_months,
-        vc.lease_mileage,
+        v.id                                                 AS vehicle_id,
+        'ELECTRIC'                                           AS energy,
+        DATE_PART('year', AGE(v.entry_into_fleet_date))      AS age,
+        EXTRACT(YEAR FROM v.entry_into_fleet_date)::INT       AS entry_year,
+        vm.model_category                                    AS segment,
+        vb.name                                              AS brand,
+        vc.lease_months::FLOAT                                AS lease_months,
+        vc.lease_mileage::FLOAT                               AS lease_mileage,
         vc.contract_type,
-        v.co2_per_km::FLOAT                                 AS co2_per_km,
-        v.fiscal_power::FLOAT                               AS fiscal_power,
-        v.seat_count::FLOAT                                 AS seat_count,
+        v.co2_per_km::FLOAT                                  AS co2_per_km,
+        v.fiscal_power::FLOAT                                AS fiscal_power,
+        v.seat_count::FLOAT                                  AS seat_count,
         v.transmission,
-        v.motor_power::FLOAT                                AS motor_power
+        v.motor_power::FLOAT                                 AS motor_power
     FROM publ.vehicles v
     JOIN publ.vehicle_contracts vc ON vc.vehicle_id = v.id
     JOIN common.vehicle_models vm ON v.model_id = vm.id

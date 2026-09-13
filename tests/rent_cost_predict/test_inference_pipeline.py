@@ -50,9 +50,9 @@ class TestInferencePipeline:
         mock_data_loader.return_value = mock_loader_instance
         mock_predictor_instance = MagicMock()
         mock_predictor.return_value = mock_predictor_instance
-        
+
         pipeline = InferencePipeline(mock_config)
-        
+
         assert pipeline.config == mock_config
         assert pipeline.data_loader == mock_loader_instance
         assert pipeline.model == mock_predictor_instance
@@ -66,22 +66,22 @@ class TestInferencePipeline:
         mock_loader_instance = MagicMock()
         mock_data_loader.return_value = mock_loader_instance
         mock_loader_instance.load_data.return_value = sample_features
-        
+
         mock_predictor_instance = MagicMock()
         mock_predictor.return_value = mock_predictor_instance
         mock_predictor_instance.predict.return_value = sample_predictions
         mock_predictor_instance.model_type = "hist_gradient_boosting"
-        
+
         pipeline = InferencePipeline(mock_config)
         result = pipeline.run()
-        
+
         # Assert
         assert len(result) == 3
         assert 'vehicle_id' in result.columns
         assert 'predicted_total_rent_tax_exc' in result.columns
         assert 'model' in result.columns
         assert result['model'].iloc[0] == "hist_gradient_boosting"
-        
+
         mock_loader_instance.load_data.assert_called_once()
         mock_predictor_instance.predict.assert_called_once()
         mock_loader_instance.write_results_to_db.assert_called_once()
@@ -95,13 +95,13 @@ class TestInferencePipeline:
         mock_loader_instance = MagicMock()
         mock_data_loader.return_value = mock_loader_instance
         mock_loader_instance.load_data.return_value = sample_features
-        
+
         mock_predictor_instance = MagicMock()
         mock_predictor.return_value = mock_predictor_instance
         mock_predictor_instance.predict.side_effect = Exception("Prediction error")
-        
+
         pipeline = InferencePipeline(mock_config)
-        
+
         with pytest.raises(Exception):
             pipeline.run()
 
@@ -113,12 +113,12 @@ class TestInferencePipeline:
         mock_loader_instance = MagicMock()
         mock_data_loader.return_value = mock_loader_instance
         mock_loader_instance.load_data.side_effect = Exception("Data loading error")
-        
+
         mock_predictor_instance = MagicMock()
         mock_predictor.return_value = mock_predictor_instance
-        
+
         pipeline = InferencePipeline(mock_config)
-        
+
         with pytest.raises(Exception):
             pipeline.run()
 
@@ -131,14 +131,14 @@ class TestInferencePipeline:
         mock_data_loader.return_value = mock_loader_instance
         mock_loader_instance.load_data.return_value = sample_features
         mock_loader_instance.write_results_to_db.side_effect = Exception("Write error")
-        
+
         mock_predictor_instance = MagicMock()
         mock_predictor.return_value = mock_predictor_instance
         mock_predictor_instance.predict.return_value = sample_predictions
         mock_predictor_instance.model_type = "hist_gradient_boosting"
-        
+
         pipeline = InferencePipeline(mock_config)
-        
+
         with pytest.raises(Exception):
             pipeline.run()
 
@@ -150,15 +150,15 @@ class TestInferencePipeline:
         mock_loader_instance = MagicMock()
         mock_data_loader.return_value = mock_loader_instance
         mock_loader_instance.load_data.return_value = sample_features
-        
+
         mock_predictor_instance = MagicMock()
         mock_predictor.return_value = mock_predictor_instance
         mock_predictor_instance.predict.return_value = sample_predictions
         mock_predictor_instance.model_type = "hist_gradient_boosting"
-        
+
         pipeline = InferencePipeline(mock_config)
         pipeline.run()
-        
+
         assert pipeline.predictions is not None
         assert len(pipeline.predictions) == 3
 
@@ -171,9 +171,9 @@ class TestInferencePipeline:
         mock_data_loader.return_value = mock_loader_instance
         mock_predictor_instance = MagicMock()
         mock_predictor.return_value = mock_predictor_instance
-        
+
         run_pipeline(mock_config)
-        
+
         mock_run.assert_called_once()
 
     @patch('soongo_data.utils.rent_cost_predict.inference_pipeline.RentalCostPredictor')
@@ -184,14 +184,14 @@ class TestInferencePipeline:
         mock_loader_instance = MagicMock()
         mock_data_loader.return_value = mock_loader_instance
         mock_loader_instance.load_data.return_value = sample_features
-        
+
         mock_predictor_instance = MagicMock()
         mock_predictor.return_value = mock_predictor_instance
         mock_predictor_instance.predict.return_value = sample_predictions
         mock_predictor_instance.model_type = "hist_gradient_boosting"
-        
+
         pipeline = InferencePipeline(mock_config)
         result = pipeline.run()
-        
+
         # Vérifier que les vehicle_id sont les mêmes
         assert list(result['vehicle_id']) == ['v1', 'v2', 'v3']

@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from datetime import datetime
 import pandas as pd
 from sqlalchemy import text
 from soongo_data.utils.rent_cost_training.model_training import RentCostModel
@@ -15,7 +14,7 @@ logger = gen_logger('Rent_Cost_Train - Train_Pipeline')
 
 class TrainingPipeline:
     """Orchestrates the complete training pipeline."""
-    
+
     def __init__(self, config: dict):
 
         self.config = config
@@ -24,7 +23,7 @@ class TrainingPipeline:
         )
         self.model = RentCostModel(config=self.config)
         self.results = {}
-    
+
     def setup(self):
         """Setup pipeline components."""
 
@@ -39,20 +38,21 @@ class TrainingPipeline:
         try:
             # Setup
             self.setup()
-            
+
             # Load data
             with self.engine.connect() as conn:
-                df = pd.read_sql(text(SELECT_ALL_FEATURES_TRAINING), conn)
+                result = conn.execute(text(SELECT_ALL_FEATURES_TRAINING))
+                df = pd.DataFrame(result.fetchall(), columns=result.keys())
 
             # Create features
             features = df.drop(columns=['target'])
 
             # Create target
             target = df[['vehicle_id', 'target']]
-            
+
             # Train model
             self.results = self.model.train_model(features, target)
-            
+
             # Save artifacts
             model_dir = self.model.save_model(self.results, self.config)
 
@@ -64,9 +64,9 @@ class TrainingPipeline:
             )
 
             self.model.remove_model_folder_from_local()
-            
+
             return True
-            
+
         except Exception as e:
             logger.error(f"Pipeline failed: {e}", exc_info=True)
             raise

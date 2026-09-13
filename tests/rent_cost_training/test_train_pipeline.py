@@ -37,6 +37,29 @@ def sample_data():
     })
 
 
+def make_mock_engine(sample_data: pd.DataFrame, execute_side_effect=None):
+    """Construit un mock d'engine SQLAlchemy tel qu'utilisé par
+    train_pipeline.run(): `with engine.connect() as conn: conn.execute(text(...))`
+    puis `pd.DataFrame(result.fetchall(), columns=result.keys())`.
+    """
+    mock_engine = MagicMock()
+    mock_conn = MagicMock()
+
+    if execute_side_effect is not None:
+        mock_conn.execute.side_effect = execute_side_effect
+    else:
+        mock_result = MagicMock()
+        mock_result.fetchall.return_value = list(
+            sample_data.itertuples(index=False, name=None)
+        )
+        mock_result.keys.return_value = list(sample_data.columns)
+        mock_conn.execute.return_value = mock_result
+
+    mock_engine.connect.return_value.__enter__.return_value = mock_conn
+    mock_engine.connect.return_value.__exit__.return_value = False
+    return mock_engine, mock_conn
+
+
 class TestTrainingPipeline:
     """Tests pour TrainingPipeline"""
 
@@ -45,9 +68,9 @@ class TestTrainingPipeline:
         """Test initialisation du pipeline"""
         mock_engine = MagicMock()
         mock_gen_engine.return_value = mock_engine
-        
+
         pipeline = TrainingPipeline(mock_config)
-        
+
         assert pipeline.config == mock_config
         assert pipeline.engine == mock_engine
         assert pipeline.model is not None
@@ -59,50 +82,49 @@ class TestTrainingPipeline:
         """Test setup du pipeline"""
         mock_gen_engine.return_value = MagicMock()
         pipeline = TrainingPipeline(mock_config)
-        
+
         pipeline.setup()
-        
+
         # Vérifie que mkdir a été appelé
         assert mock_mkdir.called
 
     @patch('soongo_data.utils.rent_cost_training.train_pipeline.push_folder_to_s3')
-    @patch('soongo_data.utils.rent_cost_training.train_pipeline.pd.read_sql')
     @patch('pathlib.Path.mkdir')
     @patch('soongo_data.utils.rent_cost_training.train_pipeline.gen_engine')
-    def test_run_success(self, mock_gen_engine, mock_mkdir, mock_read_sql, mock_push_s3, mock_config, sample_data):
+    def test_run_success(self, mock_gen_engine, mock_mkdir, mock_push_s3, mock_config, sample_data):
         """Test exécution complète du pipeline avec succès"""
-        # Setup mocks
-        mock_engine = MagicMock()
+        mock_engine, mock_conn = make_mock_engine(sample_data)
         mock_gen_engine.return_value = mock_engine
-        mock_read_sql.return_value = sample_data
-        
+
         pipeline = TrainingPipeline(mock_config)
         pipeline.model.train_model = MagicMock(return_value={'train_metrics': {}})
         pipeline.model.save_model = MagicMock(return_value=Path("/tmp/models/model_2024-01-01"))
         pipeline.model.remove_model_folder_from_local = MagicMock()
-        
+
         # Run
         result = pipeline.run()
-        
+
         # Assert
         assert result is True
         pipeline.model.train_model.assert_called_once()
         pipeline.model.save_model.assert_called_once()
         mock_push_s3.assert_called_once()
         pipeline.model.remove_model_folder_from_local.assert_called_once()
+        # La requête doit bien avoir été exécutée sur la connexion
+        mock_conn.execute.assert_called_once()
 
-    @patch('soongo_data.utils.rent_cost_training.train_pipeline.pd.read_sql')
     @patch('pathlib.Path.mkdir')
     @patch('soongo_data.utils.rent_cost_training.train_pipeline.gen_engine')
-    def test_run_with_exception(self, mock_gen_engine, mock_mkdir, mock_read_sql, mock_config):
-        """Test exécution du pipeline avec exception"""
-        # Setup mocks
-        mock_engine = MagicMock()
+    def test_run_with_exception(self, mock_gen_engine, mock_mkdir, mock_config):
+        """Test exécution du pipeline avec exception (échec de la requête SQL)"""
+        mock_engine, mock_conn = make_mock_engine(
+            sample_data=None,
+            execute_side_effect=Exception("Database error"),
+        )
         mock_gen_engine.return_value = mock_engine
-        mock_read_sql.side_effect = Exception("Database error")
-        
+
         pipeline = TrainingPipeline(mock_config)
-        
+
         # Run & Assert
         with pytest.raises(Exception):
             pipeline.run()
@@ -113,40 +135,59 @@ class TestTrainingPipeline:
         """Test fonction run_pipeline"""
         mock_gen_engine.return_value = MagicMock()
         mock_run.return_value = True
-        
+
         run_pipeline(mock_config)
-        
+
         mock_run.assert_called_once()
 
     @patch('soongo_data.utils.rent_cost_training.train_pipeline.push_folder_to_s3')
-    @patch('soongo_data.utils.rent_cost_training.train_pipeline.pd.read_sql')
     @patch('pathlib.Path.mkdir')
     @patch('soongo_data.utils.rent_cost_training.train_pipeline.gen_engine')
-    def test_pipeline_data_split(self, mock_gen_engine, mock_mkdir, mock_read_sql, mock_push_s3, mock_config, sample_data):
+    def test_pipeline_data_split(self, mock_gen_engine, mock_mkdir, mock_push_s3, mock_config, sample_data):
         """Test que les données sont bien séparées en features et target"""
-        # Setup mocks
-        mock_engine = MagicMock()
+        mock_engine, mock_conn = make_mock_engine(sample_data)
         mock_gen_engine.return_value = mock_engine
-        mock_read_sql.return_value = sample_data
-        
+
         pipeline = TrainingPipeline(mock_config)
         pipeline.model.train_model = MagicMock(return_value={'train_metrics': {}})
         pipeline.model.save_model = MagicMock(return_value=Path("/tmp/models/model_2024-01-01"))
         pipeline.model.remove_model_folder_from_local = MagicMock()
-        
+
         # Run
         pipeline.run()
-        
+
         # Vérifier que train_model a été appelé
         assert pipeline.model.train_model.called
-        
+
         # Récupérer les arguments passés à train_model
         call_args = pipeline.model.train_model.call_args
         features = call_args[0][0]
         target = call_args[0][1]
-        
+
         # Vérifier que target n'est pas dans les features
         assert 'target' not in features.columns
-        
+
         # Vérifier que target contient bien la colonne target
         assert 'target' in target.columns
+        assert 'vehicle_id' in target.columns
+
+    @patch('soongo_data.utils.rent_cost_training.train_pipeline.push_folder_to_s3')
+    @patch('pathlib.Path.mkdir')
+    @patch('soongo_data.utils.rent_cost_training.train_pipeline.gen_engine')
+    def test_query_executed_with_text_clause(self, mock_gen_engine, mock_mkdir, mock_push_s3, mock_config, sample_data):
+        """Test que la requête est bien exécutée via conn.execute(text(...)),
+        et pas via pd.read_sql (source du bug corrigé)."""
+        mock_engine, mock_conn = make_mock_engine(sample_data)
+        mock_gen_engine.return_value = mock_engine
+
+        pipeline = TrainingPipeline(mock_config)
+        pipeline.model.train_model = MagicMock(return_value={'train_metrics': {}})
+        pipeline.model.save_model = MagicMock(return_value=Path("/tmp/models/model_2024-01-01"))
+        pipeline.model.remove_model_folder_from_local = MagicMock()
+
+        pipeline.run()
+
+        # Le premier argument positionnel doit être un objet TextClause
+        # (produit par sqlalchemy.text), pas une simple string.
+        executed_query = mock_conn.execute.call_args[0][0]
+        assert hasattr(executed_query, "text") or "TextClause" in type(executed_query).__name__

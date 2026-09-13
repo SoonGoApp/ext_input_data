@@ -22,17 +22,19 @@ class DataLoader:
     def load_data(self) -> pd.DataFrame:
         """Load data from database using SQL query."""
         try:
-                with self.engine.connect() as conn:
-                    df = pd.read_sql(text(SELECT_ALL_FEATURES_PREDICTION), conn)
-                logger.info(f"Loaded {len(df)} rows from ALL_PROCESSED_SQL")
-                logger.info(f"Data Shape {df.shape}")
-                return df
-            
+            with self.engine.connect() as conn:
+                result = conn.execute(text(SELECT_ALL_FEATURES_PREDICTION))
+                df = pd.DataFrame(result.fetchall(), columns=result.keys())
+
+            logger.info(f"Loaded {len(df)} rows from ALL_PROCESSED_SQL")
+            logger.info(f"Data Shape {df.shape}")
+            return df
+
         except Exception as e:
             logger.error(f"Failed to load ALL_PROCESSED_SQL : {e}")
             raise
-    
-    
+
+
     def insert_predictions_to_table(self, df: pd.DataFrame):
         try:
             metadata = MetaData(schema='publ')
