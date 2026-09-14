@@ -14,7 +14,6 @@ from soongo_data.utils.sell_cost_predict.inference_pipeline import (
 
 @pytest.fixture
 def mock_config():
-    """Configuration de test"""
     return {
         "bucket_name": "test-bucket",
         "model_folder": "models",
@@ -24,7 +23,6 @@ def mock_config():
 
 @pytest.fixture
 def sample_features():
-    """Features de test alignées avec le modèle sell cost"""
     return pd.DataFrame({
         'vehicle_id':   ['v1', 'v2', 'v3'],
         'brand':        ['Toyota', 'Ford', 'Honda'],
@@ -41,7 +39,6 @@ def sample_features():
 
 @pytest.fixture
 def sample_predictions():
-    """Prédictions de test"""
     return np.array([25000, 32000, 28000])
 
 
@@ -90,6 +87,28 @@ class TestInferencePipeline:
         mock_predictor_instance.predict.assert_called_once()
         mock_loader_instance.write_results_to_db.assert_called_once()
         mock_predictor_instance.remove_model_folder_from_local.assert_called_once()
+
+    @patch('soongo_data.utils.sell_cost_predict.inference_pipeline.SellCostPredictor')
+    @patch('soongo_data.utils.sell_cost_predict.inference_pipeline.DataLoader')
+    def test_run_no_acq_vehicles_returns_early(self, mock_data_loader, mock_predictor, mock_config):
+        """Test que si aucun véhicule ACQ n'est retourné (df vide), la pipeline
+        s'arrête proprement sans appeler predict ni write_results_to_db."""
+        mock_loader_instance = MagicMock()
+        mock_data_loader.return_value = mock_loader_instance
+        mock_loader_instance.load_data.return_value = pd.DataFrame(
+            columns=['vehicle_id', 'brand', 'entry_year']
+        )
+
+        mock_predictor_instance = MagicMock()
+        mock_predictor.return_value = mock_predictor_instance
+
+        pipeline = InferencePipeline(mock_config)
+        result = pipeline.run()
+
+        assert result.empty
+        mock_predictor_instance.predict.assert_not_called()
+        mock_loader_instance.write_results_to_db.assert_not_called()
+        mock_predictor_instance.remove_model_folder_from_local.assert_not_called()
 
     @patch('soongo_data.utils.sell_cost_predict.inference_pipeline.SellCostPredictor')
     @patch('soongo_data.utils.sell_cost_predict.inference_pipeline.DataLoader')

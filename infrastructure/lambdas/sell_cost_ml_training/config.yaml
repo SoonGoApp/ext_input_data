@@ -16,7 +16,7 @@ model_params:
   eval_metric: "MAE"
 
 
-use_optuna: false        # active Optuna
+use_optuna: True        # active Optuna
 optuna_n_trials: 100    # 100 trials ≈ 10 min
 use_shap: true          # active SHAP
 

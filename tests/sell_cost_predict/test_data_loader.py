@@ -10,7 +10,6 @@ from soongo_data.utils.sell_cost_predict.data_loader import DataLoader
 
 @pytest.fixture
 def mock_config():
-    """Configuration de test"""
     return {
         "bucket_name": "test-bucket",
         "model_folder": "models"
@@ -19,7 +18,6 @@ def mock_config():
 
 @pytest.fixture
 def sample_data():
-    """Données de test alignées avec les features sell cost"""
     return pd.DataFrame({
         'vehicle_id':   ['v1', 'v2', 'v3'],
         'brand':        ['Toyota', 'Ford', 'Honda'],
@@ -32,6 +30,28 @@ def sample_data():
         'transmission': ['Manual', 'Auto', 'Auto'],
         'motor_power':  [110.0, 130.0, 150.0],
     })
+
+
+def make_mock_engine(sample_data, execute_side_effect=None):
+    """Mock d'engine SQLAlchemy tel qu'utilisé par load_data():
+    `with engine.connect() as conn: conn.execute(text(...))` puis
+    `pd.DataFrame(result.fetchall(), columns=result.keys())`."""
+    mock_engine = MagicMock()
+    mock_conn = MagicMock()
+
+    if execute_side_effect is not None:
+        mock_conn.execute.side_effect = execute_side_effect
+    else:
+        mock_result = MagicMock()
+        mock_result.fetchall.return_value = list(
+            sample_data.itertuples(index=False, name=None)
+        )
+        mock_result.keys.return_value = list(sample_data.columns)
+        mock_conn.execute.return_value = mock_result
+
+    mock_engine.connect.return_value.__enter__.return_value = mock_conn
+    mock_engine.connect.return_value.__exit__.return_value = False
+    return mock_engine, mock_conn
 
 
 class TestDataLoader:
@@ -48,28 +68,39 @@ class TestDataLoader:
         assert loader.config == mock_config
         assert loader.engine == mock_engine
 
-    @patch('soongo_data.utils.sell_cost_predict.data_loader.pd.read_sql')
     @patch('soongo_data.utils.sell_cost_predict.data_loader.gen_engine')
-    def test_load_data_success(self, mock_gen_engine, mock_read_sql, mock_config, sample_data):
+    def test_load_data_success(self, mock_gen_engine, mock_config, sample_data):
         """Test chargement des données avec succès"""
-        mock_engine = MagicMock()
+        mock_engine, mock_conn = make_mock_engine(sample_data)
         mock_gen_engine.return_value = mock_engine
-        mock_read_sql.return_value = sample_data
 
         loader = DataLoader(mock_config)
         result = loader.load_data()
 
         assert len(result) == 3
         assert 'vehicle_id' in result.columns
-        mock_read_sql.assert_called_once()
+        mock_conn.execute.assert_called_once()
 
-    @patch('soongo_data.utils.sell_cost_predict.data_loader.pd.read_sql')
     @patch('soongo_data.utils.sell_cost_predict.data_loader.gen_engine')
-    def test_load_data_failure(self, mock_gen_engine, mock_read_sql, mock_config):
-        """Test échec du chargement des données"""
-        mock_engine = MagicMock()
+    def test_load_data_uses_text_clause(self, mock_gen_engine, mock_config, sample_data):
+        """Test que la requête passe par text(...) et pas par pd.read_sql"""
+        mock_engine, mock_conn = make_mock_engine(sample_data)
         mock_gen_engine.return_value = mock_engine
-        mock_read_sql.side_effect = Exception("Database error")
+
+        loader = DataLoader(mock_config)
+        loader.load_data()
+
+        executed_query = mock_conn.execute.call_args[0][0]
+        assert hasattr(executed_query, "text") or "TextClause" in type(executed_query).__name__
+
+    @patch('soongo_data.utils.sell_cost_predict.data_loader.gen_engine')
+    def test_load_data_failure(self, mock_gen_engine, mock_config):
+        """Test échec du chargement des données"""
+        mock_engine, mock_conn = make_mock_engine(
+            sample_data=None,
+            execute_side_effect=Exception("Database error"),
+        )
+        mock_gen_engine.return_value = mock_engine
 
         loader = DataLoader(mock_config)
 
