@@ -4,25 +4,50 @@ models_dir: "rent_cost_models"
 # Bucket Name
 bucket_name: "soongo-staging-ml-models"
 
-model_type: "catboost"
+# ── Modèle final : moyenne HGB + ExtraTrees + LightGBM (blend), cible brute (loyer mensuel)
+model_type: "blend"
 model_params:
-  iterations: 500
-  learning_rate: 0.03
-  depth: 4
-  l2_leaf_reg: 3.0
-  random_seed: 42
-  verbose: 0
-  eval_metric: "MAE"
+  blend_members:
+    hist_gradient_boosting:
+      max_depth: 8
+      min_samples_leaf: 15
+      max_iter: 500
+      learning_rate: 0.05
+      random_state: 42
+      verbose: 0
+    extra_trees:
+      n_estimators: 300
+      min_samples_leaf: 5
+      max_features: 0.5
+      n_jobs: -1
+      random_state: 42
+    lightgbm:
+      n_estimators: 600
+      learning_rate: 0.03
+      num_leaves: 63
+      min_child_samples: 20
+      subsample: 0.8
+      subsample_freq: 1
+      colsample_bytree: 0.7
+      reg_lambda: 1.0
+      random_state: 42
+      verbose: -1
+      n_jobs: -1
 
-use_optuna: True         # active Optuna
-optuna_n_trials: 100     # 100 trials ≈ 10 min
-use_shap: true           # active SHAP
+target_transform: "none"
+exclude_features: ["entry_year", "organization", "org_fleet_size"]
+
+# Optuna désactivé : paramètres validés par les expériences.
+use_optuna: false
+optuna_n_trials: 60
+use_shap: true
+
+eval_repeats: 5
+
+# Regroupement anti data-leakage PAR MODÈLE de véhicule : tous les véhicules
+# d'un même modèle restent du même côté du split train/test et des folds de CV
+group_cols: ["brand", "model"]
 
 # Training parameters
 test_size: 0.3
 random_state: 42
-
-# Feature selection
-feature_selection:
-  method: "importance"
-  top_n_features: 30

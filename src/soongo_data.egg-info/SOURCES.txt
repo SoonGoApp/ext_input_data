@@ -141,7 +141,10 @@ src/soongo_data/utils/rent_cost_predict/inference_pipeline.py
 src/soongo_data/utils/rent_cost_predict/model_predict.py
 src/soongo_data/utils/rent_cost_predict/sql_requests.py
 src/soongo_data/utils/rent_cost_training/__init__.py
+src/soongo_data/utils/rent_cost_training/diags.py
+src/soongo_data/utils/rent_cost_training/ecb_rates.py
 src/soongo_data/utils/rent_cost_training/model_training.py
+src/soongo_data/utils/rent_cost_training/rent_experiments.py
 src/soongo_data/utils/rent_cost_training/sql_requests.py
 src/soongo_data/utils/rent_cost_training/train_pipeline.py
 tests/test_high_mobility.py

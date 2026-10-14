@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from soongo_data.utils.logging_utils import gen_logger
 from soongo_data.utils.db import gen_engine
+from soongo_data.utils.ecb_rates import add_ecb_features
 from soongo_data.utils.rent_cost_predict.sql_requests import SELECT_ALL_FEATURES_PREDICTION
 from sqlalchemy import text, Table, MetaData
 from sqlalchemy.orm import registry, Session
@@ -25,6 +26,11 @@ class DataLoader:
             with self.engine.connect() as conn:
                 result = conn.execute(text(SELECT_ALL_FEATURES_PREDICTION))
                 df = pd.DataFrame(result.fetchall(), columns=result.keys())
+
+            # Taux directeur BCE (API publique) : ecb_rate + interest_per_month,
+            # comme à l'entraînement (retire aussi la colonne lease_start_date)
+            if not df.empty:
+                df = add_ecb_features(df)
 
             logger.info(f"Loaded {len(df)} rows from ALL_PROCESSED_SQL")
             logger.info(f"Data Shape {df.shape}")
