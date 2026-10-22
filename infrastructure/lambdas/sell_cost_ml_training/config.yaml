@@ -1,0 +1,24 @@
+model_type: "catboost"
+
+models_dir: "sell_cost_models"
+
+bucket_name: "soongo-staging-ml-models"
+
+model_params:
+  iterations: 500
+  learning_rate: 0.03
+  depth: 4
+  l2_leaf_reg: 3.0
+  random_seed: 42
+  eval_metric: "MAE"
+  verbose: 0
+
+use_shap: true
+test_size: 0.3
+random_state: 42
+
+# Regroupement anti-fuite : un modèle de véhicule est soit en train, soit en test
+group_cols: ["brand", "model"]
+
+# Nombre de splits répétés pour la mesure de R² (moyenne ± écart-type)
+eval_repeats: 5
