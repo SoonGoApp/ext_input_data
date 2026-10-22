@@ -22,7 +22,7 @@ class SellCostPredictor:
         self.model = None
         self.scaler: Optional[StandardScaler] = None
         self.label_encoders = {}
-        self.std_nb = 5  # largeur du clipping de securite, en unites de std du TRAINING
+        self.std_nb = 5
         self.feature_names = None
         self.categorical_features = []
         self.numeric_features = []
@@ -31,10 +31,6 @@ class SellCostPredictor:
 
         self.model_local_path = self.load_model_from_s3()
         self.load_model_artifacts(self.model_local_path)
-
-    # ------------------------------------------------------------------
-    # S3 LOADING
-    # ------------------------------------------------------------------
 
     def load_model_from_s3(self):
         last_model_name = s3_get_most_recent_folder(
@@ -52,19 +48,12 @@ class SellCostPredictor:
         )
         return local_model_dir
 
-    # ------------------------------------------------------------------
-    # LOAD ARTIFACTS
-    # ------------------------------------------------------------------
-
     def load_model_artifacts(self, path: str):
-        """Charge le modele + preprocesseurs, en miroir de SellCostModel.save_model."""
-
         model_path = Path(path)
 
         if not model_path.exists():
             raise FileNotFoundError(f"Model directory not found: {model_path}")
 
-        # ── METADATA ──
         metadata_path = model_path / "metadata.json"
         if not metadata_path.exists():
             raise FileNotFoundError(f"Metadata not found: {metadata_path}")
@@ -83,7 +72,6 @@ class SellCostPredictor:
         if not self.feature_names:
             raise ValueError("metadata.json ne contient pas 'feature_names'")
 
-        # ── MODELE ──────────────────────────────────────────────────────
         if self.model_format == "cbm":
             from catboost import CatBoostRegressor
             cbm_path = model_path / "model.cbm"
@@ -97,7 +85,6 @@ class SellCostPredictor:
                 raise FileNotFoundError(f"ONNX model not found: {onnx_model_path}")
             self.model = ort.InferenceSession(str(onnx_model_path))
 
-        # ── SCALER (absent pour catboost) ─────────────────────────────
         scaler_json_path = model_path / "scaler.json"
         if scaler_json_path.exists():
             with open(scaler_json_path, "r") as f:
@@ -115,7 +102,6 @@ class SellCostPredictor:
             if self.model_format != "cbm":
                 logger.error("No scaler found")
 
-        # ── LABEL ENCODERS (absents pour catboost) ─────────────────────
         encoders_path = model_path / "label_encoders.json"
         if encoders_path.exists():
             with open(encoders_path, "r") as f:
@@ -147,10 +133,6 @@ class SellCostPredictor:
         except Exception as e:
             logger.error(f"Failed to delete folder {local_folder}: {e}")
 
-    # ------------------------------------------------------------------
-    # PREPROCESSING 
-    # ------------------------------------------------------------------
-
     def preprocess_features(self, df: pd.DataFrame, feature_list: list):
         df = df.copy()
 
@@ -161,11 +143,15 @@ class SellCostPredictor:
                 f"(attendues par le modele entraine: {feature_list})"
             )
 
-        # ── CatBoost : pas d'encoding, pas de scaling (comme au training) ──
         if self.model_type == "catboost":
-            return df[feature_list]
+            X_df = df[feature_list].copy()
+            for col in feature_list:
+                if col in self.categorical_features:
+                    X_df[col] = X_df[col].astype(object).where(X_df[col].notna(), 'unknown').astype(str)
+                else:
+                    X_df[col] = pd.to_numeric(X_df[col], errors='coerce').astype(float)
+            return X_df.reset_index(drop=True)
 
-        # ── Autres modeles : OrdinalEncoder ────
         for col in self.categorical_features:
             if col in df.columns:
                 if col not in self.label_encoders:
@@ -196,21 +182,7 @@ class SellCostPredictor:
 
         return X
 
-    # ------------------------------------------------------------------
-    # PREDICT
-    # ------------------------------------------------------------------
-
     def predict(self, X: pd.DataFrame) -> np.ndarray:
-        """
-        Predit le cout de reprise.
-
-        Args:
-            X: features d'entree (memes colonnes que feature_names, sans
-               vehicle_id)
-
-        Returns:
-            Array des predictions
-        """
         if self.model is None:
             raise ValueError("Model not loaded.")
 
@@ -227,7 +199,6 @@ class SellCostPredictor:
             preds = self.model.predict(pool)
             return np.asarray(preds).flatten()
 
-        # ONNX (hist_gradient_boosting, lightgbm, xgboost)
         X_processed = np.array(X_processed, dtype=np.float32)
         input_name = self.model.get_inputs()[0].name
 

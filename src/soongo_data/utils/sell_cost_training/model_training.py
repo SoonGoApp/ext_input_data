@@ -29,7 +29,12 @@ optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 logger = gen_logger('Sell_Cost_Train - Model_Training')
 
+# Regroupement anti data-leakage : un modèle de véhicule (brand|model) est soit en train, soit en test.
 GROUP_COLS = ['brand', 'model']
+
+# Colonnes jamais utilisées comme features : identifiant technique, et `model` (sert uniquement au
+# groupement : un nom de modèle jamais vu en production ne doit pas être une variable).
+NON_FEATURE_COLS = ['vehicle_id', 'model']
 
 
 class SellCostModel:
@@ -92,14 +97,15 @@ class SellCostModel:
     @staticmethod
     def _build_group_key(df: pd.DataFrame, group_cols: list) -> pd.Series:
         """
-        Construit une clé de groupe robuste à partir de group_cols.
+        Construit la clé de groupe (ex. 'brand|model').
+        Lève une erreur si une colonne de groupe manque : l'ignorer en silence changerait le
+        regroupement et fausserait le R² (un même modèle se retrouverait en train et en test).
         """
-        available_cols = [c for c in group_cols if c in df.columns]
         missing_cols = [c for c in group_cols if c not in df.columns]
         if missing_cols:
-            logger.warning(f"Group cols absentes du DataFrame, ignorées: {missing_cols}")
+            raise ValueError(f"Colonnes de groupe absentes du DataFrame: {missing_cols}")
 
-        group_df = df[available_cols].copy()
+        group_df = df[list(group_cols)].copy()
 
         for col in group_df.columns:
             if isinstance(group_df[col].dtype, pd.CategoricalDtype):
@@ -107,6 +113,18 @@ class SellCostModel:
             group_df[col] = group_df[col].fillna('unknown').astype(str)
 
         return group_df.agg('|'.join, axis=1)
+
+    # ------------------------------------------------------------------
+    # FEATURE SELECTION
+    # ------------------------------------------------------------------
+
+    def _excluded_cols(self) -> set:
+        """Colonnes retirées des features : id, model, et `exclude_features` de la config."""
+        return set(NON_FEATURE_COLS) | set(self.config.get('exclude_features', []) or [])
+
+    def _feature_columns(self, df: pd.DataFrame) -> list:
+        excluded = self._excluded_cols()
+        return [c for c in df.columns if c not in excluded]
 
     # ------------------------------------------------------------------
     # MODEL FACTORY
@@ -183,6 +201,17 @@ class SellCostModel:
                         self.label_encoders[col].fit(df[[col]])
                     df[col] = self.label_encoders[col].transform(df[[col]])
 
+        if self.model_type == "catboost":
+            # DataFrame typé (pas .values : un tableau object mélange None/NaN et fait planter CatBoost).
+            # Catégories -> str ('unknown' si vide) ; numériques -> float (NaN accepté par CatBoost).
+            X_df = df[feature_list].copy()
+            for col in feature_list:
+                if col in self.categorical_features:
+                    X_df[col] = X_df[col].astype(object).where(X_df[col].notna(), 'unknown').astype(str)
+                else:
+                    X_df[col] = pd.to_numeric(X_df[col], errors='coerce').astype(float)
+            return X_df.reset_index(drop=True)
+
         X = df[feature_list].values
 
         # CatBoost gère son propre scaling en interne → on skip StandardScaler
@@ -209,18 +238,17 @@ class SellCostModel:
         logger.info(f"target_df shape: {target_df.shape}")
         logger.info(f"features_df shape: {features_df.shape}")
 
-        # feature_cols exclut uniquement vehicle_id (id technique).
-        feature_cols = [
-            col for col in features_df.columns
-            if col not in ['vehicle_id']
-        ]
+        # Features : tout sauf vehicle_id, model et les colonnes de `exclude_features`.
+        feature_cols = self._feature_columns(features_df)
         X = features_df[feature_cols]
         y = target_df['target']
 
-        groups = self._build_group_key(features_df, feature_cols)
+        # Groupes = modèle de véhicule (brand|model) : jamais le même modèle en train et en test.
+        group_cols = self.config.get('group_cols', GROUP_COLS)
+        groups = self._build_group_key(features_df, group_cols)
 
         n_unique_groups = groups.nunique()
-        logger.info(f"Groupes de configurations véhicule uniques: {n_unique_groups}")
+        logger.info(f"Groupes ({'|'.join(group_cols)}) uniques: {n_unique_groups}")
 
         gss = GroupShuffleSplit(
             n_splits=1,
@@ -322,9 +350,8 @@ class SellCostModel:
         """
         logger.info(f"Starting Optuna optimization ({n_trials} trials) for model: {self.model_type}...")
 
-        # Réutilise les groupes calculés dans prepare_train_test_split
-        # (basés sur la signature complète des features, alignés sur
-        # X_train par position)
+        # Réutilise les groupes (brand|model) calculés dans prepare_train_test_split,
+        # alignés sur X_train par position
         groups_train = self._groups_train.reset_index(drop=True)
         X_train_raw  = X_train.reset_index(drop=True)
         y_train      = y_train.reset_index(drop=True)
@@ -360,7 +387,7 @@ class SellCostModel:
                     val_pool   = Pool(X_val[feature_list], y_val, cat_features=cat_indices)
                     model = CatBoostRegressor(**params)
                     model.fit(train_pool, eval_set=val_pool, early_stopping_rounds=50)
-                    y_pred = model.predict(X_val[feature_list].values)
+                    y_pred = model.predict(val_pool)
 
                 else:
                     # Encode catégories pour les autres modèles
@@ -451,7 +478,7 @@ class SellCostModel:
             cv_mae, cv_rmse, cv_r2 = [], [], []
 
             for tr_idx, val_idx in gkf.split(X_train_processed, y_train_reset, groups=groups_train):
-                X_tr,  X_val = X_train_processed[tr_idx], X_train_processed[val_idx]
+                X_tr,  X_val = X_train_processed.iloc[tr_idx], X_train_processed.iloc[val_idx]
                 y_tr,  y_val = y_train_reset.iloc[tr_idx], y_train_reset.iloc[val_idx]
 
                 fold_model = self._get_model(params=effective_params)
@@ -508,6 +535,61 @@ class SellCostModel:
         return metrics
 
     # ------------------------------------------------------------------
+    # REPEATED GROUP-SPLIT EVALUATION
+    # ------------------------------------------------------------------
+
+    def repeated_split_evaluation(
+        self,
+        features_df: pd.DataFrame,
+        target_df: pd.DataFrame,
+        n_repeats: int = 5,
+    ) -> Dict[str, float]:
+        """
+        Évalue sur N splits group-aware différents (R² moyen ± écart-type).
+        Un seul split dépend des modèles qui tombent en test : cette moyenne est la mesure à retenir.
+        Chaque répétition réentraîne un modèle neuf (sans CV interne ni Optuna).
+        """
+        feature_cols = self._feature_columns(features_df)
+        X_all = features_df[feature_cols].reset_index(drop=True)
+        y_all = target_df['target'].reset_index(drop=True)
+        group_cols = self.config.get('group_cols', GROUP_COLS)
+        groups = self._build_group_key(features_df, group_cols).reset_index(drop=True)
+        params = self.best_params or None
+
+        r2s, maes = [], []
+        for i in range(n_repeats):
+            gss = GroupShuffleSplit(
+                n_splits=1, test_size=self.test_size, random_state=self.random_state + 1000 + i
+            )
+            tr_idx, te_idx = next(gss.split(X_all, y_all, groups=groups))
+
+            worker = SellCostModel(self.config)
+            worker.feature_names = list(feature_cols)
+            Xp_tr = worker.preprocess_features(X_all.iloc[tr_idx], worker.feature_names, fit=True)
+            worker.model = worker._get_model(params=params)
+            worker.model.fit(Xp_tr, y_all.iloc[tr_idx])
+
+            Xp_te = worker.preprocess_features(X_all.iloc[te_idx], worker.feature_names, fit=False)
+            pred = worker.model.predict(Xp_te)
+            r2s.append(r2_score(y_all.iloc[te_idx], pred))
+            maes.append(mean_absolute_error(y_all.iloc[te_idx], pred))
+
+        out = {
+            "repeated_r2_mean":  float(np.mean(r2s)),
+            "repeated_r2_std":   float(np.std(r2s)),
+            "repeated_r2_min":   float(np.min(r2s)),
+            "repeated_r2_max":   float(np.max(r2s)),
+            "repeated_mae_mean": float(np.mean(maes)),
+            "n_repeats":         n_repeats,
+        }
+        logger.info(
+            f"[REPEATED SPLITS x{n_repeats}] R²={out['repeated_r2_mean']:.4f} ± {out['repeated_r2_std']:.4f} "
+            f"(min {out['repeated_r2_min']:.3f}, max {out['repeated_r2_max']:.3f}) | "
+            f"MAE={out['repeated_mae_mean']:.0f}€"
+        )
+        return out
+
+    # ------------------------------------------------------------------
     # TRAIN MODEL (orchestrator)
     # ------------------------------------------------------------------
 
@@ -556,6 +638,13 @@ class SellCostModel:
             f"MAE ratio={test_metrics['test_mae'] / test_metrics['train_mae']:.2f}x"
         )
 
+        # ── Évaluation sur splits répétés (mesure à retenir) ────────────
+        n_repeats = self.config.get('eval_repeats', 5)
+        if n_repeats and n_repeats > 0:
+            self.results['repeated_splits'] = self.repeated_split_evaluation(
+                features, target, n_repeats=n_repeats
+            )
+
         # ── Feature importance ──────────────────────────────────────────
         feature_importance = self.get_feature_importance()
         if not feature_importance.empty:
@@ -566,7 +655,10 @@ class SellCostModel:
 
         # ── SHAP analysis ───────────────────────────────────────────────
         if self.config.get('use_shap', True):
-            self.generate_shap_analysis(X_test=X_test, y_test=y_test)
+            try:
+                self.generate_shap_analysis(X_test=X_test, y_test=y_test)
+            except Exception as e:
+                logger.warning(f"SHAP analysis skipped: {e}")
 
         self.X_test = X_test
         self.y_test = y_test
