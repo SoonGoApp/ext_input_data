@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from datetime import datetime
 import pandas as pd
 from sqlalchemy import text
 from soongo_data.utils.sell_cost_training.model_training import SellCostModel

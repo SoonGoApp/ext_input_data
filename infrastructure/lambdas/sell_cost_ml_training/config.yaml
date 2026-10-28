@@ -5,20 +5,29 @@ models_dir: "sell_cost_models"
 bucket_name: "soongo-staging-ml-models"
 
 model_params:
-  iterations: 500
+  iterations: 1000
   learning_rate: 0.03
-  depth: 4
-  l2_leaf_reg: 3.0
+  depth: 6
+  l2_leaf_reg: 1.0
   random_seed: 42
   eval_metric: "MAE"
   verbose: 0
 
+use_optuna: False
 use_shap: true
 test_size: 0.3
-random_state: 42
+random_state: 1
+
+# Variable testée mais non utilisée (aucun gain mesuré)
+exclude_features: ["org_active_at_entry"]
 
 # Regroupement anti-fuite : un modèle de véhicule est soit en train, soit en test
 group_cols: ["brand", "model"]
 
-# Nombre de splits répétés pour la mesure de R² (moyenne ± écart-type)
-eval_repeats: 5
+# Splits répétés pour la mesure de R² (moyenne ± écart-type)
+eval_repeats: 15
+
+# Nettoyage des lignes clairement fausses (prix net / prix catalogue connu hors de [min ; max]),
+clean_data: true
+outlier_ratio_min: 0.2
+outlier_ratio_max: 3.0

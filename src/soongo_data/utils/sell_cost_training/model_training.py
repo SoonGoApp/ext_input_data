@@ -62,7 +62,7 @@ class SellCostModel:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def clean_training_data(df: pd.DataFrame) -> pd.DataFrame:
+    def clean_training_data(df: pd.DataFrame, ratio_min: float = 0.2, ratio_max: float = 3.0) -> pd.DataFrame:
         """
         Nettoyage du jeu d'entrainement avant split.
         """
@@ -79,6 +79,16 @@ class SellCostModel:
 
         if 'target' in df.columns:
             df = df[df['target'] >= 1000]
+
+        # Valeurs INCORRECTES confirmées (ex: 440 361 € pour un catalogue de 40 643 €,
+        if {'target', 'manufacturer_price_tax_exc', 'price_known'} <= set(df.columns):
+            ratio = df['target'] / df['manufacturer_price_tax_exc'].replace(0, np.nan)
+            aberrant = (df['price_known'] == 1) & ((ratio < ratio_min) | (ratio > ratio_max))
+            if aberrant.any():
+                logger.info(f"clean_training_data: {int(aberrant.sum())} lignes à ratio net/catalogue "
+                            f"hors [{ratio_min} ; {ratio_max}] retirées : "
+                            f"{df.loc[aberrant, 'vehicle_id'].tolist() if 'vehicle_id' in df.columns else ''}")
+            df = df[~aberrant]
 
         df = df.reset_index(drop=True)
 
@@ -250,12 +260,17 @@ class SellCostModel:
         n_unique_groups = groups.nunique()
         logger.info(f"Groupes ({'|'.join(group_cols)}) uniques: {n_unique_groups}")
 
+        # GroupShuffleSplit découpe en % de GROUPES (modèles de véhicules), pas de lignes :
+        # un seul tirage, graine = random_state.
         gss = GroupShuffleSplit(
             n_splits=1,
             test_size=test_size,
             random_state=random_state
         )
         train_idx, test_idx = next(gss.split(X, y, groups=groups))
+        logger.info(
+            f"Split : graine {random_state}, test = {len(test_idx) / len(X):.1%} des lignes"
+        )
 
         X_train = X.iloc[train_idx]
         X_test  = X.iloc[test_idx]
@@ -289,7 +304,7 @@ class SellCostModel:
                 "l2_leaf_reg":       trial.suggest_float("l2_leaf_reg", 1.0, 10.0, log=True),
                 "subsample":         trial.suggest_float("subsample", 0.6, 1.0),
                 "colsample_bylevel": trial.suggest_float("colsample_bylevel", 0.5, 1.0),
-                "min_data_in_leaf":  trial.suggest_int("min_data_in_leaf", 5, 80),
+                # min_data_in_leaf retiré : CatBoost le refuse avec les arbres symétriques (défaut)
                 "random_seed":       self.random_state,
                 "verbose":           0,
                 "eval_metric":       "MAE",
@@ -386,7 +401,8 @@ class SellCostModel:
                     train_pool = Pool(X_tr[feature_list], y_tr, cat_features=cat_indices)
                     val_pool   = Pool(X_val[feature_list], y_val, cat_features=cat_indices)
                     model = CatBoostRegressor(**params)
-                    model.fit(train_pool, eval_set=val_pool, early_stopping_rounds=50)
+                    # pas d'early stopping sur le fold de validation : il fausserait le score (optimiste)
+                    model.fit(train_pool)
                     y_pred = model.predict(val_pool)
 
                 else:
@@ -599,11 +615,26 @@ class SellCostModel:
         target: pd.DataFrame
     ) -> Dict:
 
+        # Nettoyage appliqué
+        # si le jeu est déjà nettoyé, rien n'est retiré.
+        if self.config.get('clean_data', True) and 'vehicle_id' in features.columns and 'vehicle_id' in target.columns:
+            df = features if 'target' in features.columns else features.merge(
+                target[['vehicle_id', 'target']], on='vehicle_id', how='inner'
+            )
+            df = self.clean_training_data(
+                df,
+                ratio_min=self.config.get('outlier_ratio_min', 0.2),
+                ratio_max=self.config.get('outlier_ratio_max', 3.0),
+            )
+            features = df.drop(columns=['target']).reset_index(drop=True)
+            target = df[['vehicle_id', 'target']].reset_index(drop=True)
+
+        n_repeats = self.config.get('eval_repeats', 5)
         X_train, X_test, y_train, y_test = self.prepare_train_test_split(
             features_df=features,
             target_df=target,
             test_size=self.config.get('test_size', 0.3),
-            random_state=self.config.get('random_state', 42)
+            random_state=self.config.get('random_state', 1)
         )
 
         X_train = X_train.drop('vehicle_id', axis=1, errors='ignore')
@@ -638,8 +669,7 @@ class SellCostModel:
             f"MAE ratio={test_metrics['test_mae'] / test_metrics['train_mae']:.2f}x"
         )
 
-        # ── Évaluation sur splits répétés (mesure à retenir) ────────────
-        n_repeats = self.config.get('eval_repeats', 5)
+        # ── Évaluation sur splits répétés (mesure à retenir : moyenne et plage) ─────
         if n_repeats and n_repeats > 0:
             self.results['repeated_splits'] = self.repeated_split_evaluation(
                 features, target, n_repeats=n_repeats
@@ -732,7 +762,7 @@ class SellCostModel:
         """
         logger.info("Generating SHAP analysis...")
 
-        output_dir  = Path(self.config["models_dir"]) / f"model_{datetime.now().strftime('%Y-%m-%d')}"
+        output_dir  = Path(self.config.get("models_dir", "sell_cost_models")) / f"model_{datetime.now().strftime('%Y-%m-%d')}"
         figures_dir = output_dir / "figures"
         figures_dir.mkdir(parents=True, exist_ok=True)
 
@@ -895,7 +925,7 @@ class SellCostModel:
         """
         logger.info("Saving model artifacts...")
 
-        model_path = Path(self.config['models_dir']) / f"model_{datetime.now().strftime('%Y-%m-%d')}"
+        model_path = Path(self.config.get('models_dir', 'sell_cost_models')) / f"model_{datetime.now().strftime('%Y-%m-%d')}"
         model_path.mkdir(parents=True, exist_ok=True)
 
         n_features  = len(self.feature_names)
@@ -993,8 +1023,7 @@ class SellCostModel:
             yaml.dump(config, f)
 
         logger.info(f"Model saved to {model_path}")
-        logger.info(f"Model successfully uploaded to S3 bucket {config['bucket_name']}")
-
+        # (l'envoi sur S3 est fait ensuite par la pipeline : push_folder_to_s3)
         return Path(model_path)
 
     # ------------------------------------------------------------------
@@ -1002,7 +1031,7 @@ class SellCostModel:
     # ------------------------------------------------------------------
 
     def remove_model_folder_from_local(self):
-        local_folder = Path(self.config['models_dir'])
+        local_folder = Path(self.config.get('models_dir', 'sell_cost_models'))
         try:
             shutil.rmtree(local_folder)
         except Exception as e:
@@ -1019,7 +1048,7 @@ class SellCostModel:
     ):
         """Generate and save standard regression evaluation figures."""
 
-        output_dir  = Path(self.config["models_dir"]) / f"model_{datetime.now().strftime('%Y-%m-%d')}"
+        output_dir  = Path(self.config.get("models_dir", "sell_cost_models")) / f"model_{datetime.now().strftime('%Y-%m-%d')}"
         figures_dir = output_dir / "figures"
         figures_dir.mkdir(parents=True, exist_ok=True)
 

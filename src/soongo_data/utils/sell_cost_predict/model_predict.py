@@ -11,6 +11,7 @@ from sklearn.preprocessing import OrdinalEncoder, StandardScaler
 from soongo_data.utils.aws import pull_folder_from_s3, s3_get_most_recent_folder
 from soongo_data.utils.logging_utils import gen_logger
 
+
 logger = gen_logger('Sell_Cost_Predict - Model_Predict')
 
 
