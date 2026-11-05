@@ -107,45 +107,47 @@ class TestDataLoader:
         with pytest.raises(Exception):
             loader.load_data()
 
-    @patch('soongo_data.utils.sell_cost_predict.data_loader.registry')
-    @patch('soongo_data.utils.sell_cost_predict.data_loader.Session')
+    @patch('soongo_data.utils.sell_cost_predict.data_loader.MetaData')
     @patch('soongo_data.utils.sell_cost_predict.data_loader.Table')
     @patch('soongo_data.utils.sell_cost_predict.data_loader.gen_engine')
-    def test_insert_predictions_to_table(self, mock_gen_engine, mock_table, mock_session, mock_registry, mock_config, sample_data):
-        """Test insertion des prédictions dans la table"""
-        mock_engine = MagicMock()
-        mock_gen_engine.return_value = mock_engine
-        mock_session_instance = MagicMock()
-        mock_session.return_value.__enter__.return_value = mock_session_instance
-
-        mock_registry_instance = MagicMock()
-        mock_registry.return_value = mock_registry_instance
+    def test_insert_predictions_to_table(self, mock_gen_engine, mock_table, mock_metadata, mock_config, sample_data):
+        """Insertion SQLAlchemy Core dans la connexion reçue (même transaction que le DELETE)"""
+        mock_gen_engine.return_value = MagicMock()
+        mock_conn = MagicMock()
 
         loader = DataLoader(mock_config)
-        loader.insert_predictions_to_table(sample_data)
+        loader.insert_predictions_to_table(sample_data, mock_conn)
 
-        mock_session_instance.bulk_insert_mappings.assert_called_once()
-        mock_session_instance.commit.assert_called_once()
+        mock_conn.execute.assert_called_once()
+        records = mock_conn.execute.call_args[0][1]
+        assert len(records) == len(sample_data)
+        assert records[0]['vehicle_id'] == 'v1'
 
-    @patch('soongo_data.utils.sell_cost_predict.data_loader.registry')
-    @patch('soongo_data.utils.sell_cost_predict.data_loader.Session')
+    @patch('soongo_data.utils.sell_cost_predict.data_loader.MetaData')
     @patch('soongo_data.utils.sell_cost_predict.data_loader.Table')
     @patch('soongo_data.utils.sell_cost_predict.data_loader.gen_engine')
-    def test_insert_predictions_failure(self, mock_gen_engine, mock_table, mock_session, mock_registry, mock_config, sample_data):
-        """Test échec de l'insertion"""
-        mock_engine = MagicMock()
-        mock_gen_engine.return_value = mock_engine
-        mock_session_instance = MagicMock()
-        mock_session.return_value.__enter__.return_value = mock_session_instance
-        mock_session_instance.bulk_insert_mappings.side_effect = Exception("Insert error")
+    def test_insert_predictions_batches_by_1000(self, mock_gen_engine, mock_table, mock_metadata, mock_config):
+        mock_gen_engine.return_value = MagicMock()
+        mock_conn = MagicMock()
+        df = pd.DataFrame({'vehicle_id': [f"v{i}" for i in range(2500)], 'predicted_value': 1.0})
 
-        mock_registry_instance = MagicMock()
-        mock_registry.return_value = mock_registry_instance
+        DataLoader(mock_config).insert_predictions_to_table(df, mock_conn)
 
-        loader = DataLoader(mock_config)
+        assert mock_conn.execute.call_count == 3                          # 1000 + 1000 + 500
+        sizes = [len(c[0][1]) for c in mock_conn.execute.call_args_list]
+        assert sizes == [1000, 1000, 500]
 
-        with pytest.raises(Exception):
-            loader.insert_predictions_to_table(sample_data)
+    @patch('soongo_data.utils.sell_cost_predict.data_loader.MetaData')
+    @patch('soongo_data.utils.sell_cost_predict.data_loader.Table')
+    @patch('soongo_data.utils.sell_cost_predict.data_loader.gen_engine')
+    def test_insert_predictions_failure(self, mock_gen_engine, mock_table, mock_metadata, mock_config, sample_data):
+        """Échec de l'insertion : l'exception remonte (la transaction est annulée par l'appelant)"""
+        mock_gen_engine.return_value = MagicMock()
+        mock_conn = MagicMock()
+        mock_conn.execute.side_effect = Exception("Insert error")
+
+        with pytest.raises(Exception, match="Insert error"):
+            DataLoader(mock_config).insert_predictions_to_table(sample_data, mock_conn)
 
     @patch('soongo_data.utils.sell_cost_predict.data_loader.gen_engine')
     def test_delete_todays_rows(self, mock_gen_engine, mock_config):
@@ -187,7 +189,7 @@ class TestDataLoader:
         loader.write_results_to_db(sample_data)
 
         loader.delete_todays_rows.assert_called_once_with(mock_conn)
-        loader.insert_predictions_to_table.assert_called_once_with(sample_data)
+        loader.insert_predictions_to_table.assert_called_once_with(sample_data, mock_conn)
 
     @patch('soongo_data.utils.sell_cost_predict.data_loader.gen_engine')
     def test_write_results_to_db_failure(self, mock_gen_engine, mock_config, sample_data):
@@ -201,20 +203,32 @@ class TestDataLoader:
         with pytest.raises(Exception):
             loader.write_results_to_db(sample_data)
 
+    @patch('soongo_data.utils.sell_cost_predict.data_loader.MetaData')
+    @patch('soongo_data.utils.sell_cost_predict.data_loader.Table')
     @patch('soongo_data.utils.sell_cost_predict.data_loader.gen_engine')
-    def test_insert_targets_correct_table(self, mock_gen_engine, mock_config, sample_data):
-        """Test que l'insertion cible bien la table vehicles_sell_cost_predictions"""
+    def test_insert_targets_correct_table(self, mock_gen_engine, mock_table, mock_metadata, mock_config, sample_data):
+        """L'insertion cible bien publ.vehicles_sell_cost_predictions"""
+        mock_gen_engine.return_value = MagicMock()
+
+        DataLoader(mock_config).insert_predictions_to_table(sample_data, MagicMock())
+
+        assert mock_table.call_args[0][0] == "vehicles_sell_cost_predictions"
+        assert mock_metadata.call_args[1] == {"schema": "publ"}
+
+    @patch('soongo_data.utils.sell_cost_predict.data_loader.gen_engine')
+    def test_write_results_deletes_then_inserts_in_same_transaction(self, mock_gen_engine, mock_config, sample_data):
+        """DELETE et INSERT utilisent la même connexion, ouverte avec engine.begin() (tout ou rien)"""
         mock_engine = MagicMock()
         mock_gen_engine.return_value = mock_engine
+        mock_conn = MagicMock()
+        mock_engine.begin.return_value.__enter__.return_value = mock_conn
+        order = []
 
         loader = DataLoader(mock_config)
+        loader.delete_todays_rows = MagicMock(side_effect=lambda c: order.append(('delete', c)))
+        loader.insert_predictions_to_table = MagicMock(side_effect=lambda df, c: order.append(('insert', c)))
 
-        with patch('soongo_data.utils.sell_cost_predict.data_loader.Table') as mock_table, \
-             patch('soongo_data.utils.sell_cost_predict.data_loader.Session') as mock_session, \
-             patch('soongo_data.utils.sell_cost_predict.data_loader.registry'):
+        loader.write_results_to_db(sample_data)
 
-            mock_session.return_value.__enter__.return_value = MagicMock()
-            loader.insert_predictions_to_table(sample_data)
-
-            call_args = mock_table.call_args
-            assert call_args[0][0] == "vehicles_sell_cost_predictions"
+        assert order == [('delete', mock_conn), ('insert', mock_conn)]
+        mock_engine.begin.assert_called_once()

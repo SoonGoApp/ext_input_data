@@ -196,10 +196,11 @@ class TestSellCostPredictor:
                 predictor.preprocess_features(sample_features, ['brand', 'not_a_column'])
 
     def test_preprocess_features_catboost_no_encoding(self, sample_features):
-        """Test que pour CatBoost, aucun encodage/scaling n'est appliqué"""
+        """CatBoost : pas d'encodage/scaling, catégories -> str, numériques -> float"""
         with patch.object(SellCostPredictor, '__init__', lambda x, y: None):
             predictor = SellCostPredictor(None)
             predictor.model_type = "catboost"
+            predictor.categorical_features = ['brand']
 
             feature_list = ['brand', 'entry_year']
             result = predictor.preprocess_features(sample_features, feature_list)
@@ -207,6 +208,49 @@ class TestSellCostPredictor:
             assert isinstance(result, pd.DataFrame)
             assert list(result.columns) == feature_list
             assert list(result['brand']) == ['Toyota', 'Ford', 'Honda']
+            assert result['entry_year'].dtype == float
+
+    def test_preprocess_features_catboost_missing_values(self):
+        """Catégorie vide -> 'unknown' ; numérique vide -> NaN (accepté par CatBoost)"""
+        with patch.object(SellCostPredictor, '__init__', lambda x, y: None):
+            predictor = SellCostPredictor(None)
+            predictor.model_type = "catboost"
+            predictor.categorical_features = ['trim_id', 'critair']
+
+            df = pd.DataFrame({
+                'trim_id': [None, 'abc'], 'critair': [np.nan, '1'],
+                'co2_per_km': [None, 120.0], 'initial_mileage': [np.nan, 5000],
+            })
+            result = predictor.preprocess_features(df, ['trim_id', 'critair', 'co2_per_km', 'initial_mileage'])
+
+            assert list(result['trim_id']) == ['unknown', 'abc']
+            assert list(result['critair']) == ['unknown', '1']
+            assert np.isnan(result['co2_per_km'].iloc[0])
+            assert result['co2_per_km'].dtype == float
+
+    def test_preprocess_features_ignores_extra_columns(self):
+        """La requête de prédiction renvoie plus de colonnes que le modèle (vehicle_id, model, org_active_at_entry)"""
+        with patch.object(SellCostPredictor, '__init__', lambda x, y: None):
+            predictor = SellCostPredictor(None)
+            predictor.model_type = "catboost"
+            predictor.categorical_features = ['brand']
+
+            df = pd.DataFrame({'vehicle_id': ['a'], 'model': ['Yaris'], 'org_active_at_entry': [10.0],
+                               'brand': ['Toyota'], 'motor_power': [110.0]})
+            result = predictor.preprocess_features(df, ['brand', 'motor_power'])
+
+            assert list(result.columns) == ['brand', 'motor_power']
+
+    def test_preprocess_features_missing_new_feature_raises(self):
+        """Un modèle entraîné avec les nouvelles variables échoue clairement si la requête ne les renvoie pas"""
+        with patch.object(SellCostPredictor, '__init__', lambda x, y: None):
+            predictor = SellCostPredictor(None)
+            predictor.model_type = "catboost"
+            predictor.categorical_features = []
+
+            df = pd.DataFrame({'motor_power': [110.0]})
+            with pytest.raises(ValueError, match="co2_per_km"):
+                predictor.preprocess_features(df, ['motor_power', 'co2_per_km'])
 
     def test_preprocess_features_missing_encoder_raises(self, sample_features):
         """Test qu'une feature catégorielle sans label encoder chargé lève ValueError"""
